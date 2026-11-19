@@ -31,7 +31,8 @@ The user wants their problem solved, not a tour of the machinery. Talk to them a
 1. Build a short `context` string from what you already know in this conversation and a quick look at what the problem names: file paths and repository layout, decisions and constraints the user stated, where data lies, what done means, what is out of scope. Do not research the problem itself.
 2. Run folder: `<working directory>/.crucible/runs/<UTC time as YYYYMMDD-HHMMSS>-<3 to 6 word slug>`, as an absolute path. Create it. Write `problem.md` there (the problem statement, a `# Flags` section with one line of the flags given, and the context), and the context alone to `context.txt`.
 3. In a git repository, add `.crucible/` to `.git/info/exclude` if it is not there, so run files stay out of commits.
-4. Earlier runs: `python3 $C/scripts/crucible_run.py atlases` prints the `atlas.md` of earlier runs under this directory. Pass those whose problem overlaps as `priorAtlases`.
+4. A problem about crucible itself (an audit or a review of the framework): add to the context the path `$C/expectation.md` and this line: "expectation.md is the owner's own statement of what crucible is for and how they use it. Measure the framework against its lines and report each by its id as met, not met or not yet tested, with evidence. Only the owner edits that file: never change it." Never edit that file yourself either.
+5. Earlier runs: `python3 $C/scripts/crucible_run.py atlases` prints the `atlas.md` of earlier runs under this directory. Pass those whose problem overlaps as `priorAtlases`.
 
 ## 3. Launch: plan first
 
@@ -87,8 +88,8 @@ A run that reaches its ceiling wraps up by itself with an answer and a handoff: 
 
 ## 8. Self-review (`--review [<run> ...]`)
 
-Here, and only here, talk about the framework openly.
+Here, and only here, talk about the framework openly. The standard the framework is measured against is `$C/expectation.md`: the owner's own lines, which no agent and no review edits.
 1. If the user said anything about how the runs went, write it in their words to a file and pass it with `--feedback`. `python3 $C/scripts/crucible_run.py review-pack [--runs <run folder | file in it | part of its name> ...] [--feedback <file>]` prints `{pack, selection, primary, runDirs, feedback, nothingToReview}`. On `error`, tell the user which name did not match. On `nothingToReview`, say so and stop.
 2. Tell the user which runs the review looks at (`selection`). Write `<pack>/launch.json`: `{"repo": "$C", "historyPack": "<pack>", "primaryRuns": <primary>, "runDirs": <runDirs>, "feedback": <feedback or omit>}`. Start: `node $C/runner/crucible-runner.mjs --args <pack>/launch.json --engine $C/engine/crucible-evolve.js --provider codex --detach` and wait as in section 3.
 3. `python3 $C/scripts/crucible_run.py evolve-save <pack>/.runner/output.json <pack>`. If it says the engine changed, run `python3 $C/scripts/crucible_run.py probe-check <pack> --provider codex` in the background (a handful of small agents) and report its verdict: a change that made a right case wrong is reverted by it.
-4. Report: which runs were read and what each showed, what changed and why (with the number each change is expected to move), which earlier changes did or did not do their job, what was rejected, and what needs the user's decision (`$C/PROPOSALS.md`).
+4. Report: if `evolve-save` printed `expectationFile`, that first; which runs were read and what each showed, what changed and why (with the number each change is expected to move), which earlier changes did or did not do their job, what was rejected, and what needs the user's decision (`$C/PROPOSALS.md`).

@@ -117,6 +117,8 @@ Cost follows difficulty: a trivial part costs three agents, a hard one many more
 
 ## How it improves itself
 
+- `expectation.md` is the standard: the owner's own lines on what crucible is for and how they use it, each with an id. Reviews and audits measure the framework against it. Only the owner edits it; a review that changes it is undone by the save step. If you fork crucible, rewrite it as your own.
+
 - Every run ends with one agent writing dated notes on what the framework did badly. Nothing is changed during or after a run.
 - `/crucible --review` is the only place changes are made. It looks at the runs you name, or at every run made on the current version, and reads each one the way a person would after a long run: where the agent time went, whether parts went round without getting closer, what the run missed that you had to add afterwards (it reads what you typed after the result, and anything you say when asking for the review), whether the answer was a faithful merge of the records, how the run ended. `references/run-audit.md` lists the questions; the figures come from code, not from an agent.
 - A change is applied only when the evidence can be opened, an independent agent has confirmed it, and the tests pass. Each change is one commit, at most five per review. `PROTECTED.md` lists what a review may never change by itself; such findings go to `PROPOSALS.md` for you.
@@ -163,6 +165,7 @@ tests/                   the regression suite (no model needed)
 routing.json             models and effort per role
 CHANGELOG.md             every change and the evidence for it
 PROTECTED.md             what a self-review may never change by itself
+expectation.md           what the owner expects of crucible; the standard for reviews; edited by the owner only
 ```
 
 ## Tests

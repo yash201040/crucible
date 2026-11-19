@@ -540,6 +540,29 @@ def _git(*a, check=False):
     return r
 
 
+OWNER_FILE = "expectation.md"
+
+
+def guard_owner_file(pack) -> dict:
+    """expectation.md is the owner's: a review never edits it. If a commit of this review changed it, put the file back
+    as it was when the review started (the file only, by a new commit) and report the commits. Where the owner also
+    changed it meanwhile, nothing is put back: it is only reported."""
+    base = (_json(Path(pack) / "pack.json", {}) or {}).get("repoHead")
+    if not base:
+        return {}
+    rows = [l.split(" ", 1) for l in _git("log", "--format=%H %s", f"{base}..HEAD", "--", OWNER_FILE).stdout.splitlines() if l.strip()]
+    bad = [h for h, s in rows if s.startswith("crucible evolve")]
+    if not bad:
+        return {}
+    out = {"changed_by_review": bad, "restored": False}
+    existed = _git("cat-file", "-e", f"{base}:./{OWNER_FILE}").returncode == 0
+    if len(bad) == len(rows) and existed and not _git("status", "--porcelain", "--", OWNER_FILE).stdout.strip():
+        if _git("checkout", base, "--", OWNER_FILE).returncode == 0:
+            c = _git("commit", "-qm", f"crucible: put {OWNER_FILE} back (only the owner edits it)", "--", OWNER_FILE)
+            out["restored"] = c.returncode == 0
+    return out
+
+
 def probe_check(pack: Path, routes: str = "sonnet@high,opus@high", dry: bool = False, provider: str = "claude") -> int:
     """After a review changed the engine: run the cases whose prompt changed on the engine before and after it.
     A case that was right before and is wrong after, twice, is a regression: the commits that changed that prompt are reverted."""

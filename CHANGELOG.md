@@ -2,6 +2,18 @@
 
 Every change to the framework, newest first. Automatic entries come from `crucible-evolve` (run = after one run, periodic = weekly/monthly review) and cite the run and evidence they rest on.
 
+## 2026-11-19 (manual; asked for by the user): `expectation.md`, the owner's standard
+
+Asked for by the user: one fixed file with what they want from crucible and how they use it, so that a new session can be told to audit and review against it without the requirements being typed again. Only the owner edits it.
+
+- `expectation.md`: why crucible exists, how it is used (U1 to U10), what a run must get right (R1 to R12), how it improves (I1 to I6), limits (L1 to L4), and a dated snapshot of the state. Drafted from the user's requests while the framework was built.
+- `PROTECTED.md`: no agent, review or script edits the file; a finding against it goes to `PROPOSALS.md`; a change that works against one of its lines is never applied automatically.
+- `crucible-evolve`: every agent of a review reads the file first and judges runs and the framework against its lines; a finding names the line it serves; the verifier treats a fix that works against a line as protected; the applier never edits the file. No engine prompt changed, so the engine version stays v5.3.
+- `evolve-save`: if a commit of the review changed the file, it is put back as it was when the review started (that file only, by a new commit) and the summary says so first. Where the owner changed it in the same period, nothing is put back and it is only reported.
+- Front desks: a problem about crucible itself gets the file's path and the rule in its context.
+
+Not verified with real agents: whether reviewers keep to the file's lines. The guard is tested on a scratch repository.
+
 ## 2026-11-19 (manual; asked for by the user): v5.3, fewer model calls per agent (Code Mode)
 
 Asked for by the user: crucible should run with Claude Code's experimental Code Mode whenever it is used within Claude, and use the corresponding Codex feature where there is one. Evidence for the cost it addresses: in the first v5.0 run an agent needed 68.9 model calls on average (20,800 in all) and the run re-read 4.1 billion cached tokens, 13.6 million per agent; every model call re-reads the context so far.

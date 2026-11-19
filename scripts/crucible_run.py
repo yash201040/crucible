@@ -862,6 +862,13 @@ def evolve_save(output_file: Path, out_dir: Path) -> int:
         summary["expectations"] = rv.record_expectations(res, out_dir)
     except Exception as e:      # bookkeeping must never lose the review's result
         summary["expectations"] = {"error": str(e)}
+    try:
+        g = rv.guard_owner_file(out_dir)
+        if g:
+            summary["expectationFile"] = {**g, "say": "this review changed expectation.md, which only the owner edits: tell the user first"
+                                          + (" (the file was put back)" if g.get("restored") else " (it was NOT put back: show them `git log -- expectation.md`)")}
+    except Exception as e:
+        summary["expectationFile"] = {"error": str(e)}
     summary["engineChanged"] = bool(res.get("engineChanged"))
     if not any(r.get("runDir") == str(out_dir) for r in _registry_rows()):   # a review without its own crucible run still counts as the last review
         REGISTRY.parent.mkdir(parents=True, exist_ok=True)

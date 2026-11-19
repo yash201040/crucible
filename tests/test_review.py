@@ -258,5 +258,66 @@ class Pack(unittest.TestCase):
         self.assertIn("matches no recorded run", json.loads(buf.getvalue())["error"])
 
 
+class OwnerFile(unittest.TestCase):
+    """expectation.md is the owner's: a review's commit that changes it is undone, the owner's own change is left alone."""
+    def setUp(self):
+        import subprocess
+        self.repo = Path(tempfile.mkdtemp(prefix="crucible-owner-test-"))
+        self.git = lambda *a: subprocess.run(["git", "-C", str(self.repo), "-c", "user.name=t", "-c", "user.email=t@example.invalid", *a], capture_output=True, text=True)
+        self.git("init", "-q")
+        (self.repo / "expectation.md").write_text("only the owner edits this\n"); (self.repo / "code.txt").write_text("a\n")
+        self.git("add", "-A"); self.git("commit", "-qm", "start")
+        self.base = self.git("rev-parse", "HEAD").stdout.strip()
+        self.pack = self.repo / "pack"; self.pack.mkdir(); (self.pack / "pack.json").write_text(json.dumps({"repoHead": self.base}))
+        (self.repo / ".git" / "info" / "exclude").write_text("pack/\n")
+        self.old = (cr.REPO, os.environ.get("GIT_AUTHOR_NAME"))
+        cr.REPO = self.repo
+        for k, v in (("GIT_AUTHOR_NAME", "t"), ("GIT_AUTHOR_EMAIL", "t@example.invalid"), ("GIT_COMMITTER_NAME", "t"), ("GIT_COMMITTER_EMAIL", "t@example.invalid")):
+            os.environ[k] = v
+
+    def tearDown(self):
+        cr.REPO = self.old[0]
+        for k in ("GIT_AUTHOR_NAME", "GIT_AUTHOR_EMAIL", "GIT_COMMITTER_NAME", "GIT_COMMITTER_EMAIL"):
+            os.environ.pop(k, None)
+
+    def commit(self, msg, text=None, code=None):
+        if text is not None:
+            (self.repo / "expectation.md").write_text(text)
+        if code is not None:
+            (self.repo / "code.txt").write_text(code)
+        self.git("add", "-A"); self.git("commit", "-qm", msg)
+
+    def test_a_review_that_left_the_file_alone_reports_nothing(self):
+        self.commit("crucible evolve(periodic): a fix", code="b\n")
+        self.assertEqual(rv.guard_owner_file(self.pack), {})
+
+    def test_a_review_commit_that_changed_it_is_undone_for_that_file_only(self):
+        self.commit("crucible evolve(periodic): a fix", text="an agent rewrote this\n", code="b\n")
+        g = rv.guard_owner_file(self.pack)
+        self.assertEqual(len(g["changed_by_review"]), 1)
+        self.assertTrue(g["restored"])
+        self.assertEqual((self.repo / "expectation.md").read_text(), "only the owner edits this\n")
+        self.assertEqual((self.repo / "code.txt").read_text(), "b\n")
+        self.assertEqual(self.git("status", "--porcelain").stdout.strip(), "")
+
+    def test_the_owners_own_change_is_never_put_back(self):
+        self.commit("my own edit", text="the owner changed a line\n")
+        self.assertEqual(rv.guard_owner_file(self.pack), {})
+        self.commit("crucible evolve(periodic): a fix", text="an agent rewrote this\n")
+        g = rv.guard_owner_file(self.pack)
+        self.assertFalse(g["restored"])
+        self.assertEqual((self.repo / "expectation.md").read_text(), "an agent rewrote this\n")
+
+
+class TheFileItself(unittest.TestCase):
+    def test_it_says_who_edits_it_and_names_nothing_of_one_machine(self):
+        f = Path(__file__).resolve().parent.parent / "expectation.md"
+        s = f.read_text()
+        self.assertTrue(s.split("\n")[2].startswith("Only I, the owner of this repository, edit this file."))
+        self.assertNotIn("/Users/", s)
+        for i in ["U1", "U10", "R1", "R12", "I1", "I6", "L1", "L4"]:
+            self.assertIn(f"**{i}.", s)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=1)

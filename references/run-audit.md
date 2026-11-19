@@ -2,6 +2,8 @@
 
 A review judges the framework on what real runs did, not on how the framework reads. For each run it audits, it answers the eight questions below from the run's records. `digest.md` in the pack gives the figures, computed the same way for every run; the records settle anything the digest cannot.
 
+The standard behind these questions is `expectation.md` at the top of the framework folder: the owner's own statement of what crucible is for, one line per expectation with an id. Where an answer bears on one of its lines, name the id. Only the owner edits that file.
+
 How to answer a question:
 - Give the figure first, then what it means. "52% of agent time went to attempts that were not kept" is an answer; "attempts were somewhat wasteful" is not.
 - A verdict is one of `fine`, `problem` or `not_measurable`. A problem names the stage of the framework that caused it, and what it cost: agents, hours, a wrong or missing result.

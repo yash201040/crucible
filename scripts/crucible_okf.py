@@ -10,6 +10,7 @@ can ask "what does the host offer that we do not use" and, after an update, "wha
   crucible_okf.py show <concept path>            print one concept
   crucible_okf.py check                          conformance with OKF 0.2 and this bundle's own rules
   crucible_okf.py stats
+  crucible_okf.py index                          write every folder's index.md again (after adding concepts by hand)
   crucible_okf.py refresh [--cache DIR]          download the documentation again, say which pages changed since the
                                                  pin and which releases are new (changes nothing in the bundle)
   crucible_okf.py build <stage dir> --docs DIR   (maintainer) turn readers' staging files into the bundle
@@ -434,6 +435,8 @@ def main(argv) -> int:
             c[rel.split("/")[0]] += 1; o[fm.get("orchestration")] += 1; m[fm.get("maturity")] += 1; t[fm.get("type")] += 1; s[fm.get("crucible") or "-"] += 1
         print(json.dumps({"concepts": sum(c.values()), "by_category": dict(c.most_common()), "by_relevance": dict(o), "by_maturity": dict(m),
                           "by_type": dict(t), "by_crucible": dict(s)}, indent=1)); return 0
+    if cmd == "index":      # write every folder's index.md again (after adding concepts by hand)
+        write_indexes(BUNDLE); print(f"indexes written: {sum(1 for _ in BUNDLE.rglob('index.md'))}"); return 0
     if cmd == "refresh":
         return refresh(Path(opt("--cache")) if opt("--cache") else None)
     if cmd == "build":

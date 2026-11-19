@@ -29,9 +29,9 @@ Agents run unattended, so they are started with permission prompts off: Claude C
 
 ## Status
 
-Version 5.3. What that rests on:
+Version 5.4. What that rests on:
 
-- The engine's rules are covered by a regression suite that needs no model (`node tests/run.mjs`, about 260 checks).
+- The engine's rules are covered by a regression suite that needs no model (`node tests/run.mjs`, about 270 checks).
 - The engine has done two large real runs under Claude Code (280 and 302 agents), on v4 and v5.0. The changes since then (staged retries, budget by importance, ownership of parts, closed acceptance lists) are tested in the suite and on small live probes, but **have not yet been through a large real run**.
 - The standalone runner has been run end to end on a small problem. The Codex path is written from the Codex CLI's documented flags and tested against a stand-in binary; **it has not yet been run against the real Codex CLI**. Expect to fix a detail on first use, and please report it.
 
@@ -50,7 +50,7 @@ python3 ~/.claude/skills/crucible/scripts/crucible_run.py install
 
 The second line copies the two workflow scripts to `~/.claude/workflows/`. Start a new session and type `/crucible <problem>`. For unattended runs use auto mode, or allow Bash, Write and Edit: the agents use the session's permission mode.
 
-Optional, for cheaper long runs: put the launcher on your PATH (`ln -s ~/.claude/skills/crucible/bin/crucible-claude ~/.local/bin/`) and start the sessions in which you use crucible with `crucible-claude`. See "Code Mode" below.
+Recommended for long runs: start the session with `crucible-claude`, which lets more agents work at once and keeps their cache longer. See "Host settings" below.
 
 In the skills list you will also see `crucible-engine` and `crucible-evolve`. Those are the two workflow scripts this skill installs, not separate tools; you never call them yourself.
 
@@ -121,21 +121,27 @@ Cost follows difficulty: a trivial part costs three agents, a hard one many more
 - `/crucible --review` is the only place changes are made. It looks at the runs you name, or at every run made on the current version, and reads each one the way a person would after a long run: where the agent time went, whether parts went round without getting closer, what the run missed that you had to add afterwards (it reads what you typed after the result, and anything you say when asking for the review), whether the answer was a faithful merge of the records, how the run ended. `references/run-audit.md` lists the questions; the figures come from code, not from an agent.
 - A change is applied only when the evidence can be opened, an independent agent has confirmed it, and the tests pass. Each change is one commit, at most five per review. `PROTECTED.md` lists what a review may never change by itself; such findings go to `PROPOSALS.md` for you.
 - Every applied change names one number it should move (`references/expectations.json`). Later reviews measure that number on later runs; a change that did not move it is reworked or reverted.
+- A review knows the host: it searches the knowledge bundle before proposing a mechanism of its own, and when the installed Claude Code is newer than the bundle it reads the release notes since.
 - A change to a prompt is also run on small cases with a known right answer, on the engine before and after (`calibration/calibrate_rules.py`). A case that was right and turned wrong is reverted.
 
 To undo a change: `git revert <commit>`, then `python3 scripts/crucible_run.py install`.
 
-## Code Mode: fewer model calls per agent
+## Host settings that decide speed and cost
 
-Most of what a long run costs is re-reading: every step an agent takes re-reads everything it has read so far. In the large run above, an agent needed 69 model calls on average and re-read 13.6 million cached tokens.
+Two settings of Claude Code matter more to a long run than anything in crucible's prompts. Both are read when a session starts, so crucible can report them but not change them.
 
-Every crucible agent is therefore told to work in few, large steps. How far it can go depends on the host:
+| Setting | Claude Code's default | What the first large run showed | What the launcher sets |
+|---|---|---|---|
+| `CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS`: agents of a run working at once | 16, or the number of CPUs minus two if that is less (6 on an 8-core laptop) | exactly 6 agents were alive for 78% of the 31 hours | 12 |
+| `CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL`: how long an agent's cached context lives | 5 minutes | 318 times a build or test run took longer, and the agent paid for its whole context again: 57% of everything written to the cache | 1 hour |
 
-- **Claude Code with Code Mode on.** Code Mode is an experimental Claude Code feature in which an agent writes one script that makes many tool calls and returns only what it needs. Start the session with `crucible-claude` (it runs `CLAUDE_CODE_EXPERIMENTAL_CODE_MODE=1 claude`) and confirm once when Claude asks. It works only in an interactive terminal session: not in `claude -p`, the Agent SDK and apps built on it, the VS Code panel, the Desktop app or cloud sessions. It needs Claude Code 2.1.323 or later and a subscription or Console account, and a session started with it can be resumed only with it. Some features are unavailable in such a session (Remote Control, Claude in Chrome, computer use). Crucible cannot switch it on from inside a session: when it is off, the front desk says so in one line and carries on.
-- **Codex.** Agents ask for Codex's own code mode (`features.code_mode`, still under development in Codex). An agent that fails with it is run once more without it; `"code_mode": false` under `codex` in `~/.crucible/providers.json` turns it off.
-- **Anywhere else.** Agents batch independent tool calls in one step and filter command output before reading it.
+To get them, start the session you run crucible in with `crucible-claude` (`ln -s ~/.claude/skills/crucible/bin/crucible-claude ~/.local/bin/`), or put both variables in the `env` block of `~/.claude/settings.json`, which also covers sessions started from an app. A value you set yourself wins. Lower the first one on a machine that struggles when many agents run tests at once. A one-hour cache write costs more than a five-minute one, so the second setting pays for agents that run long commands and costs a little for short-lived ones; by API prices it would have saved about 7% of that run's tokens.
 
-What is not known yet: Claude Code's documentation does not say whether the agents a workflow starts get the script tool when the session has it, and no run has measured the saving. Each run's efficiency log records model calls per agent and how many agents ran scripts (`crucible_run.py digest <run>`), so your first run from a Code Mode session answers both.
+`crucible_run.py host` prints what the current session has. The front desk mentions it once, at approval, for a plan of 30 agents or more.
+
+**Code Mode** (Claude Code's experimental mode in which an agent writes one script that makes many tool calls) is neither required nor recommended. Tested: in a terminal session with Code Mode on, the agents of a run do work in it, and a command of eleven minutes finishes normally. On five small tasks it made no measurable difference: 15 model calls without it, 17 with it, all answers right, because agents told to work in few, large steps already put many reads, edits and commands into one shell command. Whether it helps on the long sessions of a real run is not known; every run records model calls per agent and whether Code Mode was on.
+
+**What the host can do** is kept in `knowledge/claude-code/`: about 1,650 notes read from Claude Code's documentation, pinned to one release, in Open Knowledge Format (markdown with a header; start at `index.md` or `playbooks/how-to-use-this-bundle.md`). `experiments/` there holds every test above with its figures, and `playbooks/what-crucible-uses.md` the decision for each feature, including the ones left out: nested subagents (not available to a run's agents), agent teams, custom agent types, the advisor. `python3 scripts/crucible_okf.py refresh` says what changed in the host since the pin.
 
 ## Your own additions
 
@@ -155,10 +161,11 @@ SKILL.md                 front desk for Claude Code
 hosts/codex/SKILL.md     front desk for Codex
 engine/                  the two workflow scripts: the run engine and the self-review
 runner/                  runs the same scripts outside Claude Code
-bin/crucible-claude      starts Claude Code with Code Mode on
+bin/crucible-claude      starts Claude Code with the two session settings a long run profits from
 bin/git-pre-commit       commit guard: no private paths, and only the owner changes expectation.md
 scripts/                 bookkeeping (save, checkpoint, review pack, digests), the single-agent adapter
 references/              the run-audit questions, expectations, domain checks, templates
+knowledge/claude-code/   what the host can do, from its documentation, pinned to one release; experiments; what crucible uses and why
 calibration/             probes for models and for the engine's own prompts
 tests/                   the regression suite (no model needed)
 routing.json             models and effort per role
@@ -173,7 +180,7 @@ expectation.md           what the owner expects of crucible; the standard for re
 node tests/run.mjs
 ```
 
-It runs the engine against scripted agents, then the Python tests of the review pack and of the runner. No model is called and it takes under a minute.
+It runs the engine against scripted agents, then the Python tests of the review pack, of the runner and of the knowledge bundle. No model is called and it takes under a minute.
 
 ## Working on crucible itself
 

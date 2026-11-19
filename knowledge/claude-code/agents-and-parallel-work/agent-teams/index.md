@@ -1,0 +1,16 @@
+# agents-and-parallel-work/agent-teams
+
+* [Agent team architecture and on-disk storage](agent-teams-architecture-and-storage.md) - Team lead, teammates, task list and mailbox components, the file paths for config, tasks and inboxes, and how teams start. **[high]**
+* [Agent team best practices and sizing](agent-teams-best-practices.md) - Team size, task sizing, spawn-prompt context, avoiding file conflicts and monitoring guidance for agent teams.
+* [Teammate context, communication and token cost](agent-teams-context-and-tokens.md) - What a teammate loads at spawn, how messages and idle notifications flow, and the subagentPromptCacheTtl cache setting for in-process teammates. **[high]**
+* [Display modes and teammateMode](agent-teams-display-modes.md) - In-process or split-pane (tmux or iTerm2) display of teammates, set with the teammateMode setting or the experimental --teammate-mode flag, plus agent panel controls.
+* [Agent teams limitations](agent-teams-limitations.md) - Known limits of the experimental feature: no resume of in-process teammates, task lag, one team per session, no nested teams, no background subagents from teammates. **[high]**
+* [Choosing teammate models](agent-teams-models-and-effort.md) - Order in which Claude Code picks a teammate's model, the CLAUDE_CODE_SUBAGENT_MODEL(_FORCE) variables, availableModels substitution and effort inheritance. **[high]**
+* [Agent teams overview and enabling](agent-teams-overview-and-enable.md) - Experimental, off by default: a lead session coordinates teammate sessions with a shared task list and direct messaging; enable with CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1. **[high]**
+* [Agent team permissions and inter-agent messages](agent-teams-permissions.md) - How teammates inherit the lead's permission mode and rules, which CLI flags propagate to split-pane teammates, and how messages between agents are treated. **[high]**
+* [Teammate plan mode and plan approval](agent-teams-plan-approval.md) - Teammates spawned while the lead is in plan mode plan first and send a plan approval request; approval is automatic unless the mode was changed.
+* [Hooks for agent team quality gates](agent-teams-quality-gate-hooks.md) - TeammateIdle, TaskCreated and TaskCompleted hooks that can block with exit code 2 and send feedback. **[high]**
+* [Using subagent definitions for teammates](agent-teams-subagent-definitions.md) - Which subagent frontmatter fields (tools, model, disallowedTools, effort, autoCompactWindow, body, skills, mcpServers) apply to in-process and split-pane teammates. **[high]**
+* [Messaging teammates, shared tasks and shutdown](agent-teams-talking-and-tasks.md) - Direct messaging of teammates, the shared task list with pending/in-progress/completed states and file-locked claiming, and graceful shutdown requests. **[high]**
+* [Agent teams troubleshooting](agent-teams-troubleshooting.md) - Fixes for missing teammates, teammates replacing subagents, permission prompt friction, early stops and orphaned tmux sessions.
+* [Agent teams compared with subagents](agent-teams-vs-subagents.md) - Side-by-side of context, communication, coordination, best use and token cost for subagents versus agent teams, with the recommended use cases. **[high]**

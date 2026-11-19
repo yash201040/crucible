@@ -30,12 +30,13 @@ export const meta = {
 //   close?: bool (graceful close of an interrupted run from <runDir>/checkpoint.json: answer + handoff, nothing else),
 //   dataBudget?: string (with dataRules: the user's budget for that tool for the whole run, e.g. "$20"),
 //   codeMode?: bool (what the front desk saw: is the host's script tool (Claude Code's Code Mode, Codex's code mode) on; only recorded, for the efficiency log),
+//   host?: object (what `crucible_run.py host` printed for the front desk's session: agents at once, cache lifetime, surface; only recorded),
 //   continueFrom?: string (path of an earlier run's checkpoint.json; the plan covers only what is left), handoff?: string
 // }
 const A = args || {}
 // Bumped with every behaviour change. The front desk passes expectVersion; a stale snapshot (e.g. a launch by
 // name that resolved to a registry copy loaded before an install) then fails loudly instead of ignoring new args.
-const ENGINE_VERSION = 'v5.3'
+const ENGINE_VERSION = 'v5.4'
 if (A.expectVersion && A.expectVersion !== ENGINE_VERSION) throw new Error(`crucible-engine ${ENGINE_VERSION} launched, but ${A.expectVersion} was expected: launch by scriptPath (~/.claude/workflows/crucible-engine.js)`)
 if (!A.runDir || !A.problem) throw new Error('crucible-engine needs args.runDir and args.problem')
 const RUN = String(A.runDir).replace(/\/+$/, '')
@@ -1578,6 +1579,7 @@ return {
   paused: PAUSED || null, // set: resume this same run (resumeFromRunId, same args) instead of presenting an answer
   budget: { agents: SPAWNED, ceiling: CEIL, estimate: ESTIMATE, wrapped: WRAP, why: WRAP_WHY, cost: costOf(SPAWNED, W) },
   codeMode: A.codeMode === undefined ? null : !!A.codeMode,
+  host: A.host && typeof A.host === 'object' ? A.host : null,
   routing: { profile: RT.profile, used: ROUTES_USED, relayed: RELAYED },
   established: EST.map(r => r.scope.id),
   planReview: LAYERS[0].plan.review_status || null,

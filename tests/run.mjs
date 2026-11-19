@@ -191,6 +191,8 @@ for (const sc of ['trivial', 'race', 'exhaustive', 'staged', 'multi', 'frontier'
 { const { prompts } = await run(engine, 'exhaustive', 'standard', { dataTool: 'paidtool', dataRules: '/home/u/rules/paidtool-rules.md', dataNote: 'Make paidtool calls through its MCP tools so identical calls come from the session cache.' })
   check('data tool: when the user asks for it every agent gets the rules file', Object.values(prompts).every(p => /asked for paidtool on this run.*paidtool-rules\.md/s.test(p)))
   check('data tool: the installation\'s own note reaches every agent', Object.values(prompts).every(p => /identical calls come from the session cache/.test(p))) }
+{ const hosted = await run(engine, 'trivial', 'standard', { host: { max_live: 12, cache_ttl: '1h' } })
+  check('host: what the front desk reported about its session is recorded in the result', hosted.res.host.max_live === 12 && (await run(engine, 'trivial')).res.host === null) }
 { const on = await run(engine, 'trivial', 'standard', { codeMode: true }), off = await run(engine, 'trivial', 'standard', { codeMode: false }), unset = await run(engine, 'trivial')
   check('code mode: what the front desk saw is recorded in the result, and changes no prompt', on.res.codeMode === true && off.res.codeMode === false && unset.res.codeMode === null && JSON.stringify(on.prompts) === JSON.stringify(off.prompts)) }
 { const { prompts } = await run(engine, 'exhaustive', 'standard', { dataRules: '/r.md' })
@@ -347,6 +349,8 @@ for (const sc of ['own', 'fix', 'stop']) { const a = await run(engine, sc), b = 
   const r = spawnSync('python3', [path.join(here, 'test_review.py')], { encoding: 'utf8' })
   check('review pack: tests/test_review.py passes', r.status === 0, (r.stderr || '').split('\n').slice(-12).join(' | '))
   const q = spawnSync('python3', [path.join(here, 'test_runner.py')], { encoding: 'utf8' })
-  check('standalone runner and Codex adapter: tests/test_runner.py passes', q.status === 0, (q.stderr || '').split('\n').slice(-12).join(' | ')) }
+  check('standalone runner and Codex adapter: tests/test_runner.py passes', q.status === 0, (q.stderr || '').split('\n').slice(-12).join(' | '))
+  const o = spawnSync('python3', [path.join(here, 'test_okf.py')], { encoding: 'utf8' })
+  check('knowledge bundle about the host: tests/test_okf.py passes', o.status === 0, (o.stderr || '').split('\n').slice(-12).join(' | ')) }
 console.log(fails ? `\n${fails} FAILED` : '\nall passed')
 process.exit(fails ? 1 : 0)

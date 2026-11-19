@@ -309,6 +309,67 @@ class OwnerFile(unittest.TestCase):
         self.assertEqual((self.repo / "expectation.md").read_text(), "an agent rewrote this\n")
 
 
+class HostMeasures(unittest.TestCase):
+    """What a run's records say about the host settings: model calls, cache rebuilds, the cap on agents at once."""
+    def transcript(self, entries):
+        f = TMP / f"agent-host-{len(list(TMP.glob('agent-host-*')))}.jsonl"
+        f.write_text("\n".join(json.dumps(e) for e in entries) + "\n")
+        return f
+
+    def call(self, ts, mid, read=0, write=0, tools=(), **more):
+        return {"type": "assistant", "timestamp": ts, **more,
+                "message": {"id": mid, "model": more.pop("model", "claude-sonnet-5-5") if "model" in more else "claude-sonnet-5-5",
+                            "usage": {"input_tokens": 10, "cache_read_input_tokens": read, "cache_creation_input_tokens": write, "output_tokens": 50,
+                                      "cache_creation": {"ephemeral_1h_input_tokens": write if more.get("_1h") else 0}},
+                            "content": [{"type": "tool_use", "name": n, "input": {}} for n in tools]}}
+
+    def inner(self, ts, name):      # a tool call made from inside a script: no model behind it
+        return {"type": "assistant", "timestamp": ts, "isVirtual": True,
+                "message": {"id": f"virtual-{ts}-{name}", "model": "<synthetic>", "usage": {"input_tokens": 0, "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0, "output_tokens": 0},
+                            "content": [{"type": "tool_use", "name": name, "input": {}}]}}
+
+    def test_tool_calls_made_inside_a_script_are_not_model_calls(self):
+        st = cr._agent_stats(self.transcript([
+            self.call("2026-11-20T10:00:00Z", "m1", write=30000, tools=["REPL"]),
+            self.inner("2026-11-20T10:00:01Z", "Read"), self.inner("2026-11-20T10:00:02Z", "Edit"), self.inner("2026-11-20T10:00:03Z", "Bash"),
+            self.call("2026-11-20T10:00:10Z", "m2", read=30000, write=900, tools=["StructuredOutput"])]))
+        self.assertEqual(st["turns"], 2)
+        self.assertEqual(st["tool_calls"], 5)
+        self.assertEqual(st["script_calls"], 1)
+        self.assertEqual(st["cache_write"], 30900)
+
+    def test_a_cache_rebuild_is_a_call_after_a_long_silence_that_writes_its_context_again(self):
+        st = cr._agent_stats(self.transcript([
+            self.call("2026-11-20T10:00:00Z", "m1", write=40000, tools=["Bash"]),
+            self.call("2026-11-20T10:12:00Z", "m2", write=41000, tools=["Bash"]),            # twelve minutes later: the cache had expired
+            self.call("2026-11-20T10:12:20Z", "m3", read=41000, write=600, tools=["Bash"]),  # twenty seconds later: read
+            self.call("2026-11-20T10:30:00Z", "m4", read=41600, write=700)]))                # long silence but the cache held: no rebuild
+        self.assertEqual((st["rebuilds"], st["rebuild_tokens"]), (1, 41000))
+
+    def test_one_hour_writes_are_told_apart(self):
+        st = cr._agent_stats(self.transcript([self.call("2026-11-20T10:00:00Z", "m1", write=30000, _1h=True)]))
+        self.assertEqual(st["cache_write_1h"], 30000)
+
+    def test_host_facts_come_from_the_session_and_advice_only_where_a_setting_is_missing(self):
+        keep = {k: os.environ.get(k) for k in ("CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS", "CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL", "CLAUDE_CODE_ENTRYPOINT")}
+        try:
+            os.environ.update({"CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS": "12", "CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL": "1h", "CLAUDE_CODE_ENTRYPOINT": "cli"})
+            h = cr.host_info()
+            self.assertEqual((h["max_live"], h["max_live_set"], h["cache_ttl"], h["usage_limit_wait"], h["advice"]), (12, True, "1h", True, []))
+            os.environ["CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL"] = "5m"; os.environ["CLAUDE_CODE_ENTRYPOINT"] = "some-app"
+            h = cr.host_info()
+            self.assertEqual((h["cache_ttl"], h["usage_limit_wait"], len(h["advice"])), ("5m", False, 1))
+            self.assertIn("CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL=1h", h["advice"][0])
+        finally:
+            for k, v in keep.items():
+                os.environ.pop(k, None) if v is None else os.environ.__setitem__(k, v)
+
+    def test_a_newer_installed_host_than_the_bundle_is_said_plainly(self):
+        self.assertTrue(rv._ver_tuple("2.1.329") > rv._ver_tuple("2.1.328") and rv._ver_tuple("2.1.100") > rv._ver_tuple("2.1.99"))
+        self.assertIn("has moved on", rv.host_md({"pinned": "2.1.328", "installed": "2.1.340", "moved": True}))
+        self.assertNotIn("has moved on", rv.host_md({"pinned": "2.1.328", "installed": "2.1.328", "moved": False}))
+
+
 class TheFileItself(unittest.TestCase):
     def test_it_says_who_edits_it_and_names_nothing_of_one_machine(self):
         f = Path(__file__).resolve().parent.parent / "expectation.md"

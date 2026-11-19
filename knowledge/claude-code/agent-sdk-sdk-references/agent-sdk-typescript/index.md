@@ -1,0 +1,17 @@
+# agent-sdk-sdk-references/agent-sdk-typescript
+
+* [AgentDefinition, permission modes and canUseTool](p1-agent-definition-and-permissions.md) - Programmatic subagent fields, PermissionMode values, the canUseTool callback options, PermissionResult and setting sources. **[high]**
+* [In-process MCP tools, server configs and tool policies](p1-custom-tools-and-mcp-config.md) - tool(), createSdkMcpServer(), MCP server config types, per-tool permission_policy, plugin configs, and MCP server provenance. **[high]**
+* [Hook events, inputs and JSON output types](p1-hook-types.md) - HookEvent names, HookCallback and HookCallbackMatcher, per-event input fields, and the SyncHookJSONOutput hookSpecificOutput shapes. **[high]**
+* [TypeScript SDK install, bundling and entry points](p1-install-and-entrypoints.md) - How the TypeScript Agent SDK installs with a bundled native Claude Code binary, compiles to one executable, and offers a /core entry for bundlers.
+* [query() and the Options object](p1-query-function-options.md) - The query() entry point and every Options property: permissions, budgets, sessions, system prompt, MCP, settings, subagents, spawning. **[high]**
+* [Query object methods and runtime control](p1-query-object-methods.md) - Methods on the object query() returns: interrupt, mid-session setters, reload, MCP control, background tasks, readFile, and applyFlagSettings rules. **[high]**
+* [SDKResultMessage, SDKUserMessage and message origin](p1-result-and-user-messages.md) - Result fields (cost, usage, terminal_reason, startup failures), user message controls (priority, shouldQuery), UUID echoing and origin kinds. **[high]**
+* [Session, settings and model helper functions](p1-session-and-settings-functions.md) - Top-level functions to list, read, rename, tag and fork sessions, resolve effective settings, and test deniedModels. **[high]**
+* [startup(), prewarm() and spare processes](p1-startup-prewarm-spare.md) - Pre-spawn the Claude Code subprocess with startup() (WarmQuery) or prewarm() (alpha SpareProcess) to take spawn cost off the critical path. **[high]**
+* [System, task, progress and status stream messages](p1-system-and-task-messages.md) - The SDKMessage union members for init, tasks, hooks, tool progress, rate limits, session state, plugin install and conversation reset. **[high]**
+* [SandboxSettings, network and filesystem config](p2-sandbox-settings.md) - Programmatic sandbox options for sandboxed Bash: enabled, failIfUnavailable, network domains and sockets, filesystem paths, and unsandboxed fallback. **[high]**
+* [Custom process spawning and setMcpServers result](p2-spawn-process-and-mcp-set-servers.md) - SpawnedProcess and SpawnOptions for running Claude Code in VMs or containers, abort signal timing, and McpSetServersResult rules. **[high]**
+* [Built-in tool input schemas](p2-tool-input-types.md) - Input types for built-in tools exported from sdk-tools: Agent, Bash, Monitor, Workflow, tasks, cron, worktree, MCP resources, Artifact and more. **[high]**
+* [Built-in tool output schemas](p2-tool-output-types.md) - Output types returned by built-in tools, notably AgentOutput, WorkflowOutput, BashOutput, Cron outputs, Read variants and git operation metadata. **[high]**
+* [Usage, model, account and thinking types](p2-usage-model-account-types.md) - ModelUsage, Usage, ModelInfo, AgentInfo, AccountInfo, ThinkingConfig, SdkBeta, ApiKeySource, SlashCommand and related shared types. **[high]**

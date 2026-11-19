@@ -1,0 +1,2477 @@
+{
+ "about": "The documentation the bundle was built from. `crucible_okf.py refresh` compares the live documentation with this.",
+ "index": "https://code.claude.com/docs/llms.txt",
+ "full": "https://code.claude.com/docs/llms-full.txt",
+ "fetched_at": "2026-11-19T19:48:42Z",
+ "full_sha256": "e3e499d264d4bc49fe995efaccdc7e48c9ec0f078f5686649e34ba01fcbea867",
+ "full_bytes": 10421656,
+ "channels_at_fetch": {
+  "stable": "2.1.311",
+  "latest": "2.1.328",
+  "next": "2.1.329"
+ },
+ "release_notes_read": "2.1.101 to 2.1.328 (bug-fix sections left out); older releases only through the documentation pages",
+ "documented_release": "2.1.328",
+ "documented_release_date": "November 19, 2026",
+ "pages": [
+  {
+   "url": "https://code.claude.com/docs/en/overview",
+   "page": "overview",
+   "title": "Overview",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Getting started"
+   ],
+   "bytes": 15688,
+   "sha256": "7d7230b6ea63bf128e829b3041a5c61900ea7c282d8603f71d69fda8efab9112"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/quickstart",
+   "page": "quickstart",
+   "title": "Quickstart",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Getting started"
+   ],
+   "bytes": 12184,
+   "sha256": "3ff80752136abd1536ce11c0a536053d2ff6c75de83514de7904846c86426b0d"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/changelog",
+   "page": "changelog",
+   "title": "Claude Code changelog",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Getting started"
+   ],
+   "bytes": 1365399,
+   "sha256": "5bf99580bdf2c46239726043380df44d8c89c53f4d213176c1040c805b521ce7"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/how-claude-code-works",
+   "page": "how-claude-code-works",
+   "title": "How Claude Code works",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Core concepts"
+   ],
+   "bytes": 18445,
+   "sha256": "b21a8c11d4598829c9a783173bce2277be940ee52b8ded966bffb8dcd5b59dc5"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/features-overview",
+   "page": "features-overview",
+   "title": "Extend Claude Code",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Core concepts"
+   ],
+   "bytes": 27459,
+   "sha256": "cc200c0731d382f479e105418830a32a583ce59365c3aa1f9f5d702db47af76f"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/claude-directory",
+   "page": "claude-directory",
+   "title": "Explore the .claude directory",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Core concepts"
+   ],
+   "bytes": 42086,
+   "sha256": "79f81ea615cc972f8854d8af7798d5b23d6c54666589162c6c342793d8d6f019"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/context-window",
+   "page": "context-window",
+   "title": "Explore the context window",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Core concepts"
+   ],
+   "bytes": 9980,
+   "sha256": "31d8b106f3f7cc6aa06c6000185993394c714094dce3450f4055fdfdbda3af6a"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/prompt-caching",
+   "page": "prompt-caching",
+   "title": "How Claude Code uses prompt caching",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Core concepts"
+   ],
+   "bytes": 40993,
+   "sha256": "ea663f73054d7683fc2ef44ad421c6aece1ee89016d4c2aac8244288e641a478"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/memory",
+   "page": "memory",
+   "title": "How Claude remembers your project",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Use Claude Code"
+   ],
+   "bytes": 53780,
+   "sha256": "1a998ba7959c3bebc289be256e0a4168678c1234b022ff54b52f44ed9de5fcfd"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/sessions",
+   "page": "sessions",
+   "title": "Manage sessions",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Use Claude Code"
+   ],
+   "bytes": 33065,
+   "sha256": "47bedf9e3d8ed70679da75f8ff2790b446a2e1a140946c2756118bd7e2ebeae0"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/common-workflows",
+   "page": "common-workflows",
+   "title": "Common workflows",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Use Claude Code"
+   ],
+   "bytes": 17606,
+   "sha256": "f65861204310ca2d0213000717f524d5644edd2d6b36f5df89f5ca6ab4a71ca5"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/prompt-library",
+   "page": "prompt-library",
+   "title": "Prompt library",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Use Claude Code"
+   ],
+   "bytes": 4426,
+   "sha256": "5dc4f079d7b2b243f484ab95b1dc3a2ae8c7d2664217434ff43f520d38b412cd"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/best-practices",
+   "page": "best-practices",
+   "title": "Best practices for Claude Code",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Use Claude Code"
+   ],
+   "bytes": 50058,
+   "sha256": "afbcb480d0a216a114b395b160a84b538a59fcb15acdbfbbba886603eb38a1a5"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/platforms",
+   "page": "platforms",
+   "title": "Platforms and integrations",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 8686,
+   "sha256": "7904b17cb86f5658c5a4b73cc9cd2ff5af87a31d9d249f9bcdd59039b98ca008"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/remote-control",
+   "page": "remote-control",
+   "title": "Continue local sessions from any device with Remote Control",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 64781,
+   "sha256": "f9a2ff1b26915e33db9e9da43a8ef59a81b2e089f3782d9e98cc9bbf67275868"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/claude-projects",
+   "page": "claude-projects",
+   "title": "Let Claude coordinate ongoing work with Projects",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 60561,
+   "sha256": "2a2ba446ab89320cf43743841d4eeb26fe756abc456fb0caaa274420ef64b4ee"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/mobile",
+   "page": "mobile",
+   "title": "Claude Code on mobile",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 8240,
+   "sha256": "b635754cad20151a3153c7b9b6df59c63bd2f095065aaa66e40c0fe142ce0c9f"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/chrome",
+   "page": "chrome",
+   "title": "Use Claude Code with Chrome",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 23800,
+   "sha256": "14500e699e99db645cd94dbd539912c834e0a195f5e322dde33ed6a1857bd0bd"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/computer-use",
+   "page": "computer-use",
+   "title": "Let Claude use your computer from the CLI",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 11794,
+   "sha256": "830980dee1e33166bf8264bef35e28847c29d572cecfc27c37c7a75aba9d10f8"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/vs-code",
+   "page": "vs-code",
+   "title": "Use Claude Code in VS Code",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 102794,
+   "sha256": "19e71d3d5b151fb25f00b65c58045f2128d3a128ab520f2c5c7a92ac63ed8510"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/jetbrains",
+   "page": "jetbrains",
+   "title": "JetBrains IDEs",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 12318,
+   "sha256": "8b821a40fc3d9264f1683cd53e6d9bfee0064f1445c0935589eeed1515b73bb5"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/slack",
+   "page": "slack",
+   "title": "Claude Code in Slack",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 15292,
+   "sha256": "fb7eca769bd8b1665788824607701020bd35cd7a9d883714c78a5f73788d9954"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/claude-tag",
+   "page": "claude-tag",
+   "title": "Claude Tag",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 921,
+   "sha256": "80d15303b909bc06edfbc7ff82b3a9897b28a490c621887c7605a753d0feb453"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/web-quickstart",
+   "page": "web-quickstart",
+   "title": "Get started with Claude Code in the cloud",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 25178,
+   "sha256": "41d2227ff87e23f566a69ce930d877add0569fb5ebb0c9cfe39228b704f6815a"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/claude-code-on-the-web",
+   "page": "claude-code-on-the-web",
+   "title": "Use Claude Code in the cloud",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 46395,
+   "sha256": "4ce5a735ebd6cb8eee3ef00058140f3d31d8b4ba0b79f859b97036eb75bc80b4"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/routines",
+   "page": "routines",
+   "title": "Automate work with scheduled tasks",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 48625,
+   "sha256": "254b59f7f39e65db5f9edea294eb5016dc6387ec353a8e8bceeb142b6ba5d915"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/desktop-quickstart",
+   "page": "desktop-quickstart",
+   "title": "Get started with the desktop app",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 10513,
+   "sha256": "29b341357cbe5bcc4c26384d563370c7d522fec55990a8f1a88a46316c04bf31"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/desktop",
+   "page": "desktop",
+   "title": "Desktop application",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 222990,
+   "sha256": "94b3daa2c168631c52b9b6ae3d49943afef8bb3172a44ba4b3e6cd11f568a946"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/desktop-linux",
+   "page": "desktop-linux",
+   "title": "Claude Desktop on Linux (beta)",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 12486,
+   "sha256": "790c641ba64d8f4c6ffbeb06cec0d9765a3021cbca5b33170cbd6a10d74aa583"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/desktop-wsl",
+   "page": "desktop-wsl",
+   "title": "Claude Code Desktop in WSL",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 3878,
+   "sha256": "5d83b253b17e7a84f36eb03e77a34b6e7f7435c94131187fda9a2a2fac8cf5ea"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/desktop-scheduled-tasks",
+   "page": "desktop-scheduled-tasks",
+   "title": "Schedule recurring tasks in Claude Code Desktop",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 15589,
+   "sha256": "c34fddae69c41f0a8738cf587724b2fbbb15fed45b9af2d861e60b3f6b48f14c"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/desktop-ios-simulator",
+   "page": "desktop-ios-simulator",
+   "title": "Test iOS apps in the simulator",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Platforms and integrations"
+   ],
+   "bytes": 14898,
+   "sha256": "b82cb92b3a3507083c785209c42c5d7d77b7409e7b2b9e62e8a8c077420ded8a"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/code-review-local",
+   "page": "code-review-local",
+   "title": "Review locally with /code-review",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 13307,
+   "sha256": "7eebf69aa5079eaceca600d6568d7d4d47eee3b59a9c86d0cbbac582be9f0ac1"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/ultrareview",
+   "page": "ultrareview",
+   "title": "Find bugs with ultrareview",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 19668,
+   "sha256": "0376b4a85d065a4ceec7a5e29aa49e023042857c66d8f681bf21107567ab73ab"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/github-enterprise-server",
+   "page": "github-enterprise-server",
+   "title": "Claude Code with GitHub Enterprise Server",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 20664,
+   "sha256": "ea02a99b92d1494e7444d61fa848e12cb0ea5c3ad528de6864c31b848176fd59"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/code-review",
+   "page": "code-review",
+   "title": "Code Review",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 9604,
+   "sha256": "2e2c8140528f0451553a5b662e2e680807c7aefa27b58b1e282c247286f53a0f"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/code-review-setup",
+   "page": "code-review-setup",
+   "title": "Set up Code Review",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 13691,
+   "sha256": "2a7cadd470cf0356435f5267d056363a849b2a73c7d302fcf2d087b7e3f80a5a"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/code-review-customize",
+   "page": "code-review-customize",
+   "title": "Customize Code Review",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 17328,
+   "sha256": "b76009b7cdd8ed0a53b439956c3807024eaee1c11cffa9098a69c547459af061"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/code-review-pull-requests",
+   "page": "code-review-pull-requests",
+   "title": "Read and request reviews on a pull request",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 15138,
+   "sha256": "95f44cfe9a875db11f60451c4b524c345ee99bfb6bde446cde31fcb5d0339ab5"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/code-review-costs",
+   "page": "code-review-costs",
+   "title": "Code Review costs and usage",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 6088,
+   "sha256": "c55e49c4521fe882f3cb6ee7aee965b198b62070bab28f05085669bcf120eb8c"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/code-review-troubleshooting",
+   "page": "code-review-troubleshooting",
+   "title": "Troubleshoot Code Review",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 10651,
+   "sha256": "fec8875f0439252fc2e9afd9c16dea0c90bf169c6a95d65d03226449fa596ecc"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/security-guidance",
+   "page": "security-guidance",
+   "title": "Catch security issues as Claude writes code",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 18461,
+   "sha256": "6f516f450b2bd64c818af88828ccf7cb6b5bab776599e67c4bace460faa4dce4"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/claude-security",
+   "page": "claude-security",
+   "title": "Scan your codebase for vulnerabilities",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 15762,
+   "sha256": "1495f0d8245de5870cbc5d15899392113e5bbc1ff41c3c75ba933a5202f3d075"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/github-actions",
+   "page": "github-actions",
+   "title": "Claude Code GitHub Actions",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 29375,
+   "sha256": "cc2d7229d7f93105e8cac918c27da9fffbbf3bdfa6c6e6160dcf4c50f883a96c"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/github-actions-cloud-providers",
+   "page": "github-actions-cloud-providers",
+   "title": "Use Claude Code GitHub Actions with cloud providers",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 16948,
+   "sha256": "09e7c8b40cc041aaca02ea8c2cdadd72ed4ae713d77d74c25767cd4b814b89fe"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/gitlab-ci-cd",
+   "page": "gitlab-ci-cd",
+   "title": "Claude Code GitLab CI/CD",
+   "official": [
+    "Getting started",
+    "Overview",
+    "Code review and pull requests"
+   ],
+   "bytes": 18579,
+   "sha256": "c0af0470038ca725a7b30d1046a36c64ad5521378ea638059ef7655937f8fa6c"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agents",
+   "page": "agents",
+   "title": "Run agents in parallel",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Agents and parallel work"
+   ],
+   "bytes": 8184,
+   "sha256": "e8dcf837c08d88e065e5bb9e00a8b87b02da94a7327ec150cfef4504f9f41a7f"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/sub-agents",
+   "page": "sub-agents",
+   "title": "Create custom subagents",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Agents and parallel work"
+   ],
+   "bytes": 110830,
+   "sha256": "526b175f88013c4cf57e8c8c693c9a3de156862e8c0b06d090ee5e58c4b15cbb"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-view",
+   "page": "agent-view",
+   "title": "Manage multiple agents with agent view",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Agents and parallel work"
+   ],
+   "bytes": 141650,
+   "sha256": "47354e54828b7e46884f25155dd74863e564b809565e1cd71e41ca79532bb44e"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-teams",
+   "page": "agent-teams",
+   "title": "Orchestrate teams of Claude Code sessions",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Agents and parallel work"
+   ],
+   "bytes": 42323,
+   "sha256": "210c6b46a3cba09fe3e78fe448e405ac82c5f120e5910964c7580ac8d95f01bd"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/cross-session-messaging",
+   "page": "cross-session-messaging",
+   "title": "Message your other Claude Code sessions",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Agents and parallel work"
+   ],
+   "bytes": 35777,
+   "sha256": "f846a739f5f38a55a24f7470a02fede88b26eb1dcc85cfee6016a1e51956a0c0"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/workflows",
+   "page": "workflows",
+   "title": "Orchestrate subagents at scale with dynamic workflows",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Agents and parallel work"
+   ],
+   "bytes": 43429,
+   "sha256": "8be07578daa7200dd0bb9690da783987a90f6786ad5dbd0d0562932d6d61a614"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/worktrees",
+   "page": "worktrees",
+   "title": "Run parallel sessions with worktrees",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Agents and parallel work"
+   ],
+   "bytes": 44132,
+   "sha256": "4dc451d5edd36782b6e943ec5c6ff238232f83e9ae606eb40f542fff3324f4ea"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/mcp-quickstart",
+   "page": "mcp-quickstart",
+   "title": "Connect to MCP servers",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "MCP"
+   ],
+   "bytes": 25072,
+   "sha256": "ad577b3705d85f7d9568f59ec9dbfa3cd3220717018cf62411ba1dadb01f85d8"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/mcp",
+   "page": "mcp",
+   "title": "Connect Claude Code to tools via MCP",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "MCP"
+   ],
+   "bytes": 152464,
+   "sha256": "523d0f33d621ed4ae5d7687d98828dddc13eed1f3cd20c55f3823b6d67f7b824"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/skills",
+   "page": "skills",
+   "title": "Extend Claude with skills",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Skills"
+   ],
+   "bytes": 115472,
+   "sha256": "3a7e7269ed63efe6c6a5405a322681ef81ab0f585fcfe3e8529a75f9a7ae23b7"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/artifacts",
+   "page": "artifacts",
+   "title": "Share session output as artifacts",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Artifacts"
+   ],
+   "bytes": 42877,
+   "sha256": "54f64ffd299276ac6cbee0698084a894dd47d5717374521a7eb19aa6d16a0e96"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/hooks-guide",
+   "page": "hooks-guide",
+   "title": "Automate actions with hooks",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Automation"
+   ],
+   "bytes": 63724,
+   "sha256": "04b9b06503efa69b6a1d1bc6eb0574c2640ae1c83895b672c2faa287b91a8a92"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/channels",
+   "page": "channels",
+   "title": "Push events into a running session with channels",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Automation"
+   ],
+   "bytes": 22569,
+   "sha256": "e0e82f4c47c04596ac81c25c8558b991d78d42472f86f292c58d1e8b8854413d"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/scheduled-tasks",
+   "page": "scheduled-tasks",
+   "title": "Run prompts on a schedule",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Automation"
+   ],
+   "bytes": 19223,
+   "sha256": "b89fe94ee420308ae2f216095c23368c9999e66243e7f3f03489c4dcd67b1217"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/goal",
+   "page": "goal",
+   "title": "Keep Claude working toward a goal",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Automation"
+   ],
+   "bytes": 14916,
+   "sha256": "f67ef19096f01babd9c6d655bf79c77d5bca3e4aae78b7732875a44ec023dc90"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/headless",
+   "page": "headless",
+   "title": "Run Claude Code programmatically",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Automation"
+   ],
+   "bytes": 36416,
+   "sha256": "1e1b194a4d98e3cdf5522740e23a756b0a665f6c5a482bc28e7924c63b60eb15"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/deep-links",
+   "page": "deep-links",
+   "title": "Launch sessions from links",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Automation"
+   ],
+   "bytes": 13964,
+   "sha256": "53304a90053a6bd4b3c4e459f7a940b4b6eff2db51a7a697645ada9351a4750f"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/large-codebases",
+   "page": "large-codebases",
+   "title": "Set up Claude Code in a monorepo or large codebase",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Guides"
+   ],
+   "bytes": 34180,
+   "sha256": "8ea2f4f7b930fa6f6b83ffc4484fc67110b4a169255acedefbebc8e84ea6d5e9"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/troubleshoot-install",
+   "page": "troubleshoot-install",
+   "title": "Troubleshoot installation and login",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Troubleshooting"
+   ],
+   "bytes": 80799,
+   "sha256": "689551109630f213edf92ae5c155b18f4ba30723d18737bdaf5e59fa777ec5c7"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/troubleshooting",
+   "page": "troubleshooting",
+   "title": "Troubleshooting",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Troubleshooting"
+   ],
+   "bytes": 15467,
+   "sha256": "8e1bf5a5a3723e4aa1eab038d79b654267fd6796b7e2decaeadd28a77a35b24e"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/debug-your-config",
+   "page": "debug-your-config",
+   "title": "Debug your configuration",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Troubleshooting"
+   ],
+   "bytes": 17342,
+   "sha256": "03ecc74a7d4426401215fa9432f3d725388f951734a8058f0f4fdd0a84aab6c9"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/errors",
+   "page": "errors",
+   "title": "Error reference",
+   "official": [
+    "Build with Claude Code",
+    "Agents and parallel work",
+    "Troubleshooting"
+   ],
+   "bytes": 614290,
+   "sha256": "71d22fb694e1784b82c41538accabddac8be571f38472eaac141d5ab6c6b8414"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/overview",
+   "page": "plugins-overview",
+   "title": "Plugins overview",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Plugins"
+   ],
+   "bytes": 13140,
+   "sha256": "74d33531085516be06820bb65688c103a352b4f5ad1fe691ceeb822142bde0f4"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/install",
+   "page": "plugins-install",
+   "title": "Install and manage plugins",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Use plugins"
+   ],
+   "bytes": 31337,
+   "sha256": "95205f32b3efadbb3d48bbb9f0098467d068f9f46133de91281ed85d924bca4f"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/anthropic-marketplaces",
+   "page": "plugins-anthropic-marketplaces",
+   "title": "Anthropic's marketplaces",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Use plugins"
+   ],
+   "bytes": 8433,
+   "sha256": "0d0b13f4ea1f424b1097248c7e1718180f041c044a000c1a4a5fb28803bc0c9d"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/code-intelligence",
+   "page": "plugins-code-intelligence",
+   "title": "Code intelligence plugins",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Use plugins"
+   ],
+   "bytes": 11415,
+   "sha256": "8697c59cae69f524232cddf90d9988d03ea69d4c0402e35355e2d4ff4942f040"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/security",
+   "page": "plugins-security",
+   "title": "Plugin security and trust",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Use plugins"
+   ],
+   "bytes": 13849,
+   "sha256": "e08c00c2dc87ce0b820e092e8b12ddbe11899c198303858dc329797d170755e9"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/create",
+   "page": "plugins-create",
+   "title": "Create a Claude Code plugin",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Create plugins"
+   ],
+   "bytes": 24900,
+   "sha256": "3e3989f0021d269b3ec89fa419c7f1408460307440dcc0a94931bcc03a4c9f43"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/components",
+   "page": "plugins-components",
+   "title": "Add components to a plugin",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Create plugins"
+   ],
+   "bytes": 36382,
+   "sha256": "c086aa99f969ca4fe04a84122fc76f2f97c301c940c71b840e79e3e7b5ab837f"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/dependencies",
+   "page": "plugins-dependencies",
+   "title": "Plugin dependencies",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Create plugins"
+   ],
+   "bytes": 17011,
+   "sha256": "6129c2e601ff23091994dcae336232644e3a3d127ada03dc3c93ff50212b1c82"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugin-evals",
+   "page": "plugin-evals",
+   "title": "Test plugins with evals",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Create plugins"
+   ],
+   "bytes": 64172,
+   "sha256": "2863b9fb2b1395de0c005de2ed7693de464141f319f35817a2da6773efbad2e0"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/publish",
+   "page": "plugins-publish",
+   "title": "Publish and distribute a plugin",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Create plugins"
+   ],
+   "bytes": 16197,
+   "sha256": "3e727399733579c99dd3d12f254280260c92a1b08c111e988b576f4819c5b4c7"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/measure",
+   "page": "plugins-measure",
+   "title": "Measure plugin cost and usage",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Create plugins"
+   ],
+   "bytes": 12487,
+   "sha256": "2559068e91dab14dbc6adc73593d8e986406e135b3337bd2b24c864a88407da7"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/cli-hints",
+   "page": "plugins-cli-hints",
+   "title": "Recommend your plugin from your CLI",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Create plugins"
+   ],
+   "bytes": 6291,
+   "sha256": "e259ce850751987bcd48bc08658c7eefee6ede1dfa3de29c5ecf8f2ab5aebf16"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/mods/overview",
+   "page": "plugins-mods-overview",
+   "title": "Mods overview",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Mods"
+   ],
+   "bytes": 23191,
+   "sha256": "de13714e720097a1fedb91d80705bed7b4dd45649fbc531e3fdc18ebaeedcaec"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/mods/create",
+   "page": "plugins-mods-create",
+   "title": "Create a mod",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Mods"
+   ],
+   "bytes": 24436,
+   "sha256": "25013475de8467035d7cd7f066f773d6d3f178f536dc824a9ea1b7530fc769a7"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/mods/reference",
+   "page": "plugins-mods-reference",
+   "title": "Mods reference",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Mods"
+   ],
+   "bytes": 49052,
+   "sha256": "0edf1e400b45a64e27cb9313092d125946769c942f99c5c3e24b416af5b6d942"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/mods/interface",
+   "page": "plugins-mods-interface",
+   "title": "Draw in the interface with a mod",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Mods"
+   ],
+   "bytes": 63417,
+   "sha256": "8200516995248163495e386647d55685fc39f14bf8dda3f2f7631db69a784eae"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/mods/gallery",
+   "page": "plugins-mods-gallery",
+   "title": "Interface gallery for mods",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Mods"
+   ],
+   "bytes": 20791,
+   "sha256": "b6346be19d1cd037daf7a0e473493f2e8b57c27972cecf1043d5f0ea3871324e"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/mods/events",
+   "page": "plugins-mods-events",
+   "title": "React to events with a mod",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Mods"
+   ],
+   "bytes": 36720,
+   "sha256": "20b0b7f59bbfe3f54daa5ce13cb58419d7c5e1782d339b81f8e6e915481b8f18"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/mods/api",
+   "page": "plugins-mods-api",
+   "title": "Use the mods API",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Mods"
+   ],
+   "bytes": 39143,
+   "sha256": "afa4a36f6e980cdf18ae9abcedc243c581228ddee44610c7a4de960320634816"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/mods/test",
+   "page": "plugins-mods-test",
+   "title": "Test a mod",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Mods"
+   ],
+   "bytes": 27234,
+   "sha256": "0a5660a453f4a75883baee562d6f424f9b95118ae1e475a4cd08b3a5cdbf6bb3"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/mods/troubleshoot",
+   "page": "plugins-mods-troubleshoot",
+   "title": "Troubleshoot a mod",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Mods"
+   ],
+   "bytes": 37004,
+   "sha256": "049318131ea1550a07ae587a44459f70bed5781b8992e34f2d6b3990ec759d55"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/create-marketplace",
+   "page": "plugins-create-marketplace",
+   "title": "Create a marketplace",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Run a marketplace"
+   ],
+   "bytes": 15225,
+   "sha256": "eb19758bc5063f0ed04ea3b27aa06fef6678bb64b950794ca0e53076b6ff5c94"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/host-marketplace",
+   "page": "plugins-host-marketplace",
+   "title": "Host and maintain a marketplace",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Run a marketplace"
+   ],
+   "bytes": 38407,
+   "sha256": "53caa20dce414e2581222e70c3bbe6c99d5540d6ead5dd35767c063d6fa8c39d"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/relevance",
+   "page": "plugins-relevance",
+   "title": "Recommend plugins for your org",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Run a marketplace"
+   ],
+   "bytes": 12934,
+   "sha256": "0bec9f8da6ce7ad8eca3812bb7bac053ca0f5494ca53b4b6c1131d1e375ae9e5"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/org",
+   "page": "plugins-org",
+   "title": "Manage Claude Code plugins for your organization",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Manage plugins for your organization"
+   ],
+   "bytes": 41065,
+   "sha256": "61982cab34c852b6883d4c49a5c7d23e896d7af0fa894ca0f12001f9d288b9fa"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/mods/admin",
+   "page": "plugins-mods-admin",
+   "title": "Manage mods for your organization",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Manage plugins for your organization"
+   ],
+   "bytes": 42658,
+   "sha256": "42b3c3fa93bb1643c482a1c1229ecd002fef21af7a4105b40dbf9bf4f2b2ca4a"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/troubleshooting",
+   "page": "plugins-troubleshooting",
+   "title": "Troubleshoot plugins",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Troubleshooting"
+   ],
+   "bytes": 96207,
+   "sha256": "f8c36528730fa724fcc49580f709a40ea2c2482456b04200da63cf4382a69f1b"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/loading",
+   "page": "plugins-loading",
+   "title": "Plugin loading reference",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Troubleshooting"
+   ],
+   "bytes": 43980,
+   "sha256": "616c405db0f7da53354d20fe7a2031637107afc1d6ae4209890cc2ea8803c01c"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/manifest-reference",
+   "page": "plugins-manifest-reference",
+   "title": "Plugin manifest reference",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Reference"
+   ],
+   "bytes": 41780,
+   "sha256": "be2b4da87c19af0d7071ddcee3d87c3f607eab2030f15fa91734edd5522a6a43"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/marketplace-reference",
+   "page": "plugins-marketplace-reference",
+   "title": "Marketplace reference",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Reference"
+   ],
+   "bytes": 48073,
+   "sha256": "967c2c3d15f2bd27512ad65963cb3e0ddef07a28d3e9ad6ff59cba4a65a8979b"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/plugins/cli-reference",
+   "page": "plugins-cli-reference",
+   "title": "Plugin commands reference",
+   "official": [
+    "Plugins",
+    "Plugins",
+    "Reference"
+   ],
+   "bytes": 66309,
+   "sha256": "e51cee76db71c67cda761b3806545860b6e0edf76cfe548e7242587d0b6b86e6"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/admin-setup",
+   "page": "admin-setup",
+   "title": "Set up Claude Code for your organization",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Setup and access"
+   ],
+   "bytes": 27245,
+   "sha256": "eb8d7dac58c467027df8e135c3920526d8e76b849c4bcbff263628710c8d9211"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/setup",
+   "page": "setup",
+   "title": "Advanced setup",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Setup and access"
+   ],
+   "bytes": 34751,
+   "sha256": "aedd6e2ed3acddd22c6140174c23cd2e07613659a1406168cd441a20b64d4d5a"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/authentication",
+   "page": "authentication",
+   "title": "Authentication",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Setup and access"
+   ],
+   "bytes": 34378,
+   "sha256": "f158801a6783fb4e64682b09322f951532f902ab151fe67f2eb47e013cf33309"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/managed-settings",
+   "page": "managed-settings",
+   "title": "Deploy managed settings",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Setup and access"
+   ],
+   "bytes": 61073,
+   "sha256": "0d1f8ff34c7bb8d37dd6d47af15159d7cea528d211ed2cb05b38236b77c680f1"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/server-managed-settings",
+   "page": "server-managed-settings",
+   "title": "Configure server-managed settings",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Setup and access"
+   ],
+   "bytes": 52140,
+   "sha256": "06ef0e6ee5e5b508ad7832833babd590fef6bcd01b8ae67b1776e271731f2248"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/managed-mcp",
+   "page": "managed-mcp",
+   "title": "Control MCP server access for your organization",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Setup and access"
+   ],
+   "bytes": 45543,
+   "sha256": "b98c33b7b837e0205c3281cc7156c127ef455d07f9a940c2bfe4fb243ece33f1"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/auto-mode-config",
+   "page": "auto-mode-config",
+   "title": "Configure auto mode",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Setup and access"
+   ],
+   "bytes": 33718,
+   "sha256": "7328c7ff91266310e0f6ecc120bc974aa4c2da93b15e0589477ea71c852ae519"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/third-party-integrations",
+   "page": "third-party-integrations",
+   "title": "Enterprise deployment overview",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Deployment"
+   ],
+   "bytes": 11653,
+   "sha256": "86dee4a3fef25575d426d0cf8c8a6003d30e88ce410fa528abc01a16d8bcd700"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/feature-availability",
+   "page": "feature-availability",
+   "title": "Feature availability",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Deployment"
+   ],
+   "bytes": 24393,
+   "sha256": "52deb1d0d72d68525ba045d619d4ee907a5bd782d34ecbd98611d7d3c5aafb98"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/amazon-bedrock",
+   "page": "amazon-bedrock",
+   "title": "Claude Code on Amazon Bedrock",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Deployment"
+   ],
+   "bytes": 46483,
+   "sha256": "2c2eda30835d813d0bd289d96f78a4bfa38f3243ab22a6d97113052beaaea294"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/claude-platform-on-aws",
+   "page": "claude-platform-on-aws",
+   "title": "Claude Code on Claude Platform on AWS",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Deployment"
+   ],
+   "bytes": 11968,
+   "sha256": "8118ab495c03967780785a65eeabe1c3534d26dbec49ae8e037768264fdc2bb5"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/claude-models-on-google-cloud-anthropic-managed",
+   "page": "claude-models-on-google-cloud-anthropic-managed",
+   "title": "Claude Code with Claude Models on Google Cloud (Anthropic managed)",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Deployment"
+   ],
+   "bytes": 10825,
+   "sha256": "a8bfd6c8a25769a56e6151ac0a5ffc3a510f4671ab67a6b2cdaac8900eac6301"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/google-vertex-ai",
+   "page": "google-vertex-ai",
+   "title": "Claude Code on Google Cloud's Agent Platform",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Deployment"
+   ],
+   "bytes": 22121,
+   "sha256": "8e4a795283056056ec95694beeb9a70f9ac0acf4de80354310589b05b2b124b2"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/microsoft-foundry",
+   "page": "microsoft-foundry",
+   "title": "Claude Code on Microsoft Foundry",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Deployment"
+   ],
+   "bytes": 10279,
+   "sha256": "b1d099992ab61caf68e2cd889da5740f0238c6484d28c9a0ddf8186f91299c51"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/network-config",
+   "page": "network-config",
+   "title": "Enterprise network configuration",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Deployment"
+   ],
+   "bytes": 34135,
+   "sha256": "a20c485dfdae4e49c3bc9b03c7ed35fd06fb9d9d207f0ae118f2061673950002"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/corporate-launcher",
+   "page": "corporate-launcher",
+   "title": "Run Claude Code behind a corporate launcher",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Deployment"
+   ],
+   "bytes": 14766,
+   "sha256": "d3cf04c43a594cc1b3ef42d3bf11780650a60b5bb9665c9aae86ac3e01dae419"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/devcontainer",
+   "page": "devcontainer",
+   "title": "Development containers",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Deployment"
+   ],
+   "bytes": 17662,
+   "sha256": "4b6405304163329e3999f5043472421e8eb6174b782adffed02dda2e3b352882"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/gateways",
+   "page": "gateways",
+   "title": "Run Claude Code through a gateway",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Gateways"
+   ],
+   "bytes": 8826,
+   "sha256": "150f9fa921fcb9baee18f2864bffe22d4a8e0ee8ee6c21519dafff5a19ffd52a"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/claude-apps-gateway",
+   "page": "claude-apps-gateway",
+   "title": "Claude apps gateway for Amazon Bedrock, Claude Platform on AWS, Google Cloud, and Microsoft Foundry",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Gateways"
+   ],
+   "bytes": 59743,
+   "sha256": "1675037bf48aedbe2672bfe69cd6787b31801f8b00062ac0647a1024e633c60a"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/claude-apps-gateway-config",
+   "page": "claude-apps-gateway-config",
+   "title": "Claude apps gateway configuration",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Gateways"
+   ],
+   "bytes": 159448,
+   "sha256": "f3d0ce8a7fca1237eb10aa4eebf1d2ef943222da0b9aea298fb9b7b5f211aea0"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/claude-apps-gateway-spend-limits",
+   "page": "claude-apps-gateway-spend-limits",
+   "title": "Claude apps gateway spend limits",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Gateways"
+   ],
+   "bytes": 16944,
+   "sha256": "e0779c9c4e24f7113aaa5b9ffde68c251e9740f82a1a559226721938c4d30651"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/claude-apps-gateway-deploy",
+   "page": "claude-apps-gateway-deploy",
+   "title": "Claude apps gateway deployment and operations",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Gateways"
+   ],
+   "bytes": 77137,
+   "sha256": "20a3fcf98263537cc0bd774e55be91f6fc52c163d568eb5ab382ce84b1d9fe7f"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/claude-apps-gateway-on-aws",
+   "page": "claude-apps-gateway-on-aws",
+   "title": "Deploy Claude apps gateway on AWS",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Gateways"
+   ],
+   "bytes": 51080,
+   "sha256": "d38dff874b3dc5f12e53411cbda0cc1cdc03f88bf02f2c6810ee4b4834ab26ee"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/claude-apps-gateway-on-gcp",
+   "page": "claude-apps-gateway-on-gcp",
+   "title": "Deploy Claude apps gateway on Google Cloud",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Gateways"
+   ],
+   "bytes": 21890,
+   "sha256": "c50644c2f578017b7401d17353d44188997428994c0477364084d9d894d80fdc"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/llm-gateway",
+   "page": "llm-gateway",
+   "title": "Other LLM gateways",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Gateways"
+   ],
+   "bytes": 7325,
+   "sha256": "f3d1b932e34784e3ae3b0cb84b4698cafe6b063ca773829e214dc963bc50c9b1"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/llm-gateway-connect",
+   "page": "llm-gateway-connect",
+   "title": "Connect Claude Code to an LLM gateway",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Gateways"
+   ],
+   "bytes": 44717,
+   "sha256": "bd660e3acbb2032f0695cc629b8d76e0f34f2b2517c9c08277bef01fff47ebcc"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/llm-gateway-rollout",
+   "page": "llm-gateway-rollout",
+   "title": "Roll out an LLM gateway for your organization",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Gateways"
+   ],
+   "bytes": 28820,
+   "sha256": "bfa395b75e7211caa42fd52edc0818ee4abf88456e98ca24d235c5322b02a9f9"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/llm-gateway-protocol",
+   "page": "llm-gateway-protocol",
+   "title": "Claude Code gateway compatibility guide",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Gateways"
+   ],
+   "bytes": 51249,
+   "sha256": "2e1d4aa0b1ddf809903fd8d1191e3115fc1055d7a34272c3eb8644a3da746d26"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/monitoring-usage",
+   "page": "monitoring-usage",
+   "title": "Monitoring",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Usage and costs"
+   ],
+   "bytes": 177184,
+   "sha256": "a7cec010f11f1c4b69db3a7abd1a961f316ca0fa8cc884dc6f83ba7ae40da02c"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/costs",
+   "page": "costs",
+   "title": "Manage costs effectively",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Usage and costs"
+   ],
+   "bytes": 44482,
+   "sha256": "24ba6e99d15a0116cf9751ebb110e1811390793ecd68ba890f0b6adc6a401987"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/analytics",
+   "page": "analytics",
+   "title": "Track team usage with analytics",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Usage and costs"
+   ],
+   "bytes": 11466,
+   "sha256": "22935642635ad8cefc8604a697c5ec097a3b5876a7d5e0f64bd2b7a8ca4a6db5"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/security",
+   "page": "security",
+   "title": "Security",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Security and data"
+   ],
+   "bytes": 14058,
+   "sha256": "da1578c2de644bb8e001479175acfed86c84b8f3aef3b7a1523337116d624fce"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/data-usage",
+   "page": "data-usage",
+   "title": "Data usage",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Security and data"
+   ],
+   "bytes": 17996,
+   "sha256": "3670d986fd7aa34661a2ef15492be93f6cdd2cd38cd2009758aa13604a7cf0b5"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/zero-data-retention",
+   "page": "zero-data-retention",
+   "title": "Zero data retention",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Security and data"
+   ],
+   "bytes": 8727,
+   "sha256": "c91eb04d293910737422db7a90edcaddc986c613fcecf32b56dbe223d4bfce5b"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/hipaa-setup",
+   "page": "hipaa-setup",
+   "title": "Set up Claude Code (local mode) for a HIPAA-ready organization",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Security and data"
+   ],
+   "bytes": 21911,
+   "sha256": "6d0c5e3ea3131a7112bd2ab3c5d29ee30b468d04a888f82f817e20b62e5d9ed5"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/communications-kit",
+   "page": "communications-kit",
+   "title": "Communications kit",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Adoption"
+   ],
+   "bytes": 20987,
+   "sha256": "b55728c9805c9463e9af14c56a6dda29cf16c15f8ca0bec23a6d0a67f7454502"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/champion-kit",
+   "page": "champion-kit",
+   "title": "Champion kit",
+   "official": [
+    "Administration",
+    "Setup and access",
+    "Adoption"
+   ],
+   "bytes": 15970,
+   "sha256": "04a11fed9b86bb8a04f77cffe1936b1f8e13b24067beb1226f7d0a048da19af8"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/settings",
+   "page": "settings",
+   "title": "Settings files and precedence",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Settings"
+   ],
+   "bytes": 42718,
+   "sha256": "e6c9345911868a320d4204f5206d5b2e1e1967f865cce595d82be3b787906662"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/settings-reference",
+   "page": "settings-reference",
+   "title": "All settings",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Settings"
+   ],
+   "bytes": 432786,
+   "sha256": "7f91a4fa59c98fafd2b53404b3bebf8af88df1bf0adf5995bcc392085a79788c"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/settings-example",
+   "page": "settings-example",
+   "title": "Example settings files",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Settings"
+   ],
+   "bytes": 14920,
+   "sha256": "6a48d6801397c93ea833d6f50ff2e2cfad063640040252ccc000ce717a25a2e4"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/permissions",
+   "page": "permissions",
+   "title": "Configure permissions",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Permissions and sandboxing"
+   ],
+   "bytes": 88301,
+   "sha256": "92ce760df64334e3a862df33b3c19f3ea73ae2277b6e0ab97e6a7c75d841a0ff"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/permission-modes",
+   "page": "permission-modes",
+   "title": "Choose a permission mode",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Permissions and sandboxing"
+   ],
+   "bytes": 114337,
+   "sha256": "58694c59643c44e74d7dbb5a04bd084c98f2366903577d941cb8ac912560a69a"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/auto-mode-classifier-billing",
+   "page": "auto-mode-classifier-billing",
+   "title": "Auto mode classifier request charges",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Permissions and sandboxing"
+   ],
+   "bytes": 6886,
+   "sha256": "4396d873fa040203c2ca8cc71ec36f3ee1c6cc78073d5bf8708b877de1a52d76"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/sandboxing",
+   "page": "sandboxing",
+   "title": "Configure the sandboxed Bash tool",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Permissions and sandboxing"
+   ],
+   "bytes": 106385,
+   "sha256": "268be3b7c0d7720d480969750494cb17db0cbc413227e58a6498dbf2bd22559c"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/sandbox-environments",
+   "page": "sandbox-environments",
+   "title": "Choose a sandbox environment",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Permissions and sandboxing"
+   ],
+   "bytes": 17763,
+   "sha256": "1a071fe9cb2cd60ecbe781bb4cbc53f8abd345292a85318a1cc43364f6ac78e5"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/cloud-environments",
+   "page": "cloud-environments",
+   "title": "Configure cloud environments",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Environments"
+   ],
+   "bytes": 64269,
+   "sha256": "d20efb3c60dc560e63d07d73d98976f6031f80989d12eea0989e37f77eea8f1f"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/self-hosted-environments",
+   "page": "self-hosted-environments",
+   "title": "Self-hosted environments",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Environments"
+   ],
+   "bytes": 20351,
+   "sha256": "66bb893de546b045bd11f4aa360d8074a6e2230f582619c7e885fb2303c6f732"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/self-hosted-environments-quickstart",
+   "page": "self-hosted-environments-quickstart",
+   "title": "Self-hosted environments quickstart",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Environments"
+   ],
+   "bytes": 16048,
+   "sha256": "3de84d8678cb51366e936104c537c97d17e08e424c3267f1484da36bee7c74d9"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/self-hosted-environments-deploy",
+   "page": "self-hosted-environments-deploy",
+   "title": "Deploy self-hosted environments to production",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Environments"
+   ],
+   "bytes": 129656,
+   "sha256": "dffb9871c74d654c0be28fa5dddac3bc076bca175f8d267c4a14e4f2e1cac350"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/self-hosted-environments-configuration",
+   "page": "self-hosted-environments-configuration",
+   "title": "Customize sessions in self-hosted environments",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Environments"
+   ],
+   "bytes": 101970,
+   "sha256": "d192bb1cbfe3849704e56b7bd05b7e431bd795bf4b4fc811f608c12028b4d0fd"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/self-hosted-environments-testing",
+   "page": "self-hosted-environments-testing",
+   "title": "Test self-hosted environments end to end",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Environments"
+   ],
+   "bytes": 15919,
+   "sha256": "4fbdab2bcf3f661c52c8c3baa052c0d93eaa32c633487c024596146f7d760d6b"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/self-hosted-environments-reference",
+   "page": "self-hosted-environments-reference",
+   "title": "Self-hosted environments reference",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Environments"
+   ],
+   "bytes": 58215,
+   "sha256": "81b3c78a961b556f0f35a4f1c037de6bc413063ad85bd4260e357b237489a489"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/self-hosted-environments-identity",
+   "page": "self-hosted-environments-identity",
+   "title": "Verify session identity in self-hosted environments",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Environments"
+   ],
+   "bytes": 18193,
+   "sha256": "b7ed860a17399d87c7d5ae801a8a8654ceacc0a65139976b082fe192049ff00c"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/model-config",
+   "page": "model-config",
+   "title": "Model configuration",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Model and responses"
+   ],
+   "bytes": 128700,
+   "sha256": "874f6fd2d8da74d033036a03c5cc4f4077e261c50e4c79a46d15b3c65e585090"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/fast-mode",
+   "page": "fast-mode",
+   "title": "Speed up responses with fast mode",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Model and responses"
+   ],
+   "bytes": 23630,
+   "sha256": "5f4e7c1e651e78a663914de01da4efad3dac37d4b004e35845fa80da8cb5b609"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/advisor",
+   "page": "advisor",
+   "title": "Escalate hard decisions with the advisor tool",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Model and responses"
+   ],
+   "bytes": 17584,
+   "sha256": "3c8665d6e9e76067b4fa7eeb645dd7a91a41d326a10a95d19a82cea3d698ce0c"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/code-mode",
+   "page": "code-mode",
+   "title": "Run tool calls from code with Code Mode",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Model and responses"
+   ],
+   "bytes": 19378,
+   "sha256": "42b5308732b6b4ba44b7be8888f0dbd83891b04119b188cef6673d4ec4c066bb"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/output-styles",
+   "page": "output-styles",
+   "title": "Output styles",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Model and responses"
+   ],
+   "bytes": 16179,
+   "sha256": "e24cbd0d507e57710b8014f43dc459e977474739a6a0cf9dc16a699fe7c2f652"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/terminal-config",
+   "page": "terminal-config",
+   "title": "Configure your terminal for Claude Code",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Interface"
+   ],
+   "bytes": 26671,
+   "sha256": "a1639c3e9e2fb478b1060a42696ba783d448cdea3528f6cf7b0d8434fbfdb984"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/fullscreen",
+   "page": "fullscreen",
+   "title": "Fullscreen rendering",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Interface"
+   ],
+   "bytes": 30457,
+   "sha256": "670130f410bc3f05fd4b8a32b84959ce7128d0d9e2365c226bf2f6ccbe421a72"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/accessibility",
+   "page": "accessibility",
+   "title": "Use Claude Code with a screen reader",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Interface"
+   ],
+   "bytes": 12882,
+   "sha256": "56e4b6ab8160d29f5f7ec88edb72b4f2e649ddcd83b5f00241bae64ba00c5e9d"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/voice-dictation",
+   "page": "voice-dictation",
+   "title": "Voice dictation",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Interface"
+   ],
+   "bytes": 18451,
+   "sha256": "381105473e0993a3b2b154a2684bf7eea574dcae20633ab515f00009975c4b2e"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/statusline",
+   "page": "statusline",
+   "title": "Customize your status line",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Interface"
+   ],
+   "bytes": 61264,
+   "sha256": "6914cf80a98129f84156f05942ceacac2d343e42e6cb4defb11a33a89caec89d"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/keybindings",
+   "page": "keybindings",
+   "title": "Customize keyboard shortcuts",
+   "official": [
+    "Configuration",
+    "Settings",
+    "Interface"
+   ],
+   "bytes": 39088,
+   "sha256": "94982b140d618c0e6c21e48e1c86b55d58640796d3eed989f776cd0a2ff0a470"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/cli-reference",
+   "page": "cli-reference",
+   "title": "CLI reference",
+   "official": [
+    "Reference",
+    "Reference",
+    "Reference"
+   ],
+   "bytes": 47812,
+   "sha256": "e0592cf3d89765647c2390b1809e89cf494b1171850b9013bda8fe9ecdc7f3ab"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/commands",
+   "page": "commands",
+   "title": "Commands",
+   "official": [
+    "Reference",
+    "Reference",
+    "Reference"
+   ],
+   "bytes": 51807,
+   "sha256": "f3f48a42c2d495495dc3350d361ec30364bb7beb01ce65abe24a64db562bfef5"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/env-vars",
+   "page": "env-vars",
+   "title": "Environment variables",
+   "official": [
+    "Reference",
+    "Reference",
+    "Reference"
+   ],
+   "bytes": 178770,
+   "sha256": "d5725290dad77e3270494939003439eb89b042e5e65c7b2f75cc43766ad1d936"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/tools-reference",
+   "page": "tools-reference",
+   "title": "Tools reference",
+   "official": [
+    "Reference",
+    "Reference",
+    "Reference"
+   ],
+   "bytes": 85420,
+   "sha256": "cdf008bc66edf91c3f740d6536ac18398bca0ea4fe5abd9b9fdcedabb1ea6a38"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/interactive-mode",
+   "page": "interactive-mode",
+   "title": "Interactive mode",
+   "official": [
+    "Reference",
+    "Reference",
+    "Reference"
+   ],
+   "bytes": 75075,
+   "sha256": "c643b8000d6829232eba0933c2cb1956d22bee26e4987966fa6025d89e886be1"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/checkpointing",
+   "page": "checkpointing",
+   "title": "Checkpointing",
+   "official": [
+    "Reference",
+    "Reference",
+    "Reference"
+   ],
+   "bytes": 9021,
+   "sha256": "ea10a6d0f15e45293ceadca61c54c759dac299d646cfb25aed43654e405aafe0"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/hooks",
+   "page": "hooks",
+   "title": "Hooks reference",
+   "official": [
+    "Reference",
+    "Reference",
+    "Reference"
+   ],
+   "bytes": 287675,
+   "sha256": "69571095a77d982a90970aa851fc944554bc5ad3afa684b6ef1762f2052d3045"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/channels-reference",
+   "page": "channels-reference",
+   "title": "Channels reference",
+   "official": [
+    "Reference",
+    "Reference",
+    "Reference"
+   ],
+   "bytes": 44862,
+   "sha256": "276bfe4b57b195c84d816a4a7540eebd655e6bb0fc1d7971eedb30efae0bea99"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/glossary",
+   "page": "glossary",
+   "title": "Glossary",
+   "official": [
+    "Reference",
+    "Reference",
+    "Glossary"
+   ],
+   "bytes": 27865,
+   "sha256": "1c908861432eeae0d7dbead66c63d6d8da252e376a25d857d02846eebf4b39f1"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/overview",
+   "page": "agent-sdk-overview",
+   "title": "Agent SDK overview",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Agent SDK"
+   ],
+   "bytes": 6712,
+   "sha256": "f2dca530958b12e5c1c8221ce6ed002486ae52a8a8074ff88cf1e87b2e1e9c30"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/quickstart",
+   "page": "agent-sdk-quickstart",
+   "title": "Quickstart",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Agent SDK"
+   ],
+   "bytes": 14888,
+   "sha256": "6d7a393714c97e0b12d26403d66f758bbbdf5ca6465e90f1b45c547b1813d385"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/migration-guide",
+   "page": "agent-sdk-migration-guide",
+   "title": "Migrate to Claude Agent SDK",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Agent SDK"
+   ],
+   "bytes": 6766,
+   "sha256": "1b2234e78dbd744bbb2a5dee5eb3dd829afe695d41ae068d9d4cb4c9427e15f1"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/troubleshooting",
+   "page": "agent-sdk-troubleshooting",
+   "title": "Troubleshoot the Agent SDK",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Agent SDK"
+   ],
+   "bytes": 17442,
+   "sha256": "96fd91aa9faff046df8a0e818dcacb7bc62f71994e35eefb8347aea328062b11"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/configuration",
+   "page": "agent-sdk-configuration",
+   "title": "Configure your agent",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Build agents"
+   ],
+   "bytes": 17637,
+   "sha256": "cfc78e09ecc972ff6f0f4a8d1cba7345427378b65cd0ef4761179eefb80eed73"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/examples",
+   "page": "agent-sdk-examples",
+   "title": "Examples",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Build agents"
+   ],
+   "bytes": 2053,
+   "sha256": "3d98ca1c48ca3d7529ba7f3ef9d4d4c5f0e8b3789028b9c6a3367077b585a642"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/agent-loop",
+   "page": "agent-sdk-agent-loop",
+   "title": "How the agent loop works",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Core concepts"
+   ],
+   "bytes": 39158,
+   "sha256": "1defed0d1ff341160c7b50a5ee88e961aa8a2173e2cf2b61b1ee94667b675d30"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/claude-code-features",
+   "page": "agent-sdk-claude-code-features",
+   "title": "Use Claude Code features in the SDK",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Core concepts"
+   ],
+   "bytes": 19825,
+   "sha256": "ab38d6030b3b846e456c1d26f60863d515896b4edbb89ff0f97efd764d04deca"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/sessions",
+   "page": "agent-sdk-sessions",
+   "title": "Work with sessions",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Core concepts"
+   ],
+   "bytes": 21769,
+   "sha256": "f892c4874a554588270e19eeca3dc194d453b5b9201496aeb91103604713098d"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/session-storage",
+   "page": "agent-sdk-session-storage",
+   "title": "Persist sessions to external storage",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Core concepts"
+   ],
+   "bytes": 23770,
+   "sha256": "ff624e877d22dbc8181b14ae38a42bad430142249ed384027dd85fabdc622737"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/streaming-vs-single-mode",
+   "page": "agent-sdk-streaming-vs-single-mode",
+   "title": "Send messages to a running agent",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Input and output"
+   ],
+   "bytes": 14338,
+   "sha256": "10e613268df8f9811720dd68c53cb28f07facd679ae2b36ddc3bad8c291266ab"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/user-input",
+   "page": "agent-sdk-user-input",
+   "title": "Handle approvals and user input",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Input and output"
+   ],
+   "bytes": 34160,
+   "sha256": "9d567d0c8be5ae7e747036883c969bef142c816fecfdaba58e96d8a073b0199e"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/streaming-output",
+   "page": "agent-sdk-streaming-output",
+   "title": "Stream responses in real-time",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Input and output"
+   ],
+   "bytes": 14707,
+   "sha256": "bd7b1a0a1bb54ae21bdcc90b158a54d932d836076c1a3d7ac74d44b5bee57128"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/structured-outputs",
+   "page": "agent-sdk-structured-outputs",
+   "title": "Get structured output from agents",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Input and output"
+   ],
+   "bytes": 21758,
+   "sha256": "ee5c37433095866638542dab8af22d49bd9ab98548d7465877f3a05cc290df67"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/custom-tools",
+   "page": "agent-sdk-custom-tools",
+   "title": "Give Claude custom tools",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Extend with tools"
+   ],
+   "bytes": 39815,
+   "sha256": "05f17c1c7a73f7f98f2a3d3c39cfb5b84c28d47e8d6f7af385df9c134b9ac8cc"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/mcp",
+   "page": "agent-sdk-mcp",
+   "title": "Connect to external tools with MCP",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Extend with tools"
+   ],
+   "bytes": 39070,
+   "sha256": "5f5a91ebb113691a3354091bf55565ce2d3a3501eb2fa8dec51c811d1f5cd036"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/tool-search",
+   "page": "agent-sdk-tool-search",
+   "title": "Scale to many tools with tool search",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Extend with tools"
+   ],
+   "bytes": 11073,
+   "sha256": "e2553b44bc3af907b25f12f5f6ed616dd499d87fac0d6ccabda20fe522d41bb1"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/subagents",
+   "page": "agent-sdk-subagents",
+   "title": "Subagents in the SDK",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Extend with tools"
+   ],
+   "bytes": 41134,
+   "sha256": "ac6f9d12be73ac3c2a3b9eecd741f1dc492604117cda028c53f362fb8b226296"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/modifying-system-prompts",
+   "page": "agent-sdk-modifying-system-prompts",
+   "title": "Modifying system prompts",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Customize behavior"
+   ],
+   "bytes": 35002,
+   "sha256": "a2ff6a8233ac57d627ea1bc646bc7c76355018b7ce49b5517eb315d230dc28c2"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/skills",
+   "page": "agent-sdk-skills",
+   "title": "Extend agents with skills",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Customize behavior"
+   ],
+   "bytes": 27168,
+   "sha256": "f698c851352c53577ca29524e2b55f6b4b21d959e774745b7bf1f3536091f2c3"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/plugins",
+   "page": "agent-sdk-plugins",
+   "title": "Plugins in the SDK",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Customize behavior"
+   ],
+   "bytes": 13118,
+   "sha256": "045f96d1f2a708b733e4478765827d85b682288f678a0055eece8a7ac2312863"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/permissions",
+   "page": "agent-sdk-permissions",
+   "title": "Configure permissions",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Control and observability"
+   ],
+   "bytes": 32632,
+   "sha256": "d2ea00e196b5928532799573d394c2315d4db845c02f679419b1f8e4a3b856fc"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/hooks",
+   "page": "agent-sdk-hooks",
+   "title": "Intercept and control agent behavior with hooks",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Control and observability"
+   ],
+   "bytes": 48193,
+   "sha256": "d145238edd3453f6571b7ab5bf22278d1a4b1de973bb65dc6395d3a9367ad673"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/file-checkpointing",
+   "page": "agent-sdk-file-checkpointing",
+   "title": "Rewind file changes with checkpointing",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Control and observability"
+   ],
+   "bytes": 27657,
+   "sha256": "9cdf021b0812f749116c684e2093cf6b686a908226c785401ae48f5469f1b67e"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/cost-tracking",
+   "page": "agent-sdk-cost-tracking",
+   "title": "Track cost and usage",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Control and observability"
+   ],
+   "bytes": 25956,
+   "sha256": "874a256275247874ede345fbcab126bcaab1986ac6cba7f11c60822db435a4d9"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/observability",
+   "page": "agent-sdk-observability",
+   "title": "Observability with OpenTelemetry",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Control and observability"
+   ],
+   "bytes": 17673,
+   "sha256": "00b0866fac0df89ec7d862cd5089c2d4e835400af154a6ddbf2a7c224882d512"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/todo-tracking",
+   "page": "agent-sdk-todo-tracking",
+   "title": "Track todos",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Control and observability"
+   ],
+   "bytes": 18625,
+   "sha256": "d98198e1dc0772f99c090e9385fe08c71742063ebf3388bab584ad5d8c75b8b8"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/hosting",
+   "page": "agent-sdk-hosting",
+   "title": "Hosting the Agent SDK",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Deployment"
+   ],
+   "bytes": 23507,
+   "sha256": "980ab208739d0b42f1618c5728281806aab26571d0445d2ff861cae30ade61c6"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/secure-deployment",
+   "page": "agent-sdk-secure-deployment",
+   "title": "Securely deploying AI agents",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "Deployment"
+   ],
+   "bytes": 21251,
+   "sha256": "707384874f2984521e3d77546da7ca47b02fa593b6bf0efde10233b5f99a5b6c"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/typescript",
+   "page": "agent-sdk-typescript",
+   "title": "Agent SDK reference - TypeScript",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "SDK references"
+   ],
+   "bytes": 328403,
+   "sha256": "41c00443f31ddbc1a8920803bf13df443790a81f1439785f8904da8d64e9a7c7"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/typescript-v2-preview",
+   "page": "agent-sdk-typescript-v2-preview",
+   "title": "TypeScript SDK V2 session API (removed)",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "SDK references"
+   ],
+   "bytes": 12198,
+   "sha256": "5cc6ba831d70990b1cc2d43b67ec2928f050051825540dbeb0cb26181325a62b"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/agent-sdk/python",
+   "page": "agent-sdk-python",
+   "title": "Agent SDK reference - Python",
+   "official": [
+    "Agent SDK",
+    "Agent SDK",
+    "SDK references"
+   ],
+   "bytes": 162863,
+   "sha256": "d402be7ea2c1c5495915cfc44252a44f9e1b18c31241e82cfff3eb5e90316d27"
+  },
+  {
+   "url": "https://code.claude.com/docs/en/legal-and-compliance",
+   "page": "legal-and-compliance",
+   "title": "Legal and compliance",
+   "official": [
+    "Resources",
+    "Resources"
+   ],
+   "bytes": 6909,
+   "sha256": "b97c38b7645a58836741e0d6317d95d1b9672e78fed853e8c5eb64cd366f11ca"
+  }
+ ]
+}

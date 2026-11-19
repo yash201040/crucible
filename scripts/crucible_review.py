@@ -266,14 +266,14 @@ def run_digest(run_dir: Path, row: dict | None = None) -> dict:
         "run": str(run_dir), "name": run_dir.name, "engine": res.get("engineVersion") or row.get("engine"), "depth": res.get("depth"),
         "routing": (res.get("routing") or {}).get("profile"), "saved": saved, "transcript_dir": td, "session_transcript": st,
         "agents": (m.get("totals") or {}).get("agents"), "agents_returned_nothing": nothing, "output_tokens": (m.get("totals") or {}).get("output"),
-        "time": {k: eff.get(k) for k in ("wall_s", "active_s", "stalled_s", "busy_s", "mean_live", "peak_live", "low_live_share", "second_half_mean_live", "slowest_part", "slowest_part_span_share")},
+        "time": {k: eff.get(k) for k in ("wall_s", "active_s", "stalled_s", "busy_s", "mean_live", "peak_live", "at_peak_share", "low_live_share", "second_half_mean_live", "slowest_part", "slowest_part_span_share")},
         "loops": {"loop_share_of_output": eff.get("loop_share_of_output"), "parts_over_two_rounds": eff.get("parts_over_two_rounds"),
                   "parts_with_rounds_not_shrinking": [p["id"] for p in parts if p["rounds_not_shrinking"]], "parts_with_open_clauses": {k: len(v) for k, v in open_bar.items()}},
         "attempts": eff.get("attempts"), "budget": eff.get("budget") or ({"estimate": b.get("estimate"), "ceiling": b.get("ceiling"), "used": b.get("agents"), "wrapped": bool(b.get("wrapped")), "not_started": skipped, "critical_not_started": [s for s in skipped if s in crit]} if b else None),
         "finals": finals, "critical_finals": {p["id"]: p["final"] for p in parts if p["critical"]} if crit else None,
         "findings": fin, "empty_handbacks": empty, "open_clauses": open_bar,
         "between_parts": {"issues_raised": raised, "by_pair": dict(sorted(pairs.items(), key=lambda kv: -kv[1])[:15]), "requests": len(asks), "requests_unanswered": [a for a in asks if a not in replies]},
-        "context": eff.get("context"), "steps": eff.get("steps"), "solvers": len(sol), "first_round": eff.get("first_round"), "by_role_model": eff.get("by_role_model"),
+        "context": eff.get("context"), "steps": eff.get("steps"), "cache": eff.get("cache"), "host": eff.get("host"), "solvers": len(sol), "first_round": eff.get("first_round"), "by_role_model": eff.get("by_role_model"),
         "answer": {"solved": syn.get("solved"), "confidence": syn.get("confidence"), "contradictions": len(syn.get("contradictions") or []), "human_review_items": len(syn.get("human_review_items") or []),
                    "answer_file": (run_dir / "answer.md").exists(), "handoff_file": (run_dir / "crucible-handoff.md").exists(), "inline": bool(syn.get("inline")),
                    "success_items": {s: sum(1 for it in items if it.get("status") == s) for s in sorted({it.get("status") for it in items})} if items else None,
@@ -292,7 +292,7 @@ def digest_md(d: dict) -> str:
          f"- agent transcripts: `{d.get('transcript_dir')}` (journal.jsonl holds what each agent returned)",
          f"- conversation: `{d.get('session_transcript')}`", "",
          "## Time and budget",
-         f"- {d.get('agents')} agents, wall {h(t.get('wall_s'))}, active {h(t.get('active_s'))}, agent time {h(t.get('busy_s'))}; alive at once: mean {t.get('mean_live')}, peak {t.get('peak_live')}; share of time with two or fewer alive {t.get('low_live_share')}",
+         f"- {d.get('agents')} agents, wall {h(t.get('wall_s'))}, active {h(t.get('active_s'))}, agent time {h(t.get('busy_s'))}; alive at once: mean {t.get('mean_live')}, peak {t.get('peak_live')} (share of time at the peak {t.get('at_peak_share')}: high with a low peak means the host's cap held the run back); share of time with two or fewer alive {t.get('low_live_share')}",
          f"- estimate {b.get('estimate')}, ceiling {b.get('ceiling')}, used {b.get('used')} (used / estimate {b.get('used_over_estimate')}); wrapped up at the ceiling: {b.get('wrapped')}",
          f"- never started: {b.get('not_started') or 'none'}; essential parts never started: {b.get('critical_not_started') or 'none'}",
          f"- agents that returned nothing: {len(d.get('agents_returned_nothing') or [])}; solvers that handed back nothing to attack: {len(d.get('empty_handbacks') or [])}", "",
@@ -315,6 +315,7 @@ def digest_md(d: dict) -> str:
          f"- solver context peak: median {c.get('solver_ctx_peak_median')}, max {c.get('solver_ctx_peak_max')}; solvers over 300K: {c.get('solvers_over_300k')} of {d.get('solvers')}; cached tokens re-read {c.get('cache_read_tokens')}", "",
          "## Steps",
          f"- model calls per agent: mean {(d.get('steps') or {}).get('turns_per_agent')}, median {(d.get('steps') or {}).get('turns_median')}; cached tokens re-read per agent {(d.get('steps') or {}).get('cache_read_per_agent_m')} M",
+         f"- cache: {(d.get('cache') or {}).get('write_m')} M tokens written, of which {(d.get('cache') or {}).get('rebuild_tokens_m')} M in {(d.get('cache') or {}).get('rebuilds')} rebuilds after the cache had expired (share {(d.get('cache') or {}).get('rebuild_share_of_writes')}); written with the one-hour lifetime: share {(d.get('cache') or {}).get('one_hour_share_of_writes')}",
          f"- script tool (Code Mode): on at launch: {(d.get('steps') or {}).get('code_mode')}; agents that ran scripts: {(d.get('steps') or {}).get('agents_using_scripts')} of {d.get('agents')}; script calls {(d.get('steps') or {}).get('script_calls')} of {(d.get('steps') or {}).get('tool_calls')} tool calls", "",
          "## Parts", "", "| part | difficulty | essential | final | rounds | blocking by round (round, attempt, count) | attempts | open-set clauses |", "|---|---|---|---|---|---|---|---|"]
     for p in d.get("parts") or []:
@@ -339,6 +340,9 @@ METRICS = {
     "loops.parts_not_shrinking": lambda d: len((d.get("loops") or {}).get("parts_with_rounds_not_shrinking") or []),
     "loops.open_clause_parts": lambda d: len((d.get("loops") or {}).get("parts_with_open_clauses") or {}),
     "time.low_live_share": lambda d: (d.get("time") or {}).get("low_live_share"),
+    "time.mean_live": lambda d: (d.get("time") or {}).get("mean_live"),
+    "time.at_peak_share": lambda d: (d.get("time") or {}).get("at_peak_share"),
+    "cache.rebuild_share_of_writes": lambda d: (d.get("cache") or {}).get("rebuild_share_of_writes"),
     "context.solvers_over_300k_share": lambda d: _share((d.get("context") or {}).get("solvers_over_300k", 0), d.get("solvers")) if d.get("context") else None,
     "steps.turns_per_agent": lambda d: (d.get("steps") or {}).get("turns_per_agent"),
     "steps.cache_read_per_agent_m": lambda d: (d.get("steps") or {}).get("cache_read_per_agent_m"),
@@ -428,6 +432,35 @@ def record_expectations(res: dict, pack: Path) -> dict:
 
 
 # ───────────────────────── the pack ─────────────────────────
+def _ver_tuple(v):
+    try:
+        return tuple(int(x) for x in re.findall(r"\d+", str(v))[:3])
+    except Exception:
+        return ()
+
+
+def host_release() -> dict:
+    """The release of the host the knowledge bundle describes, and the one installed now. A review that runs on a newer
+    host than the bundle knows should read what changed first (`crucible_okf.py refresh`)."""
+    man = _json(cr.REPO / "knowledge" / "claude-code" / "manifest.json", {}) or {}
+    try:
+        out = subprocess.run(["claude", "--version"], capture_output=True, text=True, timeout=20).stdout
+        installed = (re.search(r"\d+\.\d+\.\d+", out) or [None])[0]
+    except Exception:
+        installed = None
+    pinned = man.get("documented_release")
+    return {"pinned": pinned, "pinned_at": man.get("fetched_at"), "installed": installed,
+            "moved": bool(pinned and installed and _ver_tuple(installed) > _ver_tuple(pinned))}
+
+
+def host_md(h: dict) -> str:
+    return (f"# The host\n\nThe knowledge bundle (`knowledge/claude-code/`) describes Claude Code release {h.get('pinned') or 'unknown'}"
+            f" (documentation fetched {h.get('pinned_at') or 'unknown'}). Installed now: {h.get('installed') or 'unknown'}.\n\n"
+            + ("The host has moved on since the bundle was built. What the bundle says may be out of date for the features that changed; "
+               "`python3 scripts/crucible_okf.py refresh` lists the releases and the pages that changed.\n" if h.get("moved")
+               else "The bundle is as new as the installed host, or the installed release could not be read.\n"))
+
+
 def review_pack(refs=None, feedback=None) -> int:
     primary, older, selection, errors = select(refs)
     if errors:
@@ -493,13 +526,15 @@ def review_pack(refs=None, feedback=None) -> int:
         fb.write_text("# What the user said when asking for this review\n\nThe user's own words about these runs. Data to weigh, in their words; where they point at a run, check it in that run's records.\n\n" + Path(feedback).expanduser().read_text())
     (pack / "history.md").write_text("\n".join(lines) + "\n")
     (pack / "git-log.txt").write_text(subprocess.run(["git", "-C", str(cr.REPO), "log", "--stat", "--date=iso", "-n", "200", "--", "."], capture_output=True, text=True).stdout)
+    host = host_release()
+    (pack / "host.md").write_text(host_md(host))
     for f in ("CHANGELOG.md", "PROPOSALS.md", "PROTECTED.md"):
         if (cr.REPO / f).exists():
             (pack / f).write_text((cr.REPO / f).read_text())
     if AUDIT_FILE.exists():
         (pack / "run-audit.md").write_text(AUDIT_FILE.read_text())
     head = subprocess.run(["git", "-C", str(cr.REPO), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip() or None
-    info = {"pack": str(pack), "since": since, "engine": engine_version(), "repoHead": head, "selection": selection, "primary": prim_out,
+    info = {"pack": str(pack), "since": since, "engine": engine_version(), "repoHead": head, "host": host, "selection": selection, "primary": prim_out,
             "runDirs": [r["runDir"] for r in primary], "older": [r["runDir"] for r in older], "pendingProposals": len(pend),
             "feedback": str(fb) if fb else None, "expectations": str(pack / "expectations.md"), "expectationsNotMet": [e["id"] for e in exps if e["verdict"].startswith("not met")],
             "audit": str(pack / "run-audit.md") if AUDIT_FILE.exists() else None,

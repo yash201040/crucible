@@ -17,7 +17,7 @@
   crucible_run.py efficiency [n]                          efficiency of the last n runs (time, parallelism, loops, routes)
   crucible_run.py version                                 the engine version the front desk must pass as expectVersion
   crucible_run.py repo                                    print the framework folder's real path (symlinks resolved)
-  crucible_run.py code-mode                               can Claude Code's Code Mode be on in this session, and how to start one with it
+  crucible_run.py host                                    what this session's host settings mean for a run (agents at once, cache lifetime, surface)
   crucible_run.py local                                   this installation's own front-desk notes (~/.crucible/local/front-desk.md), if any
   crucible_run.py history [N]                             runs with metrics and evolve outcomes
   crucible_run.py review-due                              is a periodic self-review due?
@@ -442,9 +442,45 @@ def _locate_transcript(run_dir: Path):
 SCRIPT_TOOLS = ("REPL",)      # Claude Code's Code Mode: the tool that runs a script which calls the other tools
 
 
+CACHE_SHORT_S = 300      # the host's default cache lifetime for agents of a run (five minutes)
+
+
+def host_info() -> dict:
+    """Facts about the host session that decide how fast and how cheaply a run goes. They are fixed when the session
+    starts: a front desk can report them, not change them. Reads three named environment variables and one key of the
+    user's Claude Code settings, nothing else."""
+    surface = os.environ.get("CLAUDE_CODE_ENTRYPOINT") or "unknown"
+    cap_env = os.environ.get("CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS")
+    default_cap = max(1, min(16, (os.cpu_count() or 4) - 2))
+    try:
+        cap = int(cap_env) if cap_env else default_cap
+    except ValueError:
+        cap = default_cap
+    ttl = os.environ.get("CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL")
+    if ttl not in ("5m", "1h"):
+        try:
+            ttl = json.loads((Path.home() / ".claude" / "settings.json").read_text()).get("subagentPromptCacheTtl")
+        except Exception:
+            ttl = None
+    ttl = ttl if ttl in ("5m", "1h") else "5m"
+    advice = []
+    if not cap_env and default_cap < 10:
+        advice.append(f"at most {default_cap} agents work at once in this session (the host's default for this machine); "
+                      "CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS=12, set before the session starts, lets twice as many work at once")
+    if ttl != "1h":
+        advice.append("agents keep their cache five minutes, so a command that runs longer makes the agent pay for its whole context again; "
+                      "CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL=1h, set before the session starts, avoids that")
+    return {"surface": surface, "max_live": cap, "max_live_set": bool(cap_env), "cache_ttl": ttl,
+            "code_mode_asked": os.environ.get("CLAUDE_CODE_EXPERIMENTAL_CODE_MODE") == "1",
+            "usage_limit_wait": surface == "cli",     # only a terminal session waits for a usage limit to reset and carries on by itself
+            "advice": advice, "how": "start the session with `crucible-claude` (it sets both), or put them in the `env` block of ~/.claude/settings.json"}
+
+
 def _agent_stats(path: Path) -> dict:
     """Token usage (deduplicated per API message), tool calls and wall time of one agent transcript."""
-    seen, st = set(), {"input": 0, "cache_write": 0, "cache_read": 0, "output": 0, "tool_calls": 0, "script_calls": 0, "turns": 0, "first": None, "last": None, "model": None, "ctx_peak": 0}
+    seen, st = set(), {"input": 0, "cache_write": 0, "cache_read": 0, "output": 0, "tool_calls": 0, "script_calls": 0, "turns": 0, "first": None, "last": None, "model": None, "ctx_peak": 0,
+                       "cache_write_1h": 0, "rebuilds": 0, "rebuild_tokens": 0}
+    prev = None      # when the previous model call was made
     if not path.exists():
         return st
     for line in path.read_text(errors="replace").splitlines():
@@ -464,7 +500,9 @@ def _agent_stats(path: Path) -> dict:
                 st["tool_calls"] += 1
                 st["script_calls"] += 1 if b.get("name") in SCRIPT_TOOLS else 0   # one script can stand for many tool calls
         mid, u = m.get("id"), m.get("usage") or {}
-        if not u or mid in seen:
+        # a tool call made from inside a script (Code Mode) is written as an entry of its own with no model behind it:
+        # it is a tool call, counted above, and not a model call
+        if not u or mid in seen or r.get("isVirtual") or m.get("model") == "<synthetic>":
             continue
         seen.add(mid)
         st["turns"] += 0 if r.get("aggregate") else 1     # one model call: each re-reads the whole context so far
@@ -476,7 +514,16 @@ def _agent_stats(path: Path) -> dict:
         # the context this call carried: a solver that grows far past what one session holds had too large a part
         # (a record written by the standalone runner holds totals over the whole agent, which say nothing about that)
         if not r.get("aggregate"):
-            st["ctx_peak"] = max(st["ctx_peak"], (u.get("input_tokens") or 0) + (u.get("cache_creation_input_tokens") or 0) + (u.get("cache_read_input_tokens") or 0))
+            ctx = (u.get("input_tokens") or 0) + (u.get("cache_creation_input_tokens") or 0) + (u.get("cache_read_input_tokens") or 0)
+            st["ctx_peak"] = max(st["ctx_peak"], ctx)
+            st["cache_write_1h"] += (u.get("cache_creation") or {}).get("ephemeral_1h_input_tokens") or 0
+            # a rebuild: the agent was silent longer than the short cache lives (a long command, usually), so this call
+            # wrote most of its context again instead of reading it
+            now = _epoch(ts)
+            if prev is not None and now is not None and now - prev > CACHE_SHORT_S and ctx > 20000 and (u.get("cache_creation_input_tokens") or 0) > 0.5 * ctx:
+                st["rebuilds"] += 1
+                st["rebuild_tokens"] += u.get("cache_creation_input_tokens") or 0
+            prev = now if now is not None else prev
     return st
 
 
@@ -597,9 +644,10 @@ def build_efficiency(run_dir: Path, agents: list, returned: dict, write: bool = 
     start, end = min(r["t0"] for r in rows), max(r["t1"] for r in rows)
     wall = max(end - start, 1e-9)
     ev = sorted([(r["t0"], 1) for r in rows] + [(r["t1"], -1) for r in rows], key=lambda x: (x[0], x[1]))
-    live, peak, last, at = 0, 0, start, {}
+    live, peak, last, at, exact = 0, 0, start, {}, {}
     for t, d in ev:
         at[min(live, 3)] = at.get(min(live, 3), 0) + (t - last)
+        exact[live] = exact.get(live, 0) + (t - last)
         live += d; peak = max(peak, live); last = t
     busy = sum(r["t1"] - r["t0"] for r in rows)
     # the second half of the run by time: is the tail thin?
@@ -709,9 +757,17 @@ def build_efficiency(run_dir: Path, agents: list, returned: dict, write: bool = 
                           "tool_calls": sum(r.get("tool_calls") or 0 for r in rows), "script_calls": sum(r.get("script_calls") or 0 for r in rows),
                           "agents_using_scripts": sum(1 for r in rows if r.get("script_calls")),
                           "cache_read_per_agent_m": round(sum(r.get("cache_read") or 0 for r in rows) / len(rows) / 1e6, 2), "code_mode": res.get("codeMode")}
+    cw = sum(r.get("cache_write") or 0 for r in rows)
+    if cw:           # how much of what was written to the cache was written a second time because the cache had expired
+        rb = sum(r.get("rebuild_tokens") or 0 for r in rows)
+        extra["cache"] = {"write_m": round(cw / 1e6, 1), "rebuilds": sum(r.get("rebuilds") or 0 for r in rows), "rebuild_tokens_m": round(rb / 1e6, 1),
+                          "rebuild_share_of_writes": round(rb / cw, 2), "one_hour_share_of_writes": round(sum(r.get("cache_write_1h") or 0 for r in rows) / cw, 2)}
+    if res.get("host"):
+        extra["host"] = res.get("host")
     eff = {
         "wall_s": round(wall), "stalled_s": round(at.get(0, 0)), "active_s": round(active), "busy_s": round(busy), "agents": len(rows),
         "mean_live": round(busy / active, 2), "peak_live": peak,
+        "at_peak_share": round(exact.get(peak, 0) / active, 2),      # high with a low peak: the host's cap on agents alive at once held the run back
         "low_live_share": round((at.get(1, 0) + at.get(2, 0)) / active, 2), "single_live_share": round(at.get(1, 0) / active, 2),
         "second_half_mean_live": round(tail_busy / max(1e-9, (wall / 2) - tail_stalled), 2),
         "loop_out_tokens": loop, "loop_share_of_output": round(loop / out_total, 2),
@@ -1335,13 +1391,8 @@ def main(argv):
         return rsi(Path(argv[1]).expanduser(), init=argv[0] == "rsi-init")
     if argv and argv[0] == "efficiency":
         return efficiency_cmd(int(argv[1]) if len(argv) > 1 else 10)
-    if argv and argv[0] == "code-mode":   # what the front desk needs to know about Claude Code's Code Mode in this session
-        surface, asked = os.environ.get("CLAUDE_CODE_ENTRYPOINT") or "unknown", os.environ.get("CLAUDE_CODE_EXPERIMENTAL_CODE_MODE") == "1"
-        terminal = surface == "cli"
-        print(f"surface: {surface}; Code Mode asked for at start: {'yes' if asked else 'no'}; "
-              + ("it is on only if you have the REPL tool." if asked and terminal else
-                 "it can be on here: start Claude with `crucible-claude` (or CLAUDE_CODE_EXPERIMENTAL_CODE_MODE=1 claude) and confirm once." if terminal else
-                 "it cannot be on in this app: Code Mode works only in a terminal session started with `crucible-claude` (or CLAUDE_CODE_EXPERIMENTAL_CODE_MODE=1 claude)."))
+    if argv and argv[0] in ("host", "code-mode"):   # what the front desk needs to know about the host session it runs in
+        print(json.dumps(host_info(), indent=1))
         return 0
     if argv and argv[0] == "local":      # this installation's own front-desk notes, if any (SKILL.md prints them at the top)
         f = LOCAL_DIR / "front-desk.md"

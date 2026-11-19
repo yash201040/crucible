@@ -96,6 +96,30 @@
    "why": "the first v5.0 run needed 68.9 model calls per agent and re-read 13.6 million cached tokens per agent; the target is a guess of a fifth fewer, to be corrected by the first measured run",
    "status": "open",
    "checked": []
+  },
+  {
+   "id": "v5.4-agent-cache",
+   "since": "v5.4",
+   "change": "sessions started with the launcher keep an agent's cache one hour instead of five minutes",
+   "metric": "cache.rebuild_share_of_writes",
+   "baseline": 0.57,
+   "op": "<=",
+   "target": 0.1,
+   "why": "in the first v5.0 run 318 calls came after a command of 5 to 30 minutes and wrote 85.0 of 149.9 million cached tokens a second time; holds only for runs started from a session with the one-hour setting (the digest's host block says which)",
+   "status": "open",
+   "checked": []
+  },
+  {
+   "id": "v5.4-more-agents-at-once",
+   "since": "v5.4",
+   "change": "sessions started with the launcher let twelve agents work at once instead of the machine's default",
+   "metric": "time.mean_live",
+   "baseline": 5.2,
+   "op": ">=",
+   "target": 7,
+   "why": "the first v5.0 run sat at the cap of six agents for 78% of its time; the target is a guess, a plan with few parts side by side cannot reach it, and it holds only for runs started from a session with the higher cap (the digest's host block says which)",
+   "status": "open",
+   "checked": []
   }
  ]
 }

@@ -2,6 +2,32 @@
 
 Every change to the framework, newest first. Automatic entries come from `crucible-evolve` (run = after one run, periodic = weekly/monthly review) and cite the run and evidence they rest on.
 
+## 2026-11-20 (manual; asked for by the user): v5.4, the host's own features, measured
+
+Asked for by the user: read all of the host's documentation, record what it can do in a navigable form pinned to a release, test what matters, and use what the evidence supports. Triggered by a missed setting (the depth of nested subagents).
+
+The knowledge bundle
+- `knowledge/claude-code/`: 205 pages of Claude Code's documentation (release 2.1.328) and its release notes from 2.1.101, read by 49 readers into about 1,650 concepts in Open Knowledge Format 0.2, in the folders of the documentation's own index. `manifest.json` holds a hash per page; `scripts/crucible_okf.py` searches the bundle, checks it, and says which releases and pages are new since the pin (`refresh`).
+- `experiments/` there: nine tests, each with its figures. `playbooks/what-crucible-uses.md`: the decision for each feature and what would change it.
+
+What the records of the first v5.0 run showed, once measured
+- Exactly six agents were alive for 78% of the run: the host's default cap on an 8-core machine. `CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS=12` lets twelve work at once (tested: 12 of 12 alive, against 6).
+- 318 calls came after a shell command of 5 to 30 minutes and wrote 85.0 of 149.9 million cached tokens a second time, because agents keep their cache five minutes. `CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL=1h` makes those reads (tested: an agent's cache writes move to the one-hour lifetime). By API prices about 7% of that run's token cost.
+- No agent compacted; 4% of the reading was above a context of 400K. An earlier cap is not worth it.
+
+Tested and not adopted
+- Nested subagents: no agent of a workflow gets the helper tool, with the default type, `general-purpose`, a custom type that lists it, or the depth raised to five. A hierarchy inside a run has to be made by the engine.
+- Code Mode: it reaches a run's agents in a terminal session and a command of eleven minutes finishes normally, but on five small tasks it saved nothing (15 model calls without, 17 with; all right). The launcher no longer turns it on and the front desk no longer advises it.
+- Custom agent types per role, earlier compaction, a deny of the messaging tools, the advisor, a fallback model chain: each works or exists, each with a reason against in the playbook.
+
+Changed
+- `bin/crucible-claude` sets the two settings above (a value the user set wins) instead of Code Mode.
+- `crucible_run.py host` prints what the session has; the front desk passes it as `host`, which the engine only records, and mentions the advice once at approval of a plan of 30 agents or more. Engine version v5.4: no prompt changed.
+- Efficiency log and digest: a tool call made inside a script is no longer counted as a model call (a Code Mode transcript writes one entry per such call); cache rebuilds and their share of all cache writes; the share of time spent at the peak of agents alive. Three new numbers for expectations, and two expectations: rebuild share at most 0.1 (from 0.57), mean agents alive at least 7 (from 5.2), both only for runs started with the settings.
+- Reviews: every agent is pointed at the bundle before proposing a mechanism of its own; the pack says when the installed host is newer than the bundle, and the release notes since can be passed in as evidence. A review may add experiments and playbooks, never change the concepts read from the documentation.
+
+Not verified: no run has been made on v5.4. Everything above about real runs comes from the records of the v5.0 run and from probes of one to twelve small agents.
+
 ## 2026-11-20 (manual; asked for by the user): this repository is now the working copy
 
 Asked for by the user: crucible leaves their private configuration repository and is developed here, in its own repository.

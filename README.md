@@ -1,7 +1,5 @@
 # crucible
 
-A skill for coding agents (Claude Code and Codex) that puts one hard problem through many independent agents and gives you one direct answer, with what was checked and what was not.
-
 You type `/crucible <problem>`. It plans the work as parts, shows you the plan and its expected cost, and waits for your approval. Then every part is solved by one agent and attacked by another that never sees the solver's reasoning; code, not an agent, decides when a part is settled. At the end one agent assembles the answer from the records. A run can be stopped and continued later, and the framework improves itself from its own runs.
 
 It is for problems where being wrong is expensive and one pass by one agent is not enough: open-ended research, a build with several components, a decision that needs its evidence checked. It is the wrong tool for a quick question.

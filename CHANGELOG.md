@@ -14,6 +14,8 @@ What was found about Code Mode (Claude Code 2.1.325, its documentation and one h
 - Codex: agents ask for `features.code_mode` (under development in Codex); an agent that fails with it is run once more without it; `"code_mode": false` in `~/.crucible/providers.json` turns it off. Headless `claude -p` agents are never asked for Code Mode.
 - Efficiency log: `steps` (model calls per agent, mean and median; tool calls; script calls; agents that ran scripts; cached tokens re-read per agent). Two new numbers for expectations, and one expectation: model calls per agent at most 55 (from 68.9; a guess of a fifth, to be corrected by the first measured run).
 
+Probes (headless Sonnet, so without Code Mode; engine before the v5.2 and v5.3 prompt changes against after): all 8 cases right on both versions, no regression. On the five short cases run a second time with counts: 32 model calls before, 30 after; 633K tokens read before, 552K after; one run per case, so this is within noise. The probes are too small to show a saving: they already take five or six calls. Probe runs now record model calls and tokens, so two engine versions can be compared on cost.
+
 Not verified: no run has been made from a Code Mode session, so neither the saving nor whether workflow agents get the script tool is known. Codex's code mode has not been run against the real CLI.
 
 ## 2026-11-19 (manual; asked for by the user): v5.2, the self-review reads the runs, a runner for other hosts, no data tool in the framework

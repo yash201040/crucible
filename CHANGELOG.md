@@ -2,6 +2,15 @@
 
 Every change to the framework, newest first. Automatic entries come from `crucible-evolve` (run = after one run, periodic = weekly/monthly review) and cite the run and evidence they rest on.
 
+## 2026-11-20 (manual; asked for by the user): this repository is now the working copy
+
+Asked for by the user: crucible leaves their private configuration repository and is developed here, in its own repository.
+
+- The skill folder of an installation links to a clone of this repository; reviews commit here directly. The one-way export from the private repository is gone.
+- `bin/git-pre-commit`: refuses a commit that adds a line naming the machine's user folder, and one that changes `expectation.md` unless the owner sets `CRUCIBLE_OWNER_EDIT=1`. It replaces the two checks the export step made.
+- `crucible-evolve`: its agents are told the repository is public.
+- `tests/audit/` and `calibration/results/` stay on the author's machine (ignored by git), as before.
+
 ## 2026-11-19 (manual; asked for by the user): `expectation.md`, the owner's standard
 
 Asked for by the user: one fixed file with what they want from crucible and how they use it, so that a new session can be told to audit and review against it without the requirements being typed again. Only the owner edits it.

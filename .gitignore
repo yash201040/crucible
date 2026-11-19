@@ -1,2 +1,6 @@
 __pycache__/
 *.pyc
+.DS_Store
+# kept on the author's machine only: an older audit suite with fixtures of that machine, and its probe outputs
+tests/audit/
+calibration/results/

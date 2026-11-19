@@ -156,6 +156,7 @@ hosts/codex/SKILL.md     front desk for Codex
 engine/                  the two workflow scripts: the run engine and the self-review
 runner/                  runs the same scripts outside Claude Code
 bin/crucible-claude      starts Claude Code with Code Mode on
+bin/git-pre-commit       commit guard: no private paths, and only the owner changes expectation.md
 scripts/                 bookkeeping (save, checkpoint, review pack, digests), the single-agent adapter
 references/              the run-audit questions, expectations, domain checks, templates
 calibration/             probes for models and for the engine's own prompts
@@ -173,6 +174,16 @@ node tests/run.mjs
 ```
 
 It runs the engine against scripted agents, then the Python tests of the review pack and of the runner. No model is called and it takes under a minute.
+
+## Working on crucible itself
+
+This repository is the working copy: `/crucible --review` commits its changes here, one commit per change. It is public, so nothing about a problem, a client or a machine belongs in a commit. Install the guard once per clone:
+
+```bash
+ln -sf ../../bin/git-pre-commit .git/hooks/pre-commit
+```
+
+It refuses a commit that names the machine's user folder, and one that changes `expectation.md` without the owner's word. Pushing is always a deliberate step: nothing here pushes by itself.
 
 ## Licence
 

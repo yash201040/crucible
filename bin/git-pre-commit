@@ -1,0 +1,19 @@
+#!/bin/sh
+# Pre-commit guard for the crucible repository, which is public. Install once per clone:
+#   ln -sf ../../bin/git-pre-commit .git/hooks/pre-commit
+# It refuses a commit that
+#   1. adds a line naming this machine's user folder (a private path in a public repository), or
+#   2. changes expectation.md, which only the owner edits. The owner commits such a change with
+#      CRUCIBLE_OWNER_EDIT=1 git commit ...
+u="$(id -un)"
+if git diff --cached -U0 --no-color | grep '^+' | grep -v '^+++' | grep -qE "/(Users|home)/$u(/|\b)"; then
+  echo "refused: a staged line names this machine's user folder (/Users/$u or /home/$u). This repository is public."
+  git diff --cached -U0 --no-color | grep '^+' | grep -v '^+++' | grep -nE "/(Users|home)/$u(/|\b)" | head -5
+  exit 1
+fi
+if git diff --cached --name-only | grep -qx 'expectation.md' && [ "${CRUCIBLE_OWNER_EDIT:-}" != "1" ]; then
+  echo "refused: expectation.md is edited by the owner only."
+  echo "If you are the owner: CRUCIBLE_OWNER_EDIT=1 git commit ...   An agent never sets that variable by its own decision."
+  exit 1
+fi
+exit 0

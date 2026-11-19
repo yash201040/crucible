@@ -1,0 +1,4001 @@
+{
+ "as_of": "2026-11-15",
+ "about": "What is known about each model that crucible could route a role to: ids per provider, price, speed, benchmark scores with their sources, the result of crucible's own calibration probes, and `fit`: the role it suits here. routing.json is the table the engine uses; this file is the evidence behind it. Regenerate with calibration/build_model_map.py after new research or a calibration.",
+ "caveats": [
+  "Most benchmark numbers are vendor-reported or come from aggregators (see each score's source_type); compare models only within one benchmark and one scaffold.",
+  "The Artificial Analysis index and speed figures were read through an aggregator page; effort labels on that page were partly inferred.",
+  "Anthropic does not publish how much of a subscription limit each model draws. The weights in routing.json follow API prices, which is a guess.",
+  "Calibration probes are a floor test (12 small tasks): every model passed nearly all of them, so they show speed, cost and robustness, not which strong model is better."
+ ],
+ "system_one_models": {
+  "definition": "TypeSafe's term (after Kahneman): non-autoregressive models that read 'state' plus predefined questions and return typed probabilistic decisions (choice, score, noul=yes/no probability, box in 1.14) in one parallel pass; no free text. Trained with Reinforcement Learning for Calibrated Decisions (RLCD).",
+  "who_is_typesafe": "TypeSafe AI, founded by Diogo Almeida (ex-OpenAI, helped build instruction-following/ChatGPT research), two years stealth, Jev announced 2026-09-15 (primary: typesafe.ai blog).",
+  "Jev": {
+   "versions": "1.14.0 (Oct 14 2026), 1.13.0; aliases jev-latest, jev-preview",
+   "price": "$0.042 per Mtok input, output free (docs.typesafe.ai/models)",
+   "speed": "vendor: 70-500 ms end-to-end; Reddit snippet ~150 ms",
+   "context": "64k per request/32k per question default; 262k with long-context header; Runware lists 262,144",
+   "inputs": "text, PNG/JPEG",
+   "choice_cardinality_max": 255,
+   "openrouter": "typesafe/jev-router (per user; not verified)",
+   "also_on": "Runware typesafe:jev@1.14; Vercel AI Gateway (Runware says ~13% of paid teams used it in 24h)",
+   "vendor_claims": "193.6x faster, 444.6x cheaper than LLM baselines on TypeSafe's own workflow evals, reference = average of GPT-6 Astra and Fable 5.1; 'cannot hallucinate' means cannot emit invalid type, not cannot be wrong",
+   "independent": [
+    "Runware engineer: synthetic phishing, asked directly Jev 62.6% vs Claude Haiku 4.5 81.3%; decomposed into 5 signals + code 95%; domain rules 91.8%",
+    "arXiv 2609.33401 (TraceStone/NTU): Jev, Laya, Decider, Bespoke Nimble on agent security decisions; good average accuracy/calibration hides confident misses on some attack groups; second judge repeats errors"
+   ],
+   "sources": [
+    "https://typesafe.ai/blog/introducing-system-one-models-and-jev",
+    "https://docs.typesafe.ai/models",
+    "https://runware.ai/blog/jev-laya-and-the-emerging-role-of-decision-models",
+    "https://arxiv.org/html/2609.33401v1"
+   ]
+  },
+  "Laya": {
+   "what": "Open-weight (Apache 2.0) decision model by Convai Innovations, NOT TypeSafe's. English checkpoint ModernBERT-large + decision head; multilingual mmBERT; Jev-compatible API with choice/score/noul.",
+   "speed": "vendor: 39.5 ms (English) and 32.8 ms (multilingual) per question on Tesla T4; 10 questions 158.6/72.3 ms",
+   "accuracy": "vendor synthetic benchmark (2000 decisions): specialized checkpoint 76.6%; general English checkpoint 36.2% vs 46.1% majority baseline",
+   "limits": "512-token context default (1024 multilingual/specialized); ~20 options advised max; probabilities can be overconfident",
+   "controversy": "Reddit/Medium/YouTube snippets discuss whether Jev derives from Laya or vice versa; unresolved, not opened",
+   "other_names": "Decider and Bespoke Nimble are other System One-style models named in the arXiv paper; Berget AI offers Laya in Sweden",
+   "sources": [
+    "https://runware.ai/blog/jev-laya-and-the-emerging-role-of-decision-models",
+    "https://github.com/LeonaDavinci/laya-system-one (snippet)"
+   ]
+  },
+  "fit": "Both: routing, triage, scoring, judge/guardrail slots where answers are bounded. Not general reasoning. Sanz's advice: decompose into atomic questions, combine in code, test against small LLM with structured output and plain rules, calibrate thresholds."
+ },
+ "subscription_economics": {
+  "claude": {
+   "plans": {
+    "Pro": "$20/mo (price from codingplan.org snippet)",
+    "Max": "$100/mo, 'five times the Pro plan's usage every five hours and every week'",
+    "Max_20x_or_Ultra": "$200/mo; Anthropic help center now also lists an 'Ultra' plan; third-party pages call $200 tier Max 20x"
+   },
+   "metering": [
+    "5-hour limit plus a weekly limit across all models (primary)",
+    "separate weekly meter for Fable models; on Max/Ultra Fable can use up to 50% of weekly limit, then usage credits or switch model; draws from the same weekly pool and 'use them faster than other Claude models' (primary)",
+    "Pro: Fable 5.2/5.1/5 are credits-only (primary)",
+    "Claude on web/desktop/mobile, Claude Code and Cowork share limits (userightai, secondary)",
+    "Anthropic publishes multipliers not message counts; weekly limits reset at an account-specific time"
+   ],
+   "per_model_cost_against_limit": "No official per-model rates. SemiAnalysis (Oct 5 2026, secondary, paywalled charts): each (model, token type) consumes different credits; Anthropic reduces API-equivalent value for premium models: small drop Sonnet 5.5 -> Opus 5.5, large drop at Fable 5.1; Opus 5.5 token limits raised ~20% on Max and ~50% on Pro after price cut. Haiku 5.5 metering not found.",
+   "monthly_api_credits": "Max $100/$200 per month API credits since 2026-10-07, claimed in Console, separate from chat/Code allowance (userightai, secondary; Anthropic help text confirms credits exist)",
+   "api_prices_primary": {
+    "Fable 5.2": "$8 in / $40 out",
+    "Opus 5.5": "$4/$20",
+    "Sonnet 5.5": "$2/$10",
+    "Haiku 5.5": "$0.10/$0.50 (<=100k prompt)"
+   },
+   "sources": [
+    "https://support.claude.com/en/articles/11049741-what-is-the-max-plan",
+    "https://support.claude.com/en/articles/15424964-claude-fable-models-on-your-plan",
+    "https://platform.claude.com/docs/en/about-claude/pricing",
+    "https://www.userightai.com/claude-max-limits"
+   ]
+  },
+  "openai_codex": {
+   "facts": [
+    "Plus $20; Codex included; est. 15-160 local messages/5h on GPT-6.1 Sol (aibusinessweekly snippet); kipt.me snippet: Plus per-5h ranges Astra 5-45, 6.1 Sol 15-160, Luna 350-3000",
+    "Per OpenAI help center (primary, opened): from December Plus, Pro, Business allowances are shared across ChatGPT and Codex, measured in tokens, heavier models use more; instant chat does not draw usage",
+    "SemiAnalysis: OpenAI halved $200 Pro limits in late Sep 2026 and added $500 tier; Pro plans have no 5-hour limit"
+   ],
+   "sources": [
+    "https://help.openai.com/en/articles/20001625-understanding-chatgpt-and-codex-usage-limits",
+    "https://newsletter.semianalysis.com/p/anthropic-subscriptions-offer-5x"
+   ]
+  },
+  "value_vs_api": {
+   "semianalysis_oct5_2026": "secondary, paywalled: $200 Claude plan ~ $11,726 of Opus 5.5 agentic API-equivalent per month (via explainx/tokenpost snippets); ChatGPT Pro $200 ~ $2,084 (explainx snippet); Opus 5.5 on Claude ~4-5x OpenAI value. Opened article text: $200 Anthropic plan has 50% left after $2,485 of Fable 5.1; OpenAI equivalent exhausted after $2,897 of Astra. Anthropic tiers give equal per-dollar value across Pro/Max.",
+   "other": [
+    "medium snippet: $200 Max 20x = $2,800-$7,470 API at standard rates depending on use",
+    "atticusli.com snippet: one user's real usage API-equivalent $7,814 for Jul 1-20 2026",
+    "GitHub issue anthropics/claude-code#108599 (Nov 9): users report effective limits ~1/3 lower since ~Oct 30"
+   ],
+   "caveat": "For a $100 plan, scale linearly: Anthropic says same per-dollar value across tiers (SemiAnalysis), so Max $100 would be roughly half of the $200 figure; inferred."
+  }
+ },
+ "benchmarks": {
+  "AA_Intelligence_Index": {
+   "what_it_measures": "Artificial Analysis composite of reasoning, knowledge, math, coding, agentic evals; modelgrep repackages it",
+   "url": "https://artificialanalysis.ai/leaderboards/models"
+  },
+  "ARC-AGI-1/2/3": {
+   "what_it_measures": "ARC Prize abstract reasoning; ARC-AGI-3 is interactive",
+   "url": "https://arcprize.org/results"
+  },
+  "LMArena_text": {
+   "what_it_measures": "crowd-voted preference Elo. Only search snippets seen, page not opened",
+   "url": "https://lmarena.ai/leaderboard/text"
+  },
+  "Vectara_HHEM": {
+   "what_it_measures": "summary hallucination rate; only search snippets seen",
+   "url": "https://github.com/vectara/hallucination-leaderboard"
+  },
+  "TrueStandard_pushback": {
+   "what_it_measures": "share of verdicts a model flips when pushed back; snippets only",
+   "url": "https://truestandard.ai/ai-sycophancy-benchmark"
+  },
+  "Big-Big-SycoBench": {
+   "what_it_measures": "responsiveness to valid vs compliance with invalid arguments; snippet only",
+   "url": "https://arxiv.org/html/2610.15634"
+  },
+  "SWE-bench Pro (public, vendor-reported)": {
+   "what_it_measures": "731 real tasks from commercial repos; benchlm page shows 83/87 vendor-reported, 4 from another lab's table, none independent",
+   "url": "https://benchlm.ai/benchmarks/swe-bench-pro",
+   "fetched": "2026-11-15"
+  },
+  "SWE-bench Pro V2 Hard (Scale board)": {
+   "what_it_measures": "Scale AI SWE-bench Pro public V2 (relaunched Sep 2026), Hard split; scaffold shown per row; scores much higher than classic Pro",
+   "url": "https://models.fru.dev/boards/scale-swe-pro",
+   "fetched": "2026-11-15"
+  },
+  "SWE-bench Pro (public, independent Scale run)": {
+   "what_it_measures": "Independent run of SWE-bench Pro per llmlearner",
+   "url": "https://llmlearner.com/rankings/swe-bench-pro",
+   "fetched": "2026-11-15"
+  },
+  "Terminal-Bench 4.1": {
+   "what_it_measures": "Terminal agent tasks (66 tasks, hardened verifiers); resolution rate with 95% CI, tokens and cost per run set",
+   "url": "https://www.tbench.ai/leaderboard/terminal-bench/4.1 (JS table empty on extract; values from snorkel.ai copy and search snippets)",
+   "fetched": "2026-11-15"
+  },
+  "Terminal-Bench 4.0 (Anthropic)": {
+   "what_it_measures": "Previous version, vendor-reported by Anthropic",
+   "url": "https://www.anthropic.com/claude-haiku-5-5",
+   "fetched": "2026-11-15"
+  },
+  "Terminal-Bench 4.0 (AA, by effort)": {
+   "what_it_measures": "AA-run Terminal-Bench 4.0 across effort levels",
+   "url": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+   "fetched": "2026-11-15"
+  },
+  "Terminal-Bench 4.0 (Moonshot sheet)": {
+   "what_it_measures": "Vendor sheet",
+   "url": "https://k31pro.novcog.us.com/benchmarks",
+   "fetched": "2026-11-15"
+  },
+  "Terminal-Bench 4.0 (vendor sheet)": {
+   "what_it_measures": "Moonshot vendor sheet",
+   "url": "https://k31pro.novcog.us.com/benchmarks",
+   "fetched": "2026-11-15"
+  },
+  "LMArena WebDev": {
+   "what_it_measures": "Human votes on web apps built by two anonymous models",
+   "url": "https://models.fru.dev/boards/lmarena-webdev",
+   "fetched": "2026-11-15"
+  },
+  "LiveBench global average": {
+   "what_it_measures": "Contamination-limited average over math/reasoning/coding/data/language/IF (not coding-only); top-3 rows and Claude 5.5 rows missing from extract",
+   "url": "https://models.fru.dev/boards/livebench",
+   "fetched": "2026-11-15"
+  },
+  "Scale MCP Atlas": {
+   "what_it_measures": "Tool use over 36 MCP servers / 220 tools, 500 tasks",
+   "url": "https://models.fru.dev/boards/scale-mcp-atlas",
+   "fetched": "2026-11-15"
+  },
+  "tau2-bench airline": {
+   "what_it_measures": "Tool-calling dialogue tasks; OpenRouter-run, compressed 75-80% band so differences are mostly noise",
+   "url": "https://openrouter.ai/benchmarks/tau2-bench-airline",
+   "fetched": "2026-11-15"
+  },
+  "METR time horizon 1.1 (50%)": {
+   "what_it_measures": "Task length (human minutes) at which agent succeeds 50%; no 5.x models measured",
+   "url": "https://metr.org/time-horizons",
+   "fetched": "2026-11-15"
+  },
+  "SWE-rebench": {
+   "what_it_measures": "Fresh GitHub tasks, 111 problems, window 15 May-1 Jul 2026",
+   "url": "https://swe-rebench.com/",
+   "fetched": "2026-11-15"
+  },
+  "AA Coding Agent Index v2.1": {
+   "what_it_measures": "Artificial Analysis index of models in their agent harnesses (FrontierCode-AA 2.0, Terminal-Bench 4.1, SWE-Atlas-QnA)",
+   "url": "https://x.com/ArtificialAnlys/status/2121393821955334328",
+   "fetched": "2026-11-15"
+  },
+  "AA Intelligence Index v5.0.1 (max)": {
+   "what_it_measures": "AA Intelligence Index with cost/time per task; (*) = effort column inferred",
+   "url": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+   "fetched": "2026-11-15"
+  },
+  "FrontierCode 2.0": {
+   "what_it_measures": "Cognition FrontierCode: would a maintainer merge the change",
+   "url": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+   "fetched": "2026-11-15"
+  },
+  "FrontierCode 1.1 (Main)": {
+   "what_it_measures": "Older version",
+   "url": "https://www.anthropic.com/claude-haiku-5-5",
+   "fetched": "2026-11-15"
+  },
+  "FrontierSWE v2": {
+   "what_it_measures": "Agentic coding, vendor table",
+   "url": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+   "fetched": "2026-11-15"
+  },
+  "Terminal-Bench-Science 0.1": {
+   "what_it_measures": "Agentic scientific research",
+   "url": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+   "fetched": "2026-11-15"
+  },
+  "DeepSWE v1.1 (vendor sheet)": {
+   "what_it_measures": "Long-horizon SWE tasks",
+   "url": "https://k31pro.novcog.us.com/benchmarks",
+   "fetched": "2026-11-15"
+  },
+  "MacroscopeBench (code review)": {
+   "what_it_measures": "Bug detection in real PRs; score combines recall and precision; vendor runs a code-review product",
+   "url": "https://macroscope.com/benchmark",
+   "fetched": "2026-11-15"
+  },
+  "Qodo code review F1": {
+   "what_it_measures": "Real bugs traced to introducing PRs; single reviewer, LLM judge; vendor sells review product",
+   "url": "https://qodo.ai/blog/which-llm-should-review-your-code",
+   "fetched": "2026-11-15"
+  },
+  "IronBee code review F2": {
+   "what_it_measures": "Code Review Bench-style golden comments, 50 PRs, 3 passes, 3 judges, no tools; F2 x100 (recall-weighted)",
+   "url": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+   "fetched": "2026-11-15"
+  },
+  "Kodus code review recall": {
+   "what_it_measures": "121 confirmed bugs, balanced mode single agent",
+   "url": "https://kodus.io/en/best-llms-for-code-review",
+   "fetched": "2026-11-15"
+  },
+  "bito coding sessions (blended score)": {
+   "what_it_measures": "Vendor's six-task real coding sessions, effort comparison",
+   "url": "https://bito.ai/blog/claude-haiku-5-5-vs-sonnet-5-5-vs-opus-5-5/",
+   "fetched": "2026-11-15"
+  },
+  "Opus-boss/worker bench accuracy": {
+   "what_it_measures": "Opus 5.5 plans/reviews, cheap worker codes; 13 Python tasks x3 runs",
+   "url": "https://github.com/jankorbay/orchestrator-worker-bench",
+   "fetched": "2026-11-15"
+  },
+  "SWE-bench Verified subset (django+sympy, 295 tasks)": {
+   "what_it_measures": "Individual's retry-ladder experiment",
+   "url": "https://github.com/oaustegard/experiments/blob/main/swe-ladder/RESULTS.md",
+   "fetched": "2026-11-15"
+  },
+  "AA Coding Agent Index (Kimi Code CLI, per AA post snippet)": {
+   "what_it_measures": "Snippet-only",
+   "url": "https://x.com/ArtificialAnlys/status/2121393821955334328",
+   "fetched": "2026-11-15"
+  },
+  "Aider polyglot / SWE-bench Verified / BFCL": {
+   "what_it_measures": "Stale boards (last published Oct 2025 / Feb 2026 / Apr 2026), not collected",
+   "url": "https://models.fru.dev/boards/aider-polyglot",
+   "fetched": "2026-11-15"
+  }
+ },
+ "models": [
+  {
+   "name": "Claude Fable 5.2",
+   "vendor": "Anthropic",
+   "tier": "frontier",
+   "ids": {
+    "claude_code": "fable",
+    "openrouter": "anthropic/claude-fable-5.2",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 8.0,
+    "out": 40.0,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1000000,
+   "speed_tokens_per_s": 92.0,
+   "fit": "Strongest model (AA 64.6), on its own subscription meter (up to half the weekly limit on Max, then paid credits) and at twice Opus's API price. Not in any default route: use the session profile for a run that should have it everywhere.",
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 64.6,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 98.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 93.8,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-3": {
+     "score": 97.72,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro (public, vendor-reported)": {
+     "score": 93.0,
+     "unit": "% resolved",
+     "setting": "vendor harness, effort not stated",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "Terminal-Bench 4.1": {
+     "score": 65.8,
+     "unit": "% resolved",
+     "setting": "max effort, Claude Code, +-2.8 (harbor leaderboard text seen only as search snippet)",
+     "source": "https://hub.harborframework.com/datasets/terminal-bench/terminal-bench/5?leaderboard=4-1-0&tab=leaderboard",
+     "source_type": "primary",
+     "date": "2026-11-09"
+    },
+    "LMArena WebDev": {
+     "score": 1838,
+     "unit": "Arena rating",
+     "setting": "xHigh",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-11"
+    },
+    "MacroscopeBench (code review)": {
+     "score": 78.5,
+     "unit": "score",
+     "setting": "xhigh effort; high effort scores 76.0 at $3.01 and 1m28s; xhigh took 4m18s",
+     "cost_per_task_usd": 7.41,
+     "source": "https://macroscope.com/benchmark",
+     "source_type": "vendor",
+     "date": "2026-10-20"
+    },
+    "AA Coding Agent Index v2.1": {
+     "score": 58,
+     "unit": "index",
+     "setting": "xhigh and high both 58; max 56 (more attempts hit time limits), Claude Code; cost shown is the max-effort config",
+     "cost_per_task_usd": 44.22,
+     "source": "https://x.com/ArtificialAnlys/status/2121393821955334328",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    },
+    "FrontierCode 2.0": {
+     "score": 49.1,
+     "unit": "%",
+     "setting": "xhigh",
+     "source": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+     "source_type": "vendor",
+     "date": "2026-11-09"
+    },
+    "FrontierSWE v2": {
+     "score": 69.9,
+     "unit": "%",
+     "setting": "not stated",
+     "source": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+     "source_type": "vendor",
+     "date": "2026-11-09"
+    },
+    "Terminal-Bench-Science 0.1": {
+     "score": 74.6,
+     "unit": "%",
+     "setting": "not stated",
+     "source": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+     "source_type": "vendor",
+     "date": "2026-11-09"
+    }
+   },
+   "notes": "Released ~Nov 9 2026. $8/$40 per M tokens (benchlm). Best long-run result: 1,000-subagent run (Anthropic launch page). Cost per task very high ($44.22 at max in AA coding agent index)."
+  },
+  {
+   "name": "Gemini 4 Carbon",
+   "vendor": "Google",
+   "tier": "frontier",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "google/gemini-4-carbon",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 2.0,
+    "out": 10.0,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1048576,
+   "speed_tokens_per_s": 98.0,
+   "fit": "Another family at Opus's level (AA 60.0 vs 59.1), but at high effort through OpenRouter one small review took 7.5 minutes and $0.33 (calibration, one run): too slow and dear for a routine second check. Untested at lower effort.",
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 60.0,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 98.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 94.2,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-3": {
+     "score": 99.09,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "LMArena WebDev": {
+     "score": 1768,
+     "unit": "Arena rating",
+     "setting": "High",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-11"
+    },
+    "AA Coding Agent Index v2.1": {
+     "score": 55,
+     "unit": "index",
+     "setting": "high, Antigravity CLI",
+     "source": "https://x.com/ArtificialAnlys/status/2121393821955334328",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    },
+    "FrontierCode 2.0": {
+     "score": 41.1,
+     "unit": "%",
+     "setting": "medium",
+     "source": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+     "source_type": "vendor",
+     "date": "2026-11-09"
+    }
+   },
+   "calibration": {
+    "openrouter:google/gemini-4-carbon@high": {
+     "20261115b": {
+      "runs": 1,
+      "failed_runs": 0,
+      "critic_flaws_caught": "1/1",
+      "critic_clean_accepted": "0/0",
+      "critic_false_blocking": 0,
+      "solver_correct": {},
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 446.6,
+       "solver": null
+      },
+      "cost_usd": 0.331
+     }
+    }
+   }
+  },
+  {
+   "name": "Claude Opus 5.5",
+   "vendor": "Anthropic",
+   "tier": "frontier",
+   "ids": {
+    "claude_code": "opus",
+    "openrouter": "anthropic/claude-opus-5.5",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 4.0,
+    "out": 20.0,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1000000,
+   "speed_tokens_per_s": 97.0,
+   "fit": "Planner, plan critic, completeness, strategist, synthesizer, referee; solver and attacker of hard and frontier parts. Strongest reviewer measured (Macroscope 83.9 at max effort; Qodo F1 56.8). At low effort it is below Sonnet at high (AA index 35 vs 42): do not use opus@low.",
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 59.1,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 98.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 93.3,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro (public, vendor-reported)": {
+     "score": 89.9,
+     "unit": "% resolved",
+     "setting": "vendor",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "Terminal-Bench 4.1": {
+     "score": 65.8,
+     "unit": "% resolved",
+     "setting": "max, Claude Code, +-3.1, 8.0B tokens, $4.7k total",
+     "source": "https://snorkel.ai/blog/terminal-bench-4-1-hardens-the-verifiers-behind-the-scores",
+     "source_type": "secondary",
+     "date": "2026-09-22"
+    },
+    "LMArena WebDev": {
+     "score": 1815,
+     "unit": "Arena rating",
+     "setting": "Max",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-11"
+    },
+    "Scale MCP Atlas": {
+     "score": 85.4,
+     "unit": "% pass",
+     "setting": "Opus 5.5",
+     "source": "https://models.fru.dev/boards/scale-mcp-atlas",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "AA Coding Agent Index v2.1": {
+     "score": 58,
+     "unit": "index",
+     "setting": "max, Claude Code (also 58 paired with GPT-6 Luna High in Devin Fusion CLI)",
+     "source": "https://x.com/ArtificialAnlys/status/2121393821955334328",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    },
+    "AA Intelligence Index v5.0.1 (max)": {
+     "score": 59,
+     "unit": "index",
+     "setting": "max; $10.04/task, 25.4 min/task",
+     "cost_per_task_usd": 10.04,
+     "source": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+     "source_type": "secondary",
+     "date": "2026-11-15"
+    },
+    "AA Intelligence Index v5.0.1 (xhigh*)": {
+     "score": 57,
+     "unit": "index",
+     "setting": "xhigh (column inferred from price/order); $6.05, 15.8 min",
+     "cost_per_task_usd": 6.05,
+     "source": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+     "source_type": "secondary",
+     "date": "2026-11-15"
+    },
+    "AA Intelligence Index v5.0.1 (high*)": {
+     "score": 52,
+     "unit": "index",
+     "setting": "high (inferred); $3.46, 9.4 min",
+     "cost_per_task_usd": 3.46,
+     "source": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+     "source_type": "secondary",
+     "date": "2026-11-15"
+    },
+    "AA Intelligence Index v5.0.1 (medium*)": {
+     "score": 48,
+     "unit": "index",
+     "setting": "medium (inferred); $2.45, 6.9 min",
+     "cost_per_task_usd": 2.45,
+     "source": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+     "source_type": "secondary",
+     "date": "2026-11-15"
+    },
+    "AA Intelligence Index v5.0.1 (low)": {
+     "score": 35,
+     "unit": "index",
+     "setting": "low; $0.98, 3.1 min (low confirmed by page text)",
+     "cost_per_task_usd": 0.98,
+     "source": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+     "source_type": "secondary",
+     "date": "2026-11-15"
+    },
+    "Terminal-Bench 4.0 (AA, by effort)": {
+     "score": 31.3,
+     "unit": "%",
+     "setting": "low (52.5 medium*, 56.6 high*, 59.6 xhigh* and max)",
+     "source": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+     "source_type": "secondary",
+     "date": "2026-11-15"
+    },
+    "MacroscopeBench (code review)": {
+     "score": 83.9,
+     "unit": "score",
+     "setting": "max effort; recall 83.8, precision 84.0; 10m8s. xhigh 78.9 ($3.51, 2m52s), high 73.1 ($1.30, 1m3s)",
+     "cost_per_task_usd": 11.58,
+     "source": "https://macroscope.com/benchmark",
+     "source_type": "vendor",
+     "date": "2026-10-20"
+    },
+    "Qodo code review F1": {
+     "score": 56.8,
+     "unit": "% F1",
+     "setting": "high (xhigh 54.0, low 45.1 per fireworks mirror)",
+     "cost_per_task_usd": 1.0,
+     "source": "https://qodo.ai/blog/which-llm-should-review-your-code",
+     "source_type": "vendor",
+     "date": "2026-10-12"
+    },
+    "IronBee code review F2": {
+     "score": 62.1,
+     "unit": "F2 (x100)",
+     "setting": "low; default 61.9 ($0.316); xhigh 60.4 ($0.479, 1.7 min). All within noise (top group F2 58.5-64.4)",
+     "cost_per_task_usd": 0.283,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    },
+    "Kodus code review recall": {
+     "score": 42.2,
+     "unit": "% recall",
+     "setting": "balanced single-agent; precision 52.6",
+     "cost_per_task_usd": 0.715,
+     "source": "https://kodus.io/en/best-llms-for-code-review",
+     "source_type": "secondary",
+     "date": "2026-11-11"
+    },
+    "FrontierCode 2.0": {
+     "score": 45.5,
+     "unit": "%",
+     "setting": "not stated",
+     "source": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+     "source_type": "vendor",
+     "date": "2026-11-09"
+    },
+    "Terminal-Bench 4.0 (Moonshot sheet)": {
+     "score": 66.4,
+     "unit": "%",
+     "setting": "as quoted in a Moonshot vendor sheet",
+     "source": "https://k31pro.novcog.us.com/benchmarks",
+     "source_type": "vendor",
+     "date": "2026-11-14"
+    }
+   },
+   "calibration": {
+    "claude:opus@high": {
+     "20261115": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "3/3",
+      "critic_clean_accepted": "2/3",
+      "critic_false_blocking": 0,
+      "solver_correct": {
+       "s1-duration": true,
+       "s2-booking": true,
+       "s3-cycle": true
+      },
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 33.7,
+       "solver": 31.2
+      },
+      "cost_usd": 1.1766
+     },
+     "20261115b": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "5/5",
+      "critic_clean_accepted": "4/4",
+      "critic_false_blocking": 0,
+      "solver_correct": {},
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 33.6,
+       "solver": null
+      },
+      "cost_usd": 1.1258
+     }
+    },
+    "claude:opus@medium": {
+     "20261115": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "3/3",
+      "critic_clean_accepted": "3/3",
+      "critic_false_blocking": 0,
+      "solver_correct": {
+       "s1-duration": true,
+       "s2-booking": true,
+       "s3-cycle": true
+      },
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 24.8,
+       "solver": 43.2
+      },
+      "cost_usd": 1.2538
+     },
+     "20261115b": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "5/5",
+      "critic_clean_accepted": "4/4",
+      "critic_false_blocking": 0,
+      "solver_correct": {},
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 25.3,
+       "solver": null
+      },
+      "cost_usd": 1.2635
+     }
+    }
+   },
+   "notes": "$4/$20. Default effort medium. Best AA Intelligence Index (59 at max). Best code-review scores in Macroscope/Qodo."
+  },
+  {
+   "name": "GPT-6.1 Sol",
+   "vendor": "OpenAI",
+   "tier": "frontier",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "openai/gpt-6.1-sol",
+    "codex_cli": "gpt-6.1-sol"
+   },
+   "price_usd_per_mtok": {
+    "in": 2.0,
+    "out": 10.0,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1050000,
+   "speed_tokens_per_s": 65.0,
+   "fit": "Codex subscription route for solver and attacker of moderate and hard parts once the Codex CLI is installed (Terminal-Bench 4.1 60.9; $1.51 a task on AA's coding index against $44 for Fable at max).",
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 54.6,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 98.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 94.2,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-3": {
+     "score": 96.37,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "Terminal-Bench 4.1": {
+     "score": 60.9,
+     "unit": "% resolved",
+     "setting": "max, Codex, +-3.0, 1.5B tokens, $634 total",
+     "source": "https://snorkel.ai/blog/terminal-bench-4-1-hardens-the-verifiers-behind-the-scores",
+     "source_type": "secondary",
+     "date": "2026-11-09"
+    },
+    "LMArena WebDev": {
+     "score": 1743,
+     "unit": "Arena rating",
+     "setting": "Max",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-11"
+    },
+    "AA Coding Agent Index v2.1": {
+     "score": 52,
+     "unit": "index",
+     "setting": "max, Codex",
+     "cost_per_task_usd": 1.51,
+     "source": "https://x.com/ArtificialAnlys/status/2121393821955334328",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    },
+    "MacroscopeBench (code review)": {
+     "score": 78.5,
+     "unit": "score",
+     "setting": "max; precision 90.7 recall 69.2",
+     "cost_per_task_usd": 1.05,
+     "source": "https://macroscope.com/benchmark",
+     "source_type": "vendor",
+     "date": "2026-10-20"
+    },
+    "IronBee code review F2": {
+     "score": 47.5,
+     "unit": "F2 (x100)",
+     "setting": "xhigh (default 44.2, low 42.5)",
+     "cost_per_task_usd": 0.15,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    },
+    "Kodus code review recall": {
+     "score": 43.0,
+     "unit": "% recall",
+     "setting": "balanced; precision 62.7 (highest)",
+     "cost_per_task_usd": 0.787,
+     "source": "https://kodus.io/en/best-llms-for-code-review",
+     "source_type": "secondary",
+     "date": "2026-11-11"
+    },
+    "LiveBench global average": {
+     "score": 81.6,
+     "unit": "%",
+     "setting": "max",
+     "source": "https://models.fru.dev/boards/livebench",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    }
+   },
+   "notes": "OpenAI claims it nearly matches Astra at 1/5 cost (vendor). Cheapest high-scoring OpenAI model. Naming: OpenAI GPT-5.6 Sol/Terra/Luna also exist; GPT-6.1 Terra appears in Macroscope."
+  },
+  {
+   "name": "Claude Sonnet 5.5",
+   "vendor": "Anthropic",
+   "tier": "mid",
+   "ids": {
+    "claude_code": "sonnet",
+    "openrouter": "anthropic/claude-sonnet-5.5",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 2.0,
+    "out": 10.0,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1000000,
+   "speed_tokens_per_s": 135.0,
+   "fit": "Solver and attacker of trivial, easy and moderate parts; reflector; data fetcher. Close to Opus on agentic coding (Terminal-Bench 4.1 63.9 vs 65.8) at half the price and 1.4x the speed. In calibration: fastest of all at low and medium effort, every probe passed.",
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 54.5,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 96.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 83.9,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-3": {
+     "score": 72.44,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro (public, vendor-reported)": {
+     "score": 81.3,
+     "unit": "% resolved",
+     "setting": "vendor",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 70.6,
+     "unit": "% resolved",
+     "setting": "mini-swe-agent, xhigh",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "Terminal-Bench 4.1": {
+     "score": 63.9,
+     "unit": "% resolved",
+     "setting": "max, Claude Code, +-3.0, 19.4B tokens, $7.3k total",
+     "source": "https://snorkel.ai/blog/terminal-bench-4-1-hardens-the-verifiers-behind-the-scores",
+     "source_type": "secondary",
+     "date": "2026-09-28"
+    },
+    "Terminal-Bench 4.0 (Anthropic)": {
+     "score": 70.6,
+     "unit": "%",
+     "setting": "peak effort; Opus 5.5 66.4 in same source family",
+     "source": "https://www.anthropic.com/claude-haiku-5-5",
+     "source_type": "vendor",
+     "date": "2026-10-07"
+    },
+    "LMArena WebDev": {
+     "score": 1772,
+     "unit": "Arena rating",
+     "setting": "xHigh",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-11"
+    },
+    "AA Coding Agent Index v2.1": {
+     "score": 56,
+     "unit": "index",
+     "setting": "max, Claude Code",
+     "source": "https://x.com/ArtificialAnlys/status/2121393821955334328",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    },
+    "AA Intelligence Index v5.0.1 (max)": {
+     "score": 55,
+     "unit": "index",
+     "setting": "max; $10.02, 33.3 min/task (AA launch article says 56 at $7.60)",
+     "cost_per_task_usd": 10.02,
+     "source": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+     "source_type": "secondary",
+     "date": "2026-11-15"
+    },
+    "AA Intelligence Index v5.0.1 (xhigh*)": {
+     "score": 50,
+     "unit": "index",
+     "setting": "xhigh (inferred column); $4.09, 14.5 min",
+     "cost_per_task_usd": 4.09,
+     "source": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+     "source_type": "secondary",
+     "date": "2026-11-15"
+    },
+    "AA Intelligence Index v5.0.1 (high*)": {
+     "score": 42,
+     "unit": "index",
+     "setting": "high (inferred); $1.64, 6.9 min",
+     "cost_per_task_usd": 1.64,
+     "source": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+     "source_type": "secondary",
+     "date": "2026-11-15"
+    },
+    "AA Intelligence Index v5.0.1 (medium*)": {
+     "score": 31,
+     "unit": "index",
+     "setting": "medium (inferred); $0.78, 4.1 min",
+     "cost_per_task_usd": 0.78,
+     "source": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+     "source_type": "secondary",
+     "date": "2026-11-15"
+    },
+    "AA Intelligence Index v5.0.1 (low)": {
+     "score": 26,
+     "unit": "index",
+     "setting": "low; $0.51, 2.6 min (confirmed by page text)",
+     "cost_per_task_usd": 0.51,
+     "source": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+     "source_type": "secondary",
+     "date": "2026-11-15"
+    },
+    "Terminal-Bench 4.0 (AA, by effort)": {
+     "score": 63.6,
+     "unit": "%",
+     "setting": "max (57.1 xhigh*, 43.9 high*, 29.8 medium*, 20.7 low)",
+     "source": "https://artificialanalysis.ai/models/comparisons/claude-opus-5-5-low-vs-claude-sonnet-5-5-high",
+     "source_type": "secondary",
+     "date": "2026-11-15"
+    },
+    "Qodo code review F1": {
+     "score": 54.9,
+     "unit": "% F1",
+     "setting": "high (text of same post says 51.7 at high $0.31 and 54.9 at xhigh $0.73; table/text inconsistent)",
+     "cost_per_task_usd": 0.73,
+     "source": "https://qodo.ai/blog/which-llm-should-review-your-code",
+     "source_type": "vendor",
+     "date": "2026-10-12"
+    },
+    "IronBee code review F2": {
+     "score": 64.4,
+     "unit": "F2 (x100)",
+     "setting": "low; P 46.0 R 71.5 (highest of 52 configs, within noise of 13 others); default 61.7, xhigh 61.1",
+     "cost_per_task_usd": 0.142,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    },
+    "Kodus code review recall": {
+     "score": 37.2,
+     "unit": "% recall",
+     "setting": "balanced; precision 57.0",
+     "cost_per_task_usd": 0.542,
+     "source": "https://kodus.io/en/best-llms-for-code-review",
+     "source_type": "secondary",
+     "date": "2026-11-11"
+    },
+    "tau2-bench airline": {
+     "score": 78.8,
+     "unit": "% pass",
+     "setting": "OpenRouter, +-2.2pp, 71s/task",
+     "cost_per_task_usd": 0.16,
+     "source": "https://openrouter.ai/benchmarks/tau2-bench-airline",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    }
+   },
+   "calibration": {
+    "claude:sonnet@high": {
+     "20261115": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "3/3",
+      "critic_clean_accepted": "3/3",
+      "critic_false_blocking": 0,
+      "solver_correct": {
+       "s1-duration": true,
+       "s2-booking": true,
+       "s3-cycle": true
+      },
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 18.9,
+       "solver": 20.2
+      },
+      "cost_usd": 0.4964
+     },
+     "20261115b": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "5/5",
+      "critic_clean_accepted": "4/4",
+      "critic_false_blocking": 0,
+      "solver_correct": {},
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 18.4,
+       "solver": null
+      },
+      "cost_usd": 0.4673
+     }
+    },
+    "claude:sonnet@low": {
+     "20261115": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "3/3",
+      "critic_clean_accepted": "3/3",
+      "critic_false_blocking": 0,
+      "solver_correct": {
+       "s2-booking": true,
+       "s1-duration": true,
+       "s3-cycle": true
+      },
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 10.2,
+       "solver": 13.4
+      },
+      "cost_usd": 0.5094
+     },
+     "20261115b": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "5/5",
+      "critic_clean_accepted": "3/4",
+      "critic_false_blocking": 0,
+      "solver_correct": {},
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 11.2,
+       "solver": null
+      },
+      "cost_usd": 0.4642
+     }
+    },
+    "claude:sonnet@medium": {
+     "20261115": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "3/3",
+      "critic_clean_accepted": "3/3",
+      "critic_false_blocking": 0,
+      "solver_correct": {
+       "s2-booking": true,
+       "s1-duration": true,
+       "s3-cycle": true
+      },
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 12.1,
+       "solver": 19.7
+      },
+      "cost_usd": 0.4371
+     },
+     "20261115b": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "5/5",
+      "critic_clean_accepted": "4/4",
+      "critic_false_blocking": 0,
+      "solver_correct": {},
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 11.9,
+       "solver": null
+      },
+      "cost_usd": 0.3821
+     }
+    }
+   },
+   "notes": "$2/$10. Heaviest output-token user AA measured (~193k tokens/task at max). Best value in code review (IronBee low effort top F2). Vendor SWE-bench Pro 81.3 vs Scale mini-swe-agent 70.6: harness gap."
+  },
+  {
+   "name": "Gemini 4 Hydrogen",
+   "vendor": "Google",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "google/gemini-4-hydrogen",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 1.5,
+    "out": 7.5,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1048576,
+   "speed_tokens_per_s": 246.0,
+   "fit": "Second attacker for moderate parts in the mixed profile: another family at Sonnet's level (AA 53.9); 9 of 9 review probes right in calibration, including accepting the correct submission that tempts a reviewer to invent a stricter bar. About 40 s and $0.07 a check through OpenRouter (Sonnet: 12-18 s).",
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 53.9,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "LMArena WebDev": {
+     "score": 1704,
+     "unit": "Arena rating",
+     "setting": "High",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    }
+   },
+   "calibration": {
+    "openrouter:google/gemini-4-hydrogen@medium": {
+     "20261115": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "3/3",
+      "critic_clean_accepted": "3/3",
+      "critic_false_blocking": 0,
+      "solver_correct": {
+       "s1-duration": true,
+       "s2-booking": true,
+       "s3-cycle": true
+      },
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 43.2,
+       "solver": 47.8
+      },
+      "cost_usd": 0.6657
+     },
+     "20261115b": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "5/5",
+      "critic_clean_accepted": "4/4",
+      "critic_false_blocking": 0,
+      "solver_correct": {},
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 39.6,
+       "solver": null
+      },
+      "cost_usd": 0.61
+     }
+    }
+   }
+  },
+  {
+   "name": "GPT-6.1 Terra",
+   "vendor": "OpenAI",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "openai/gpt-6.1-terra",
+    "codex_cli": "gpt-6.1-terra"
+   },
+   "price_usd_per_mtok": {
+    "in": 1.0,
+    "out": 5.0,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1050000,
+   "speed_tokens_per_s": 90.0,
+   "fit": "Not as an attacker here. Strong on a vendor code-review benchmark (Macroscope 82.3), but in calibration it rejected a correct submission at medium and at high effort with three to four invented blocking findings (4300-digit integers, Unicode digits, str subclasses): a reviewer that raises the bar past the contract is what makes parts loop. Fine as a solver on the probes.",
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 51.3,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "MacroscopeBench (code review)": {
+     "score": 82.3,
+     "unit": "score",
+     "setting": "high; precision 91.2 recall 75.0 (medium 81.2 at $0.35, 1m23s; low 76.1 at $0.18, 41s)",
+     "cost_per_task_usd": 0.57,
+     "source": "https://macroscope.com/benchmark",
+     "source_type": "vendor",
+     "date": "2026-10-20"
+    }
+   },
+   "calibration": {
+    "openrouter:openai/gpt-6.1-terra@medium": {
+     "20261115": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "3/3",
+      "critic_clean_accepted": "0/3",
+      "critic_false_blocking": 0,
+      "solver_correct": {
+       "s2-booking": true,
+       "s3-cycle": true,
+       "s1-duration": true
+      },
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 38.2,
+       "solver": 33.3
+      },
+      "cost_usd": 0.1555
+     },
+     "20261115b": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "5/5",
+      "critic_clean_accepted": "3/4",
+      "critic_false_blocking": 4,
+      "solver_correct": {},
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 44.5,
+       "solver": null
+      },
+      "cost_usd": 0.1867
+     }
+    },
+    "openrouter:openai/gpt-6.1-terra@high": {
+     "20261115b": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "5/5",
+      "critic_clean_accepted": "3/4",
+      "critic_false_blocking": 5,
+      "solver_correct": {},
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 84.1,
+       "solver": null
+      },
+      "cost_usd": 0.3457
+     }
+    }
+   },
+   "notes": "Macroscope calls it GPT-6.1 Terra; other boards say GPT-5.6 Terra. Treat as separate rows."
+  },
+  {
+   "name": "Kimi K3.1 Pro",
+   "vendor": "Moonshot",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "moonshotai/kimi-k3.1-pro",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 0.223,
+    "out": 8.411,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1048576,
+   "speed_tokens_per_s": 29.0,
+   "fit": "Not as an attacker: highest recall in one review benchmark (68.6%) with 49% precision, which means false findings and extra rounds. Possible cheap solver; its headline scores are the vendor's own.",
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 46.5,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "LMArena WebDev": {
+     "score": 1687,
+     "unit": "Arena rating",
+     "setting": "Max",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "Kodus code review recall": {
+     "score": 68.6,
+     "unit": "% recall",
+     "setting": "balanced; precision 49.1; 83 of 121 bugs",
+     "cost_per_task_usd": 1.244,
+     "source": "https://kodus.io/en/best-llms-for-code-review",
+     "source_type": "secondary",
+     "date": "2026-11-11"
+    },
+    "Terminal-Bench 4.0 (vendor sheet)": {
+     "score": 65.7,
+     "unit": "%",
+     "setting": "max, Claude Code",
+     "source": "https://k31pro.novcog.us.com/benchmarks",
+     "source_type": "vendor",
+     "date": "2026-11-14"
+    },
+    "DeepSWE v1.1 (vendor sheet)": {
+     "score": 75.5,
+     "unit": "%",
+     "setting": "max",
+     "source": "https://k31pro.novcog.us.com/benchmarks",
+     "source_type": "vendor",
+     "date": "2026-11-14"
+    },
+    "AA Coding Agent Index (Kimi Code CLI, per AA post snippet)": {
+     "score": 68,
+     "unit": "%",
+     "setting": "Kimi Code CLI; snippet from AA X search result, metric name not fully visible",
+     "source": "https://x.com/ArtificialAnlys/status/2121393821955334328",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    },
+    "tau2-bench airline": {
+     "score": 75.9,
+     "unit": "% pass",
+     "setting": "OpenRouter run",
+     "cost_per_task_usd": 0.21,
+     "source": "https://openrouter.ai/benchmarks/tau2-bench-airline",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    }
+   },
+   "calibration": {
+    "openrouter:moonshotai/kimi-k3.1-pro@medium": {
+     "20261115": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "3/3",
+      "critic_clean_accepted": "0/3",
+      "critic_false_blocking": 0,
+      "solver_correct": {
+       "s1-duration": true,
+       "s3-cycle": true,
+       "s2-booking": true
+      },
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 22.0,
+       "solver": 22.7
+      },
+      "cost_usd": 0.2405
+     },
+     "20261115b": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "5/5",
+      "critic_clean_accepted": "4/4",
+      "critic_false_blocking": 1,
+      "solver_correct": {},
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 30.4,
+       "solver": null
+      },
+      "cost_usd": 0.426
+     }
+    }
+   },
+   "notes": "Open weights. Best code-review recall in Kodus (68.6%). Vendor sheet numbers are from a third-party page reproducing Moonshot's sheet."
+  },
+  {
+   "name": "Claude Haiku 5.5",
+   "vendor": "Anthropic",
+   "tier": "fast",
+   "ids": {
+    "claude_code": "haiku",
+    "openrouter": "anthropic/claude-haiku-5.5",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 0.1,
+    "out": 0.5,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1000000,
+   "speed_tokens_per_s": 235.0,
+   "fit": "Relay agent; solver of trivial and easy parts in the economy profile. Weak on long agentic work (Terminal-Bench 4.0 39.2, vendor) and it over-flags as a fact checker (30 correct sentences flagged where Opus flagged 0, one test): never the attacker. In calibration at high effort it passed every probe but wrote about 5x the output of Sonnet and was slower.",
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 36.5,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 89.0,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 61.3,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-3": {
+     "score": 2.82,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 52.9,
+     "unit": "% resolved",
+     "setting": "mini-swe-agent, high",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "Terminal-Bench 4.0 (Anthropic)": {
+     "score": 39.2,
+     "unit": "%",
+     "setting": "not stated (Sonnet 5.5 70.6, GPT-6 Luna 16.4 in same table)",
+     "source": "https://www.anthropic.com/claude-haiku-5-5",
+     "source_type": "vendor",
+     "date": "2026-10-07"
+    },
+    "FrontierCode 1.1 (Main)": {
+     "score": 46.4,
+     "unit": "%",
+     "setting": "not stated (Sonnet 5.5 xhigh 52.1)",
+     "source": "https://www.anthropic.com/claude-haiku-5-5",
+     "source_type": "vendor",
+     "date": "2026-10-07"
+    },
+    "IronBee code review F2": {
+     "score": 50.7,
+     "unit": "F2 (x100)",
+     "setting": "default; low 46.7 ($0.020, 14s), xhigh 50.2 ($0.070, 2.1 min). Single no-tool call.",
+     "cost_per_task_usd": 0.023,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    },
+    "bito coding sessions (blended score)": {
+     "score": 79,
+     "unit": "% of max",
+     "setting": "high; Sonnet 5.5 high 82, Haiku medium 76, Opus medium 85",
+     "cost_per_task_usd": 0.62,
+     "source": "https://bito.ai/blog/claude-haiku-5-5-vs-sonnet-5-5-vs-opus-5-5/",
+     "source_type": "vendor",
+     "date": "2026-10-09"
+    },
+    "Opus-boss/worker bench accuracy": {
+     "score": 99.9,
+     "unit": "% hidden tests",
+     "setting": "worker Haiku high under Opus 5.5 high boss, 13 tasks x3; $2.66/run vs $6.29 all-Opus; xhigh 100.0 at $2.86; medium 99.9 at $2.71",
+     "source": "https://github.com/jankorbay/orchestrator-worker-bench",
+     "source_type": "secondary",
+     "date": "2026-11-15"
+    },
+    "SWE-bench Verified subset (django+sympy, 295 tasks)": {
+     "score": 86.8,
+     "unit": "% first attempt",
+     "setting": "single Haiku 5.5 attempt; retry ladder Haiku->Haiku 286/295 for $8.49",
+     "source": "https://github.com/oaustegard/experiments/blob/main/swe-ladder/RESULTS.md",
+     "source_type": "secondary",
+     "date": "2026-10-09"
+    }
+   },
+   "calibration": {
+    "claude:haiku@high": {
+     "20261115": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "3/3",
+      "critic_clean_accepted": "1/3",
+      "critic_false_blocking": 0,
+      "solver_correct": {
+       "s1-duration": true,
+       "s3-cycle": true,
+       "s2-booking": true
+      },
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 50.1,
+       "solver": 52.7
+      },
+      "cost_usd": 0.0857
+     },
+     "20261115b": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "5/5",
+      "critic_clean_accepted": "4/4",
+      "critic_false_blocking": 1,
+      "solver_correct": {},
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 52.3,
+       "solver": null
+      },
+      "cost_usd": 0.0978
+     }
+    }
+   },
+   "notes": "$0.10/$0.50. First Haiku with effort levels. Anthropic recommends it as sub-agent. SWE-bench Pro 64.8 (Anthropic system card) appears only in an aggregator search snippet, not recorded."
+  },
+  {
+   "name": "Muse Ember",
+   "vendor": "Meta",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "meta/muse-ember",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 0.1,
+    "out": 0.5,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1048576,
+   "speed_tokens_per_s": 736.0,
+   "fit": "Fastest small model (736 tokens/s; 16 s a review probe) at Haiku's level (AA 36.0). A candidate for mechanical roles.",
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 36.0,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    }
+   },
+   "calibration": {
+    "openrouter:meta/muse-ember@medium": {
+     "20261115": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "3/3",
+      "critic_clean_accepted": "2/3",
+      "critic_false_blocking": 0,
+      "solver_correct": {
+       "s2-booking": true,
+       "s1-duration": true,
+       "s3-cycle": true
+      },
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 16.0,
+       "solver": 23.5
+      },
+      "cost_usd": 0.0289
+     },
+     "20261115b": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "5/5",
+      "critic_clean_accepted": "4/4",
+      "critic_false_blocking": 0,
+      "solver_correct": {},
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 15.4,
+       "solver": null
+      },
+      "cost_usd": 0.0264
+     }
+    }
+   }
+  },
+  {
+   "name": "DeepSeek V4.1 Flash 1017",
+   "vendor": "DeepSeek",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "deepseek/deepseek-v4.1-flash-1017",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 0.15,
+    "out": 0.6,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1048576,
+   "speed_tokens_per_s": 173.0,
+   "fit": "Cheapest model that passed every calibration probe ($0.04 for nine); slow per call through OpenRouter and at Haiku's level on general benchmarks (AA 32.6). A candidate for mechanical roles, not for judging.",
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 32.6,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 94.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 78.1,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-3": {
+     "score": 5.81,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "Kodus code review recall": {
+     "score": 40.5,
+     "unit": "% recall",
+     "setting": "balanced; precision 43.4",
+     "cost_per_task_usd": 0.134,
+     "source": "https://kodus.io/en/best-llms-for-code-review",
+     "source_type": "secondary",
+     "date": "2026-11-11"
+    },
+    "IronBee code review F2": {
+     "score": 56.5,
+     "unit": "F2 (x100)",
+     "setting": "high (low 52.9 at $0.017)",
+     "cost_per_task_usd": 0.025,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    },
+    "LMArena WebDev": {
+     "score": 1664,
+     "unit": "Arena rating",
+     "setting": "Max",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "LiveBench global average": {
+     "score": 81.1,
+     "unit": "%",
+     "setting": "max",
+     "source": "https://models.fru.dev/boards/livebench",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    }
+   },
+   "calibration": {
+    "openrouter:deepseek/deepseek-v4.1-flash-1017@medium": {
+     "20261115": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "3/3",
+      "critic_clean_accepted": "1/3",
+      "critic_false_blocking": 0,
+      "solver_correct": {
+       "s2-booking": true,
+       "s1-duration": true,
+       "s3-cycle": true
+      },
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 67.1,
+       "solver": 38.0
+      },
+      "cost_usd": 0.0408
+     },
+     "20261115b": {
+      "runs": 9,
+      "failed_runs": 0,
+      "critic_flaws_caught": "5/5",
+      "critic_clean_accepted": "4/4",
+      "critic_false_blocking": 1,
+      "solver_correct": {},
+      "solver_false_claims": 0,
+      "mean_seconds": {
+       "critic": 60.2,
+       "solver": null
+      },
+      "cost_usd": 0.0538
+     }
+    }
+   },
+   "notes": "Cheap code-review option: Kodus recall 40.5% at $0.134 per PR."
+  },
+  {
+   "name": "GPT-6 Astra",
+   "vendor": "OpenAI",
+   "tier": "frontier",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": "gpt-6-astra"
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 58.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 56.9,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 98.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 95.0,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-3": {
+     "score": 99.95,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 90.2,
+     "unit": "% resolved",
+     "setting": "Codex, high",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "Terminal-Bench 4.1": {
+     "score": 60.3,
+     "unit": "% resolved",
+     "setting": "max, Codex, +-2.8, $3.3k total",
+     "source": "https://snorkel.ai/blog/terminal-bench-4-1-hardens-the-verifiers-behind-the-scores",
+     "source_type": "secondary",
+     "date": "2026-11-09"
+    },
+    "LMArena WebDev": {
+     "score": 1764,
+     "unit": "Arena rating",
+     "setting": "Max",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-11"
+    },
+    "Qodo code review F1": {
+     "score": 46.6,
+     "unit": "% F1",
+     "setting": "high",
+     "cost_per_task_usd": 1.56,
+     "source": "https://qodo.ai/blog/which-llm-should-review-your-code",
+     "source_type": "vendor",
+     "date": "2026-10-12"
+    },
+    "LiveBench global average": {
+     "score": 82.2,
+     "unit": "%",
+     "setting": "max (not coding-specific)",
+     "source": "https://models.fru.dev/boards/livebench",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "MacroscopeBench (code review)": {
+     "score": 78.0,
+     "unit": "score",
+     "setting": "max; recall 67.8 precision 91.7",
+     "cost_per_task_usd": 7.87,
+     "source": "https://macroscope.com/benchmark",
+     "source_type": "vendor",
+     "date": "2026-10-20"
+    }
+   },
+   "notes": "Priciest OpenAI ($10/$50 per llm-stats)."
+  },
+  {
+   "name": "Claude Fable 5.1",
+   "vendor": "Anthropic",
+   "tier": "frontier",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 69.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 49.2,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 97.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 90.0,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro (public, vendor-reported)": {
+     "score": 81.2,
+     "unit": "% resolved",
+     "setting": "vendor",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 92.2,
+     "unit": "% resolved",
+     "setting": "Claude Code, high",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "Terminal-Bench 4.1": {
+     "score": 57.6,
+     "unit": "% resolved",
+     "setting": "xhigh, Claude Code, +-3.3",
+     "source": "https://snorkel.ai/blog/terminal-bench-4-1-hardens-the-verifiers-behind-the-scores",
+     "source_type": "secondary",
+     "date": "2026-11-09"
+    },
+    "LMArena WebDev": {
+     "score": 1742,
+     "unit": "Arena rating",
+     "setting": "Max",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-11"
+    },
+    "Scale MCP Atlas": {
+     "score": 87.2,
+     "unit": "% pass",
+     "setting": "Fable 5.1",
+     "source": "https://models.fru.dev/boards/scale-mcp-atlas",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "Qodo code review F1": {
+     "score": 53.5,
+     "unit": "% F1",
+     "setting": "high",
+     "cost_per_task_usd": 2.31,
+     "source": "https://qodo.ai/blog/which-llm-should-review-your-code",
+     "source_type": "vendor",
+     "date": "2026-10-12"
+    },
+    "tau2-bench airline": {
+     "score": 79.2,
+     "unit": "% pass",
+     "setting": "OpenRouter run, +-1.3pp, 1.9 min/task",
+     "cost_per_task_usd": 0.72,
+     "source": "https://openrouter.ai/benchmarks/tau2-bench-airline",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    }
+   },
+   "notes": "Prior Fable. $10/$50."
+  },
+  {
+   "name": "Claude Mythos Preview (early)",
+   "vendor": "Anthropic",
+   "tier": "frontier",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "METR time horizon 1.1 (50%)": {
+     "score": 1044.8,
+     "unit": "minutes",
+     "setting": "50% horizon, CI 508.9-3304.3 min; 80% horizon 185.9 min",
+     "source": "https://metr.org/assets/benchmark_results_1_1.yaml",
+     "source_type": "primary",
+     "date": "2026-09-08"
+    }
+   },
+   "notes": "Older model; included only because METR has no entry for any 5.x model (page frozen Sep 8 2026)."
+  },
+  {
+   "name": "Claude Opus 4.6",
+   "vendor": "Anthropic",
+   "tier": "frontier",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "METR time horizon 1.1 (50%)": {
+     "score": 718.8,
+     "unit": "minutes",
+     "setting": "50% horizon, CI 316.7-3633.8 min; 80% horizon 69.9 min",
+     "source": "https://metr.org/assets/benchmark_results_1_1.yaml",
+     "source_type": "primary",
+     "date": "2026-09-08"
+    }
+   },
+   "notes": "Older model; included only because METR has no entry for any 5.x model (page frozen Sep 8 2026)."
+  },
+  {
+   "name": "Gemini 3.1 Pro",
+   "vendor": "Google",
+   "tier": "frontier",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "METR time horizon 1.1 (50%)": {
+     "score": 384.1,
+     "unit": "minutes",
+     "setting": "50% horizon, CI 233.5-694.8 min; 80% horizon 89.8 min",
+     "source": "https://metr.org/assets/benchmark_results_1_1.yaml",
+     "source_type": "primary",
+     "date": "2026-09-08"
+    }
+   },
+   "notes": "Older model; included only because METR has no entry for any 5.x model (page frozen Sep 8 2026)."
+  },
+  {
+   "name": "Claude Opus 4.5",
+   "vendor": "Anthropic",
+   "tier": "frontier",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "METR time horizon 1.1 (50%)": {
+     "score": 293.0,
+     "unit": "minutes",
+     "setting": "50% horizon, CI 161.7-623.7 min; 80% horizon 49.4 min",
+     "source": "https://metr.org/assets/benchmark_results_1_1.yaml",
+     "source_type": "primary",
+     "date": "2026-09-08"
+    }
+   },
+   "notes": "Older model; included only because METR has no entry for any 5.x model (page frozen Sep 8 2026)."
+  },
+  {
+   "name": "Gemini 4 Argon",
+   "vendor": "Google",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "google/gemini-4-argon",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 2.0,
+    "out": 10.0,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1048576,
+   "speed_tokens_per_s": 87.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 50.4,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 98.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 91.3,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-3": {
+     "score": 97.46,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 92.2,
+     "unit": "% resolved",
+     "setting": "mini-swe-agent, high",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "Scale MCP Atlas": {
+     "score": 90.7,
+     "unit": "% pass",
+     "setting": "Gemini-4-Argon (top)",
+     "source": "https://models.fru.dev/boards/scale-mcp-atlas",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "LMArena WebDev": {
+     "score": 1681,
+     "unit": "Arena rating",
+     "setting": "High",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-11"
+    },
+    "IronBee code review F2": {
+     "score": 56.6,
+     "unit": "F2 (x100)",
+     "setting": "high (low 52.6 at 14s, $0.121)",
+     "cost_per_task_usd": 0.235,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    },
+    "tau2-bench airline": {
+     "score": 78.7,
+     "unit": "% pass",
+     "setting": "OpenRouter run",
+     "cost_per_task_usd": 0.5,
+     "source": "https://openrouter.ai/benchmarks/tau2-bench-airline",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    }
+   }
+  },
+  {
+   "name": "GPT-6 Sol",
+   "vendor": "OpenAI",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 153.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 44.2,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "Terminal-Bench 4.1": {
+     "score": 50.3,
+     "unit": "% resolved",
+     "setting": "max, Codex",
+     "source": "https://snorkel.ai/blog/terminal-bench-4-1-hardens-the-verifiers-behind-the-scores",
+     "source_type": "secondary",
+     "date": "2026-11-09"
+    },
+    "Qodo code review F1": {
+     "score": 48.7,
+     "unit": "% F1",
+     "setting": "medium (xhigh 48.4 at 3x cost)",
+     "cost_per_task_usd": 0.18,
+     "source": "https://qodo.ai/blog/which-llm-should-review-your-code",
+     "source_type": "vendor",
+     "date": "2026-10-12"
+    },
+    "MacroscopeBench (code review)": {
+     "score": 80.3,
+     "unit": "score",
+     "setting": "max",
+     "cost_per_task_usd": 3.68,
+     "source": "https://macroscope.com/benchmark",
+     "source_type": "vendor",
+     "date": "2026-10-20"
+    }
+   }
+  },
+  {
+   "name": "Claude Opus 5",
+   "vendor": "Anthropic",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 54.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 44.2,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 97.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 90.4,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-3": {
+     "score": 30.16,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro (public, vendor-reported)": {
+     "score": 79.2,
+     "unit": "% resolved",
+     "setting": "vendor",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 98.0,
+     "unit": "% resolved",
+     "setting": "Claude Code, xhigh",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "Terminal-Bench 4.1": {
+     "score": 53.3,
+     "unit": "% resolved",
+     "setting": "xhigh, Claude Code",
+     "source": "https://snorkel.ai/blog/terminal-bench-4-1-hardens-the-verifiers-behind-the-scores",
+     "source_type": "secondary",
+     "date": "2026-11-09"
+    },
+    "SWE-rebench": {
+     "score": 63.4,
+     "unit": "% resolved",
+     "setting": "high; window 15 May-1 Jul 2026",
+     "cost_per_task_usd": 3.47,
+     "source": "https://swe-rebench.com/",
+     "source_type": "primary",
+     "date": "2026-11-15"
+    },
+    "IronBee code review F2": {
+     "score": 61.9,
+     "unit": "F2 (x100)",
+     "setting": "low (precision 38.3 recall 73.2; default 58.3, xhigh 59.1)",
+     "cost_per_task_usd": 0.449,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    }
+   },
+   "notes": "Previous gen."
+  },
+  {
+   "name": "Muse Wonder",
+   "vendor": "Meta",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "meta/muse-wonder",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 4.0,
+    "out": 20.0,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1048576,
+   "speed_tokens_per_s": 151.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 43.6,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 90.2,
+     "unit": "% resolved",
+     "setting": "Muse Wonder 1.0 mini-swe-agent xhigh",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "LMArena WebDev": {
+     "score": 1723,
+     "unit": "Arena rating",
+     "setting": "Muse Wonder Full (Max)",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-11"
+    }
+   },
+   "notes": "Closed Meta; Full variant LMArena only."
+  },
+  {
+   "name": "Muse Spark 1.3",
+   "vendor": "Meta",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 145.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 36.6,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "IronBee code review F2": {
+     "score": 60.9,
+     "unit": "F2 (x100)",
+     "setting": "default (low 59.7 at $0.062, xhigh 59.7)",
+     "cost_per_task_usd": 0.072,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    },
+    "LiveBench global average": {
+     "score": 81.6,
+     "unit": "%",
+     "setting": "xhigh",
+     "source": "https://models.fru.dev/boards/livebench",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "LMArena WebDev": {
+     "score": 1655,
+     "unit": "Arena rating",
+     "setting": "Max",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    }
+   }
+  },
+  {
+   "name": "Grok 4.7",
+   "vendor": "xAI",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 71.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 35.5,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 90.2,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 61.4,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-3": {
+     "score": 10.05,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "Terminal-Bench 4.1": {
+     "score": 38.8,
+     "unit": "% resolved",
+     "setting": "xhigh, Grok Build",
+     "source": "https://snorkel.ai/blog/terminal-bench-4-1-hardens-the-verifiers-behind-the-scores",
+     "source_type": "secondary",
+     "date": "2026-11-09"
+    },
+    "IronBee code review F2": {
+     "score": 61.9,
+     "unit": "F2 (x100)",
+     "setting": "low (default 60.7 but 5.8 min; xhigh 58.5 at 12 min)",
+     "cost_per_task_usd": 0.139,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    },
+    "LMArena WebDev": {
+     "score": 1641,
+     "unit": "Arena rating",
+     "setting": "xHigh",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    }
+   }
+  },
+  {
+   "name": "Tencent HY4",
+   "vendor": "Tencent",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "tencent/hy4",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 0.417,
+    "out": 1.25,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1048576,
+   "speed_tokens_per_s": 96.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 34.6,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    }
+   }
+  },
+  {
+   "name": "Qwen3.8 Max 0902",
+   "vendor": "Alibaba",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 39.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 33.7,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "SWE-bench Pro (public, vendor-reported)": {
+     "score": 67.7,
+     "unit": "% resolved",
+     "setting": "vendor",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "LMArena WebDev": {
+     "score": 1676,
+     "unit": "Arena rating",
+     "setting": "0902",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "IronBee code review F2": {
+     "score": 54.4,
+     "unit": "F2 (x100)",
+     "setting": "default",
+     "cost_per_task_usd": 0.214,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    }
+   }
+  },
+  {
+   "name": "GPT-5.6 Terra",
+   "vendor": "OpenAI",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 125.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 32.3,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 86.3,
+     "unit": "% resolved",
+     "setting": "Codex, xhigh",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "IronBee code review F2": {
+     "score": 48.9,
+     "unit": "F2 (x100)",
+     "setting": "xhigh (low 41.9)",
+     "cost_per_task_usd": 0.212,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    }
+   }
+  },
+  {
+   "name": "GLM-5.3",
+   "vendor": "Z.ai",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 98.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 31.7,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 84.3,
+     "unit": "% resolved",
+     "setting": "mini-swe-agent, max",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "Terminal-Bench 4.1": {
+     "score": 41.2,
+     "unit": "% resolved",
+     "setting": "max, Claude Code, $2.7k total",
+     "source": "https://snorkel.ai/blog/terminal-bench-4-1-hardens-the-verifiers-behind-the-scores",
+     "source_type": "secondary",
+     "date": "2026-11-09"
+    },
+    "Qodo code review F1": {
+     "score": 52.1,
+     "unit": "% F1",
+     "setting": "high; beats all OpenAI/Google configs",
+     "cost_per_task_usd": 0.76,
+     "source": "https://qodo.ai/blog/which-llm-should-review-your-code",
+     "source_type": "vendor",
+     "date": "2026-10-12"
+    },
+    "Scale MCP Atlas": {
+     "score": 84.2,
+     "unit": "% pass",
+     "source": "https://models.fru.dev/boards/scale-mcp-atlas",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "tau2-bench airline": {
+     "score": 77.3,
+     "unit": "% pass",
+     "setting": "OpenRouter",
+     "cost_per_task_usd": 0.057,
+     "source": "https://openrouter.ai/benchmarks/tau2-bench-airline",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    },
+    "IronBee code review F2": {
+     "score": 55.3,
+     "unit": "F2 (x100)",
+     "setting": "high",
+     "cost_per_task_usd": 0.102,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    },
+    "MacroscopeBench (code review)": {
+     "score": 77.4,
+     "unit": "score",
+     "setting": "max; recall 76.4 precision 78.4; 12m30s",
+     "cost_per_task_usd": 3.86,
+     "source": "https://macroscope.com/benchmark",
+     "source_type": "vendor",
+     "date": "2026-10-20"
+    },
+    "Kodus code review recall": {
+     "score": 41.3,
+     "unit": "% recall",
+     "setting": "balanced",
+     "cost_per_task_usd": 1.171,
+     "source": "https://kodus.io/en/best-llms-for-code-review",
+     "source_type": "secondary",
+     "date": "2026-11-11"
+    }
+   },
+   "notes": "Open weights; cheap ($0.057/task on tau2)."
+  },
+  {
+   "name": "MiMo-V2.6-Pro",
+   "vendor": "Xiaomi",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 62.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 29.9,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    }
+   }
+  },
+  {
+   "name": "Step 5 Preview",
+   "vendor": "StepFun",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 118.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 28.5,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    }
+   }
+  },
+  {
+   "name": "DeepSeek V4 Pro 0813",
+   "vendor": "DeepSeek",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 93.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 23.1,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 90.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 61.3,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro (public, vendor-reported)": {
+     "score": 55.4,
+     "unit": "% resolved",
+     "setting": "V4 Pro 0813",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "Qodo code review F1": {
+     "score": 49.9,
+     "unit": "% F1",
+     "setting": "high; slow 440s",
+     "cost_per_task_usd": 1.05,
+     "source": "https://qodo.ai/blog/which-llm-should-review-your-code",
+     "source_type": "vendor",
+     "date": "2026-10-12"
+    },
+    "IronBee code review F2": {
+     "score": 52.4,
+     "unit": "F2 (x100)",
+     "setting": "high",
+     "cost_per_task_usd": 0.156,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    }
+   }
+  },
+  {
+   "name": "Muse Spark 1.1",
+   "vendor": "Meta",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "SWE-bench Pro (public, independent Scale run)": {
+     "score": 61.5,
+     "unit": "% resolved",
+     "setting": "best independent per llmlearner",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "Scale MCP Atlas": {
+     "score": 88.1,
+     "unit": "% pass",
+     "source": "https://models.fru.dev/boards/scale-mcp-atlas",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    }
+   }
+  },
+  {
+   "name": "Kimi K3",
+   "vendor": "Moonshot AI",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 88.2,
+     "unit": "% resolved",
+     "setting": "mini-swe-agent, max",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "Qodo code review F1": {
+     "score": 49.0,
+     "unit": "% F1",
+     "setting": "high",
+     "cost_per_task_usd": 0.7,
+     "source": "https://qodo.ai/blog/which-llm-should-review-your-code",
+     "source_type": "vendor",
+     "date": "2026-10-12"
+    },
+    "IronBee code review F2": {
+     "score": 55.6,
+     "unit": "F2 (x100)",
+     "setting": "xhigh; slow 4.4 min",
+     "cost_per_task_usd": 0.253,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    },
+    "Scale MCP Atlas": {
+     "score": 82.3,
+     "unit": "% pass",
+     "setting": "max",
+     "source": "https://models.fru.dev/boards/scale-mcp-atlas",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    }
+   }
+  },
+  {
+   "name": "Claude Sonnet 5",
+   "vendor": "Anthropic",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 88.2,
+     "unit": "% resolved",
+     "setting": "Claude Code, xhigh",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "SWE-rebench": {
+     "score": 56.8,
+     "unit": "% resolved",
+     "setting": "high; window 15 May-1 Jul 2026",
+     "cost_per_task_usd": 1.43,
+     "source": "https://swe-rebench.com/",
+     "source_type": "primary",
+     "date": "2026-11-15"
+    },
+    "IronBee code review F2": {
+     "score": 49.5,
+     "unit": "F2 (x100)",
+     "setting": "xhigh (default 46.6, low 33.1)",
+     "cost_per_task_usd": 0.401,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    }
+   }
+  },
+  {
+   "name": "GPT-5.6 Sol",
+   "vendor": "OpenAI",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 82.4,
+     "unit": "% resolved",
+     "setting": "Codex, xhigh",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "SWE-rebench": {
+     "score": 62.3,
+     "unit": "% resolved",
+     "setting": "medium; window 15 May-1 Jul 2026",
+     "cost_per_task_usd": 0.85,
+     "source": "https://swe-rebench.com/",
+     "source_type": "primary",
+     "date": "2026-11-15"
+    },
+    "MacroscopeBench (code review)": {
+     "score": 77.8,
+     "unit": "score",
+     "setting": "high",
+     "cost_per_task_usd": 3.9,
+     "source": "https://macroscope.com/benchmark",
+     "source_type": "vendor",
+     "date": "2026-10-20"
+    }
+   }
+  },
+  {
+   "name": "Mistral Large 4",
+   "vendor": "Mistral",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "mistralai/mistral-large-4-0",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 0.7,
+    "out": 2.1,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1048576,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "IronBee code review F2": {
+     "score": 33.8,
+     "unit": "F2 (x100)",
+     "setting": "no reasoning; P 10.7 R 73.2",
+     "cost_per_task_usd": 0.054,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    }
+   }
+  },
+  {
+   "name": "GPT-5.3-Codex",
+   "vendor": "OpenAI",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "METR time horizon 1.1 (50%)": {
+     "score": 349.5,
+     "unit": "minutes",
+     "setting": "50% horizon, CI 194.9-816.4 min; 80% horizon 54.7 min",
+     "source": "https://metr.org/assets/benchmark_results_1_1.yaml",
+     "source_type": "primary",
+     "date": "2026-09-08"
+    }
+   },
+   "notes": "Older model; included only because METR has no entry for any 5.x model (page frozen Sep 8 2026)."
+  },
+  {
+   "name": "GPT-5.4",
+   "vendor": "OpenAI",
+   "tier": "mid",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "METR time horizon 1.1 (50%)": {
+     "score": 341.7,
+     "unit": "minutes",
+     "setting": "50% horizon, CI 186.6-768.8 min; 80% horizon 53.9 min",
+     "source": "https://metr.org/assets/benchmark_results_1_1.yaml",
+     "source_type": "primary",
+     "date": "2026-09-08"
+    }
+   },
+   "notes": "Older model; included only because METR has no entry for any 5.x model (page frozen Sep 8 2026)."
+  },
+  {
+   "name": "Gemini 3.8 Flash",
+   "vendor": "Google",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 126.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 30.8,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 98.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 89.2,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-3": {
+     "score": 35.0,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 58.8,
+     "unit": "% resolved",
+     "setting": "mini-swe-agent, high",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "Qodo code review F1": {
+     "score": 47.0,
+     "unit": "% F1",
+     "setting": "high; precision 71.0 recall 35.1; $3.63/PR, 834s",
+     "cost_per_task_usd": 3.63,
+     "source": "https://qodo.ai/blog/which-llm-should-review-your-code",
+     "source_type": "vendor",
+     "date": "2026-10-12"
+    }
+   }
+  },
+  {
+   "name": "Inkling 2 Small",
+   "vendor": "Thinking Machines",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "thinkingmachines/inkling-2-small",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 0.3,
+    "out": 1.0,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1048576,
+   "speed_tokens_per_s": 84.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 30.6,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 96.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 81.7,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 86.3,
+     "unit": "% resolved",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "Scale MCP Atlas": {
+     "score": 85.4,
+     "unit": "% pass",
+     "source": "https://models.fru.dev/boards/scale-mcp-atlas",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "LMArena WebDev": {
+     "score": 1647,
+     "unit": "Arena rating",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    }
+   }
+  },
+  {
+   "name": "MiniMax-M3.1-Flash",
+   "vendor": "MiniMax",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "minimax/minimax-m3.1-flash",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 0.15,
+    "out": 0.6,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1048576,
+   "speed_tokens_per_s": 160.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 29.1,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 84.3,
+     "unit": "% resolved",
+     "setting": "mini-swe-agent, xhigh",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    }
+   }
+  },
+  {
+   "name": "GPT-6 Luna",
+   "vendor": "OpenAI",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": "gpt-6-luna"
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 124.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 27.9,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "Terminal-Bench 4.0 (Anthropic table)": {
+     "score": 16.4,
+     "unit": "%",
+     "setting": "not stated",
+     "source": "https://www.anthropic.com/claude-haiku-5-5",
+     "source_type": "vendor",
+     "date": "2026-10-07"
+    },
+    "IronBee code review F2": {
+     "score": 44.2,
+     "unit": "F2 (x100)",
+     "setting": "xhigh; $0.009, 68 s (low 37.1 at $0.004)",
+     "cost_per_task_usd": 0.009,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    },
+    "Qodo code review F1": {
+     "score": 42.2,
+     "unit": "% F1",
+     "setting": "high; $0.02/PR",
+     "cost_per_task_usd": 0.02,
+     "source": "https://qodo.ai/blog/which-llm-should-review-your-code",
+     "source_type": "vendor",
+     "date": "2026-10-12"
+    }
+   },
+   "notes": "Very cheap; weak recall on review."
+  },
+  {
+   "name": "GLM-5.3-Flash",
+   "vendor": "Z.ai",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 55.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 27.8,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 91.0,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 65.8,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "Kodus code review recall": {
+     "score": 35.5,
+     "unit": "% recall",
+     "setting": "balanced; $0.098/PR, lowest cost per bug found ($0.069)",
+     "cost_per_task_usd": 0.098,
+     "source": "https://kodus.io/en/best-llms-for-code-review",
+     "source_type": "secondary",
+     "date": "2026-11-11"
+    }
+   }
+  },
+  {
+   "name": "MiMo-V2.6-Flash",
+   "vendor": "Xiaomi",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 34.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 26.7,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "tau2-bench airline": {
+     "score": 77.9,
+     "unit": "% pass",
+     "setting": "OpenRouter 'Pareto' variant, $0.015/task",
+     "cost_per_task_usd": 0.015,
+     "source": "https://openrouter.ai/benchmarks/tau2-bench-airline",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    },
+    "LMArena WebDev": {
+     "score": 1638,
+     "unit": "Arena rating",
+     "source": "https://models.fru.dev/boards/lmarena-webdev",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    }
+   }
+  },
+  {
+   "name": "Muse Spark Open",
+   "vendor": "Meta",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": "meta/muse-spark-open",
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": {
+    "in": 1.25,
+    "out": 4.25,
+    "source": "openrouter.ai/api/v1/models, 2026-11-15"
+   },
+   "context_tokens": 1048576,
+   "speed_tokens_per_s": 194.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 24.9,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 89.0,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 57.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-3": {
+     "score": 0.42,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro V2 Hard (Scale board)": {
+     "score": 82.3,
+     "unit": "% resolved",
+     "setting": "mini-swe-agent xhigh",
+     "source": "https://models.fru.dev/boards/scale-swe-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    },
+    "tau2-bench airline": {
+     "score": 75.7,
+     "unit": "% pass",
+     "setting": "OpenRouter run",
+     "cost_per_task_usd": 0.088,
+     "source": "https://openrouter.ai/benchmarks/tau2-bench-airline",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    }
+   }
+  },
+  {
+   "name": "GPT-5.6 Luna",
+   "vendor": "OpenAI",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 126.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 23.8,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 90.7,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 59.6,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro (public, vendor-reported)": {
+     "score": 62.7,
+     "unit": "% resolved",
+     "setting": "vendor",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "SWE-rebench": {
+     "score": 43.6,
+     "unit": "% resolved",
+     "setting": "medium; window 15 May-1 Jul 2026",
+     "cost_per_task_usd": 0.11,
+     "source": "https://swe-rebench.com/",
+     "source_type": "primary",
+     "date": "2026-11-15"
+    }
+   }
+  },
+  {
+   "name": "Qwen3.8-27B",
+   "vendor": "Alibaba",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 42.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 20.1,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 87.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 42.4,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "SWE-bench Pro (public, vendor-reported)": {
+     "score": 61.7,
+     "unit": "% resolved",
+     "setting": "vendor",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "tau2-bench airline": {
+     "score": 77.5,
+     "unit": "% pass",
+     "setting": "OpenRouter",
+     "cost_per_task_usd": 0.066,
+     "source": "https://openrouter.ai/benchmarks/tau2-bench-airline",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    },
+    "Kodus code review recall": {
+     "score": 28.1,
+     "unit": "% recall",
+     "setting": "balanced; precision 51.5",
+     "cost_per_task_usd": 0.198,
+     "source": "https://kodus.io/en/best-llms-for-code-review",
+     "source_type": "secondary",
+     "date": "2026-11-11"
+    }
+   }
+  },
+  {
+   "name": "MiniMax-M3",
+   "vendor": "MiniMax",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 116.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 18.9,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "SWE-bench Pro (public, vendor-reported)": {
+     "score": 59.0,
+     "unit": "% resolved",
+     "setting": "vendor",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "IronBee code review F2": {
+     "score": 47.0,
+     "unit": "F2 (x100)",
+     "setting": "default",
+     "cost_per_task_usd": 0.037,
+     "source": "https://ironbee.ai/blog/the-honest-raw-llm-code-review-benchmark",
+     "source_type": "secondary",
+     "date": "2026-10-19"
+    }
+   }
+  },
+  {
+   "name": "Solar Pro 4",
+   "vendor": "Upstage",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 84.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 14.2,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    }
+   }
+  },
+  {
+   "name": "Nemotron 3.5 Super VL",
+   "vendor": "NVIDIA",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 273.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 13.6,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 22.7,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 1.9,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    }
+   }
+  },
+  {
+   "name": "Inkling Small",
+   "vendor": "Thinking Machines",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 193.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 12.9,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 84.0,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 40.1,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    }
+   }
+  },
+  {
+   "name": "Inkling",
+   "vendor": "Thinking Machines",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 165.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 12.5,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 79.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 36.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    }
+   }
+  },
+  {
+   "name": "Gemini 3.5 Flash-Lite",
+   "vendor": "Google",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 438.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 11.7,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    },
+    "ARC-AGI-1": {
+     "score": 53.5,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    },
+    "ARC-AGI-2": {
+     "score": 10.3,
+     "unit": "%",
+     "setting": "reasoning setting/harness not given on results index page (ARC-AGI-3 column may be provider-adapter or standard harness; Carbon standard harness is 65.1 per ARC Prize X post seen in search snippet)",
+     "source": "https://arcprize.org/results",
+     "source_type": "primary",
+     "date": "2026-11-10 page"
+    }
+   }
+  },
+  {
+   "name": "Command A+",
+   "vendor": "Cohere",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 230.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 6.2,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    }
+   }
+  },
+  {
+   "name": "Gemini 3.1 Flash-Lite",
+   "vendor": "Google",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 340.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 6.2,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    }
+   }
+  },
+  {
+   "name": "Nemotron 3.5 Lightning",
+   "vendor": "NVIDIA",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 290.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 5.5,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    }
+   }
+  },
+  {
+   "name": "Granite 4.2 8B",
+   "vendor": "IBM",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 45.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 5.1,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    }
+   }
+  },
+  {
+   "name": "Mistral Medium 3.5",
+   "vendor": "Mistral",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 170.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 4.6,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    }
+   }
+  },
+  {
+   "name": "gpt-oss-120b",
+   "vendor": "OpenAI",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": 220.0,
+   "fit": null,
+   "scores": {
+    "AA_Intelligence_Index": {
+     "score": 3.8,
+     "unit": "index points",
+     "setting": "best variant as listed by aggregator (AA page itself shows Fable 5.2 max/xhigh/high, Carbon high); not stated per row",
+     "source": "https://modelgrep.com/leaderboard",
+     "source_type": "aggregator",
+     "date": "2026-11 (page 'Updated November 2026')"
+    }
+   }
+  },
+  {
+   "name": "Gemini 3.5 Flash",
+   "vendor": "Google",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "SWE-bench Pro (public, vendor-reported)": {
+     "score": 55.1,
+     "unit": "% resolved",
+     "setting": "vendor",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "Scale MCP Atlas": {
+     "score": 83.6,
+     "unit": "% pass",
+     "setting": "high",
+     "source": "https://models.fru.dev/boards/scale-mcp-atlas",
+     "source_type": "aggregator",
+     "date": "2026-11-15"
+    }
+   }
+  },
+  {
+   "name": "Ling 3.1 Flash",
+   "vendor": "InclusionAI",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "SWE-bench Pro (public, vendor-reported)": {
+     "score": 68.7,
+     "unit": "% resolved",
+     "setting": "vendor; open MIT",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "tau2-bench airline": {
+     "score": 79.3,
+     "unit": "% pass",
+     "setting": "OpenRouter 'Pareto' variant, $0.031/task",
+     "cost_per_task_usd": 0.031,
+     "source": "https://openrouter.ai/benchmarks/tau2-bench-airline",
+     "source_type": "secondary",
+     "date": "2026-11-14"
+    }
+   }
+  },
+  {
+   "name": "Laguna S 2.1",
+   "vendor": "Poolside",
+   "tier": "fast",
+   "ids": {
+    "claude_code": null,
+    "openrouter": null,
+    "codex_cli": null
+   },
+   "price_usd_per_mtok": null,
+   "context_tokens": null,
+   "speed_tokens_per_s": null,
+   "fit": null,
+   "scores": {
+    "SWE-bench Pro (public, vendor-reported)": {
+     "score": 59.4,
+     "unit": "% resolved",
+     "setting": "vendor; $0.1/$0.2",
+     "source": "https://benchlm.ai/benchmarks/swe-bench-pro",
+     "source_type": "aggregator",
+     "date": "2026-11-13"
+    },
+    "Qodo code review F1": {
+     "score": 27.3,
+     "unit": "% F1",
+     "setting": "no reasoning",
+     "cost_per_task_usd": 0.023,
+     "source": "https://qodo.ai/blog/which-llm-should-review-your-code",
+     "source_type": "vendor",
+     "date": "2026-10-12"
+    }
+   }
+  }
+ ]
+}

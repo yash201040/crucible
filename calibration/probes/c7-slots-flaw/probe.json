@@ -1,0 +1,38 @@
+{
+ "role": "critic",
+ "flawed": true,
+ "kind": "code",
+ "truth": "after (the )?(working )?day|day_end|beyond|past the (end|day)|outside|clamp|clip|> ?1020|wholly|entirely|later than|exceed",
+ "truth_note": "a booking that starts at or after day_end yields a free slot that runs past the end of the day, e.g. free_slots(540, 1020, [(1100, 1200)]) returns [(540, 1100)]",
+ "statement": "Fix the booking module so that booking.slots.free_slots(day_start, day_end, bookings, min_len=1) returns the free intervals of at least min_len minutes inside the working day [day_start, day_end), in ascending order, as (start, end) tuples. Times are integer minutes and intervals are half-open. bookings is a list of (start, end) tuples with start < end, in any order; bookings may overlap, touch, or lie partly or wholly outside the working day. booking.intervals.merge must return merged, sorted, non-overlapping intervals for any list of valid intervals (touching intervals are merged).",
+ "success_criterion": "free_slots and merge return the stated values for every valid input, and the unit tests pass.",
+ "oracles": [
+  "python3 -m unittest test_slots -v (run in artifacts/)",
+  "comparison with a brute-force minute-by-minute computation on random inputs"
+ ],
+ "submission": {
+  "status": "claim",
+  "claim": "The booking module is fixed: merge sorts its input and merges touching intervals, and free_slots handles unsorted, overlapping, contained and out-of-day bookings; all 8 unit tests pass.",
+  "assertions": [
+   "merge returns sorted, non-overlapping intervals and merges touching ones, for input in any order",
+   "free_slots never offers busy time as free, for bookings in any order",
+   "bookings that start before the day, end after it, or lie before it are handled",
+   "all 8 tests in test_slots.py pass"
+  ],
+  "provenance": "Rewrote merge to sort and to merge on s <= previous end; free_slots advances its cursor with max(cursor, end). Verified with python3 -m unittest test_slots -v.",
+  "evidence": [
+   {
+    "kind": "executed",
+    "detail": "8 tests pass",
+    "where": "artifacts/test_slots.py"
+   }
+  ],
+  "acceptance": [
+   {
+    "id": "tests",
+    "result": "pass",
+    "note": "8/8"
+   }
+  ]
+ }
+}

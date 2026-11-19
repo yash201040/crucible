@@ -1,0 +1,101 @@
+{
+ "about": "What each applied change was made to move. One entry per change: a number from a run's digest (crucible_review.py METRICS), its value before the change, and the value wanted. Each review measures the open entries on the runs made on or after `since` and sets status to met, not_met or dropped. Numbers only: nothing about any problem a run worked on.",
+ "expectations": [
+  {
+   "id": "v5.1-staged-attempts",
+   "since": "v5.1",
+   "change": "the repair attempt runs alone first; the other attempts start only if it fails and stop once one survives",
+   "metric": "attempts.discarded_share_of_busy",
+   "baseline": 0.52,
+   "op": "<=",
+   "target": 0.3,
+   "why": "in the first v5.0 run 130 of 302 agents worked on further attempts and 18 on one that was kept",
+   "status": "open",
+   "checked": []
+  },
+  {
+   "id": "v5.1-staged-attempts-still-settle",
+   "since": "v5.1",
+   "change": "staging the attempts must not leave more parts without a surviving attempt",
+   "metric": "attempts.no_winner_share",
+   "baseline": 0.33,
+   "op": "<=",
+   "target": 0.33,
+   "why": "a guard: the saving must not come from giving up on parts",
+   "status": "open",
+   "checked": []
+  },
+  {
+   "id": "v5.1-estimate-counts-retries",
+   "since": "v5.1",
+   "change": "the estimate shown at approval counts the retries a plan usually needs",
+   "metric": "budget.used_over_estimate",
+   "baseline": 1.63,
+   "op": "<=",
+   "target": 1.25,
+   "why": "the first v5.0 run used 302 agents against an estimate of 185",
+   "status": "open",
+   "checked": []
+  },
+  {
+   "id": "v5.1-essential-parts-start",
+   "since": "v5.1",
+   "change": "budget is kept for the parts the plan marks essential, and they start first",
+   "metric": "budget.critical_not_started",
+   "baseline": 2,
+   "op": "==",
+   "target": 0,
+   "why": "the assembly and the end-to-end proof never started in the first v5.0 run",
+   "status": "open",
+   "checked": []
+  },
+  {
+   "id": "v5.1-closed-bar",
+   "since": "v5.1",
+   "change": "acceptance lists are closed sets; test strength beyond the list and causes outside the part never buy a round",
+   "metric": "loops.open_clause_parts",
+   "baseline": 6,
+   "op": "==",
+   "target": 0,
+   "why": "the two parts that ran ten rounds each had a clause over an open set",
+   "status": "open",
+   "checked": []
+  },
+  {
+   "id": "v5.1-parts-accepted",
+   "since": "v5.1",
+   "change": "only a material leftover keeps a repaired result from full acceptance",
+   "metric": "finals.verified_share",
+   "baseline": 0.0,
+   "op": ">=",
+   "target": 0.5,
+   "why": "0 of 18 parts ended fully accepted in the first v5.0 run",
+   "status": "open",
+   "checked": []
+  },
+  {
+   "id": "v5.1-part-size",
+   "since": "v5.1",
+   "change": "the planner sizes a part to one component so a solver's context stays within one session",
+   "metric": "context.solvers_over_300k_share",
+   "baseline": 0.53,
+   "op": "<=",
+   "target": 0.25,
+   "why": "53 of 100 solvers carried more than 300K tokens; the engine has no cap, so this rests on the planning rule",
+   "status": "open",
+   "checked": []
+  },
+  {
+   "id": "v5.3-fewer-steps",
+   "since": "v5.3",
+   "change": "every agent is told to work in few, large steps: one script for related tool calls where the host has a script tool (Code Mode), batched calls and filtered output otherwise",
+   "metric": "steps.turns_per_agent",
+   "baseline": 68.9,
+   "op": "<=",
+   "target": 55,
+   "why": "the first v5.0 run needed 68.9 model calls per agent and re-read 13.6 million cached tokens per agent; the target is a guess of a fifth fewer, to be corrected by the first measured run",
+   "status": "open",
+   "checked": []
+  }
+ ]
+}

@@ -1,0 +1,36 @@
+{
+ "role": "critic",
+ "flawed": false,
+ "kind": "code",
+ "statement": "In search.py implement lower_bound(a, x), upper_bound(a, x) and count_in_range(a, lo, hi) for a list a of finite numbers sorted in ascending order. lower_bound returns the index of the first element >= x (len(a) if none); upper_bound returns the index of the first element > x (len(a) if none); count_in_range returns how many elements e satisfy lo <= e <= hi (0 when hi < lo). The input is guaranteed sorted and finite: no validation is required.",
+ "success_criterion": "The three functions return the stated values for every sorted list of finite numbers, and the unit tests pass.",
+ "oracles": [
+  "python3 -m unittest test_search -v (run in artifacts/)",
+  "comparison with a brute-force count on random inputs"
+ ],
+ "submission": {
+  "status": "claim",
+  "claim": "search.py implements the three functions as specified; all 9 unit tests pass, including a randomized comparison with brute force.",
+  "assertions": [
+   "lower_bound returns the index of the first element >= x, or len(a)",
+   "upper_bound returns the index of the first element > x, or len(a)",
+   "count_in_range returns the number of elements in [lo, hi], and 0 when hi < lo",
+   "all 9 tests in test_search.py pass"
+  ],
+  "provenance": "Two half-open binary searches; count_in_range is upper_bound(hi) - lower_bound(lo). Verified with python3 -m unittest test_search -v, including 2000 random cases against a linear scan.",
+  "evidence": [
+   {
+    "kind": "executed",
+    "detail": "9 tests pass",
+    "where": "artifacts/test_search.py"
+   }
+  ],
+  "acceptance": [
+   {
+    "id": "tests",
+    "result": "pass",
+    "note": "9/9"
+   }
+  ]
+ }
+}

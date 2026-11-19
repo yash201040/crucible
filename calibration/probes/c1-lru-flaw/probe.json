@@ -1,0 +1,37 @@
+{
+ "role": "critic",
+ "flawed": true,
+ "kind": "code",
+ "truth": "falsy|\\b0\\b|zero|empty (string|list)|False|if value|truthi|None.{0,40}(stored|present)",
+ "statement": "Implement class LRUCache(capacity) in lru.py. get(key, default=None) returns the stored value if the key is present, else default, and marks the key as most recently used. put(key, value) inserts or updates the key and marks it most recently used. When the number of keys exceeds capacity, the least recently used key is evicted. Keys are any hashable object; values may be any Python object.",
+ "success_criterion": "The behaviour matches the statement for all keys and values, and the unit tests pass.",
+ "oracles": [
+  "python3 -m unittest test_lru -v (run in artifacts/)",
+  "independent behavioural checks against the statement"
+ ],
+ "submission": {
+  "status": "claim",
+  "claim": "lru.py implements the LRU cache as specified; all 6 unit tests pass.",
+  "assertions": [
+   "get returns the stored value for a present key and the default for an absent key",
+   "get and put both mark the key as most recently used",
+   "when the cache exceeds its capacity the least recently used key is evicted",
+   "all 6 tests in test_lru.py pass"
+  ],
+  "provenance": "Implemented on collections.OrderedDict (move_to_end on access, popitem(last=False) to evict). Verified with python3 -m unittest test_lru -v.",
+  "evidence": [
+   {
+    "kind": "executed",
+    "detail": "6 tests pass",
+    "where": "artifacts/test_lru.py"
+   }
+  ],
+  "acceptance": [
+   {
+    "id": "tests",
+    "result": "pass",
+    "note": "6/6"
+   }
+  ]
+ }
+}

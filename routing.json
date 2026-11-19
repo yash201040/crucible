@@ -1,0 +1,211 @@
+{
+ "version": "2026-11-15",
+ "default": "balanced",
+ "about": "Which model and effort fills each crucible role. A route is provider:model@effort; the provider defaults to claude (the subscription). An entry is a route, a map difficulty -> route, or a list (one route per reviewer seat). `rank` orders models by strength: the attacking side is never ranked below the solver it checks (the engine raises it if this table says otherwise), and a model without a rank is never used to attack. `weight` is a model's rough draw on the subscription allowance (an Opus agent = 1), used only for the cost estimate. The engine carries a copy of `balanced` as its fallback; tests/run.mjs keeps the two equal. Evidence for each choice: references/model-map.json and calibration/results/. A non-Claude route can write only inside the run directory, so it suits checking roles.",
+ "profiles": {
+  "balanced": {
+   "profile": "balanced",
+   "rank": {
+    "haiku": 1,
+    "sonnet": 2,
+    "opus": 3,
+    "fable": 4
+   },
+   "weight": {
+    "haiku": 0.05,
+    "sonnet": 0.5,
+    "opus": 1,
+    "fable": 2
+   },
+   "relay": "haiku@low",
+   "fallback": "sonnet@high",
+   "roles": {
+    "planner": "opus@high",
+    "plan_critic": "opus@high",
+    "gaps": "opus@high",
+    "strategist": "opus@high",
+    "synth": "opus@high",
+    "referee": "opus@high",
+    "reflector": "sonnet@high",
+    "fetcher": "sonnet@medium",
+    "solver": {
+     "trivial": "sonnet@low",
+     "easy": "sonnet@medium",
+     "moderate": "sonnet@medium",
+     "hard": "opus@high",
+     "frontier": "opus@high"
+    },
+    "critic": {
+     "trivial": "sonnet@medium",
+     "easy": "sonnet@high",
+     "moderate": "sonnet@high",
+     "hard": "opus@high",
+     "frontier": "opus@xhigh"
+    },
+    "debunker": {
+     "easy": "sonnet@high",
+     "moderate": [
+      "opus@high",
+      "sonnet@high"
+     ],
+     "hard": "opus@high",
+     "frontier": "opus@xhigh"
+    }
+   }
+  },
+  "session": {
+   "profile": "session",
+   "about": "Every agent on the session's own model, with the effort table: how crucible ran before v5. Use it to compare, or when the session model is the one you want everywhere.",
+   "rank": {
+    "haiku": 1,
+    "sonnet": 2,
+    "opus": 3,
+    "fable": 4
+   },
+   "weight": {
+    "haiku": 0.05,
+    "sonnet": 0.5,
+    "opus": 1,
+    "fable": 2
+   },
+   "relay": "haiku@low",
+   "fallback": "session@high",
+   "roles": {
+    "planner": "session@high",
+    "plan_critic": "session@high",
+    "gaps": "session@high",
+    "strategist": "session@high",
+    "synth": "session@high",
+    "referee": "session@high",
+    "reflector": "session@high",
+    "fetcher": "session@medium",
+    "solver": {
+     "trivial": "session@low",
+     "easy": "session@medium",
+     "moderate": "session@medium",
+     "hard": "session@high",
+     "frontier": "session@high"
+    },
+    "critic": {
+     "trivial": "session@medium",
+     "easy": "session@high",
+     "moderate": "session@high",
+     "hard": "session@high",
+     "frontier": "session@xhigh"
+    },
+    "debunker": {
+     "easy": "session@high",
+     "moderate": "session@high",
+     "hard": "session@high",
+     "frontier": "session@xhigh"
+    }
+   }
+  },
+  "economy": {
+   "profile": "economy",
+   "about": "Lowest draw on the allowance: Haiku solves trivial and easy parts, Sonnet checks them. Not yet tried on a real run; Haiku at high effort passed every calibration probe but was slower than Sonnet at medium.",
+   "rank": {
+    "haiku": 1,
+    "sonnet": 2,
+    "opus": 3,
+    "fable": 4
+   },
+   "weight": {
+    "haiku": 0.05,
+    "sonnet": 0.5,
+    "opus": 1,
+    "fable": 2
+   },
+   "relay": "haiku@low",
+   "fallback": "sonnet@high",
+   "roles": {
+    "planner": "opus@high",
+    "plan_critic": "opus@high",
+    "gaps": "opus@high",
+    "strategist": "opus@high",
+    "synth": "opus@high",
+    "referee": "opus@high",
+    "reflector": "sonnet@medium",
+    "fetcher": "haiku@high",
+    "solver": {
+     "trivial": "haiku@medium",
+     "easy": "haiku@high",
+     "moderate": "sonnet@medium",
+     "hard": "opus@high",
+     "frontier": "opus@high"
+    },
+    "critic": {
+     "trivial": "sonnet@medium",
+     "easy": "sonnet@high",
+     "moderate": "sonnet@high",
+     "hard": "opus@high",
+     "frontier": "opus@xhigh"
+    },
+    "debunker": {
+     "easy": "sonnet@high",
+     "moderate": [
+      "opus@high",
+      "sonnet@high"
+     ],
+     "hard": "opus@high",
+     "frontier": "opus@xhigh"
+    }
+   }
+  },
+  "mixed": {
+   "profile": "mixed",
+   "about": "The balanced table plus a second attacker from another model family on a moderate part's first submission, through OpenRouter (Gemini 4 Hydrogen: 9 of 9 calibration probes right, about $0.07 and 40 s a check). It buys accuracy with money, not allowance. The problem text and files of those parts are sent to OpenRouter providers (with their no-training policy enforced). Hard and frontier parts get no second attacker yet: the only tested model at Opus's level (Gemini 4 Carbon at high effort) took 7.5 minutes and $0.33 for one small check. GPT-6.1 Terra is not used: it rejected a correct submission with invented blocking findings at both efforts. Not yet tried on a real run.",
+   "rank": {
+    "haiku": 1,
+    "sonnet": 2,
+    "opus": 3,
+    "fable": 4,
+    "google/gemini-4-hydrogen": 2
+   },
+   "weight": {
+    "haiku": 0.05,
+    "sonnet": 0.5,
+    "opus": 1,
+    "fable": 2
+   },
+   "relay": "haiku@low",
+   "fallback": "sonnet@high",
+   "roles": {
+    "planner": "opus@high",
+    "plan_critic": "opus@high",
+    "gaps": "opus@high",
+    "strategist": "opus@high",
+    "synth": "opus@high",
+    "referee": "opus@high",
+    "reflector": "sonnet@high",
+    "fetcher": "sonnet@medium",
+    "solver": {
+     "trivial": "sonnet@low",
+     "easy": "sonnet@medium",
+     "moderate": "sonnet@medium",
+     "hard": "opus@high",
+     "frontier": "opus@high"
+    },
+    "critic": {
+     "trivial": "sonnet@medium",
+     "easy": "sonnet@high",
+     "moderate": "sonnet@high",
+     "hard": "opus@high",
+     "frontier": "opus@xhigh"
+    },
+    "critic2": {
+     "moderate": "openrouter:google/gemini-4-hydrogen@medium"
+    },
+    "debunker": {
+     "easy": "sonnet@high",
+     "moderate": [
+      "opus@high",
+      "sonnet@high"
+     ],
+     "hard": "opus@high",
+     "frontier": "opus@xhigh"
+    }
+   }
+  }
+ }
+}

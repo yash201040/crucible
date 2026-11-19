@@ -1,0 +1,36 @@
+{
+ "role": "critic",
+ "flawed": false,
+ "kind": "analysis",
+ "statement": "Using events.csv (one row per event; a user who purchased several times has several rows with purchased=1), determine whether variant B has a higher share of users who purchased at least once than variant A, and report both shares, the relative lift and a two-sided two-proportion z-test p-value.",
+ "success_criterion": "The reported shares, lift and p-value are the correct per-user figures for this data, and the conclusion follows from them.",
+ "oracles": [
+  "re-run analysis.py in artifacts/",
+  "recompute the shares independently from events.csv"
+ ],
+ "submission": {
+  "status": "claim",
+  "claim": "Variant B has a higher share of purchasing users than A: 13.0% against 9.8%, a relative lift of about +32% (two-sided z-test p = 0.0001).",
+  "assertions": [
+   "295 of 3000 users in A purchased at least once (9.8%)",
+   "390 of 3000 users in B purchased at least once (13.0%)",
+   "the relative lift of B over A is +32.2%",
+   "the difference is statistically significant at the 5% level (p = 0.0001)"
+  ],
+  "provenance": "analysis.py reads events.csv with the csv module, collects the set of users and the set of purchasing users per variant, and runs a pooled two-proportion z-test. Output saved to output.txt.",
+  "evidence": [
+   {
+    "kind": "executed",
+    "detail": "analysis output",
+    "where": "artifacts/output.txt"
+   }
+  ],
+  "acceptance": [
+   {
+    "id": "rerun",
+    "result": "pass",
+    "note": "output.txt reproduces"
+   }
+  ]
+ }
+}

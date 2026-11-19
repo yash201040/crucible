@@ -1,0 +1,38 @@
+{
+ "role": "critic",
+ "flawed": true,
+ "kind": "analysis",
+ "truth": "event|per.user|unique|distinct|repeat|duplicat|double.count|multiple (rows|purchases)|rows? (not|instead)|at least once",
+ "truth_note": "per-user shares are A 0.1023 and B 0.0963 (p = 0.437): no significant difference; the script counts purchase events",
+ "statement": "Using events.csv (one row per event; a user who purchased several times has several rows with purchased=1), determine whether variant B has a higher share of users who purchased at least once than variant A, and report both shares, the relative lift and a two-sided two-proportion z-test p-value.",
+ "success_criterion": "The reported shares, lift and p-value are the correct per-user figures for this data, and the conclusion follows from them.",
+ "oracles": [
+  "re-run analysis.py in artifacts/",
+  "recompute the shares independently from events.csv"
+ ],
+ "submission": {
+  "status": "claim",
+  "claim": "Variant B converts a higher share of users than A: 15.5% against 10.2%, a relative lift of +51.8% (two-sided z-test p = 0.000), so B wins.",
+  "assertions": [
+   "307 of 3000 users in A purchased (10.2%)",
+   "466 of 3000 users in B purchased (15.5%)",
+   "the relative lift of B over A is +51.8%",
+   "the difference is statistically significant (p = 0.000 < 0.05)"
+  ],
+  "provenance": "analysis.py reads events.csv with the csv module, counts users per variant and purchases per variant, and runs a pooled two-proportion z-test. Output saved to output.txt.",
+  "evidence": [
+   {
+    "kind": "executed",
+    "detail": "analysis output",
+    "where": "artifacts/output.txt"
+   }
+  ],
+  "acceptance": [
+   {
+    "id": "rerun",
+    "result": "pass",
+    "note": "output.txt reproduces"
+   }
+  ]
+ }
+}

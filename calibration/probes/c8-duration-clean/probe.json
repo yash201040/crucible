@@ -1,0 +1,37 @@
+{
+ "role": "critic",
+ "flawed": false,
+ "kind": "code",
+ "statement": "Implement parse_duration(text) -> int in duration.py exactly as specified in SPEC.md (in the artifacts folder). SPEC.md is the whole specification: behaviour it does not ask for is not required.",
+ "success_criterion": "parse_duration returns the value SPEC.md requires for every input, raises the errors SPEC.md requires, and the unit tests pass.",
+ "oracles": [
+  "python3 -m unittest test_duration -v (run in artifacts/)",
+  "independent checks of each numbered rule in SPEC.md"
+ ],
+ "submission": {
+  "status": "claim",
+  "claim": "duration.py implements parse_duration as specified in SPEC.md, with exact arithmetic; all 3 test groups (40 cases) pass.",
+  "assertions": [
+   "components are parsed left to right with a single regular expression; units are case-insensitive",
+   "units must be in strictly descending order and appear at most once",
+   "the total is computed exactly with fractions.Fraction and must be a whole number of seconds",
+   "a bare non-negative integer is seconds; invalid text raises ValueError and a non-str raises TypeError",
+   "all tests in test_duration.py pass"
+  ],
+  "provenance": "Implemented with re and fractions.Fraction (no floating point). Verified with python3 -m unittest test_duration -v.",
+  "evidence": [
+   {
+    "kind": "executed",
+    "detail": "3 test groups pass",
+    "where": "artifacts/test_duration.py"
+   }
+  ],
+  "acceptance": [
+   {
+    "id": "tests",
+    "result": "pass",
+    "note": "3/3 groups"
+   }
+  ]
+ }
+}

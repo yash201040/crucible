@@ -1,0 +1,36 @@
+{
+ "role": "critic",
+ "flawed": false,
+ "kind": "citation",
+ "statement": "From sources/report_excerpt.md, state what the report found about starting parallel candidates instead of continuing sequential repair: the size of the effect, whether it holds across the models tested, and what it costs. Every statement must be supported by the excerpt.",
+ "success_criterion": "Each assertion is supported by the excerpt, with numbers quoted correctly and no claim broader than the source.",
+ "oracles": [
+  "open sources/report_excerpt.md and confirm each figure and each generalisation against the text and Table 2"
+ ],
+ "submission": {
+  "status": "claim",
+  "claim": "The report finds that switching to parallel candidates after two failed rounds raises the resolve rate for three of the four models tested (70.9% to 77.6% for the strongest), makes the smallest model slightly worse, and roughly triples the cost per task.",
+  "assertions": [
+   "For Large-A the resolve rate rose from 70.9% to 77.6% (+6.7 points) on the 500-task verified subset",
+   "The resolve rate improved for three of the four models; for Small-D it fell by 1.2 points, a difference the authors did not test for significance",
+   "Cost per task was 3.1 times that of sequential repair for Large-A, and 2.4 to 3.3 times for the other models",
+   "Wall-clock time per task fell by 38% for Large-A",
+   "The authors caution that each configuration was run once and that all tasks come from one benchmark"
+  ],
+  "provenance": "Read sections 4 and 5 and Table 2 of sources/report_excerpt.md and quoted the figures.",
+  "evidence": [
+   {
+    "kind": "cited",
+    "detail": "Table 2, the cost paragraph and section 5",
+    "where": "sources/report_excerpt.md sections 4-5"
+   }
+  ],
+  "acceptance": [
+   {
+    "id": "quotes",
+    "result": "pass",
+    "note": "figures match the table"
+   }
+  ]
+ }
+}

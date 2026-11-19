@@ -1,0 +1,8 @@
+{
+ "role": "solver",
+ "difficulty": "hard",
+ "kind": "answer",
+ "task_file": "TASK.md",
+ "answer": "875,770,22,2923976608187104",
+ "truth_note": "pre-period 13171, period 1026"
+}

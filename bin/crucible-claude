@@ -1,0 +1,6 @@
+#!/bin/sh
+# crucible-claude: start Claude Code in this terminal with Code Mode on, for a session in which /crucible will be used.
+# In Code Mode an agent writes one script that makes many tool calls, which saves model calls and tokens on long runs.
+# Code Mode is experimental and works only in an interactive terminal session; Claude asks you to confirm it once.
+# Everything you add is passed to claude (for example: crucible-claude --resume).
+exec env CLAUDE_CODE_EXPERIMENTAL_CODE_MODE=1 claude "$@"

@@ -2,6 +2,10 @@
 
 Every change to the framework, newest first. Automatic entries come from `crucible-evolve` (run = after one run, periodic = weekly/monthly review) and cite the run and evidence they rest on.
 
+## 2026-11-20 (manual): correction on nesting; no code change
+
+The v5.4 entry below says a hierarchy inside a run has to be made by the engine. That was too strong. An agent of a run has no helper tool, but it can start a headless child session from the shell, and the child nests its own subagents: three levels ran under one agent in a test (`knowledge/claude-code/experiments/nesting-through-a-child-session.md`). The child is outside the run's cap, ceiling and records, so nothing uses it yet; the design for a counted helper is in `PROPOSALS.md`. Also recorded: a headless session never has Code Mode, and a terminal session gets it from the user's settings alone.
+
 ## 2026-11-20 (manual; asked for by the user): v5.4, the host's own features, measured
 
 Asked for by the user: read all of the host's documentation, record what it can do in a navigable form pinned to a release, test what matters, and use what the evidence supports. Triggered by a missed setting (the depth of nested subagents).

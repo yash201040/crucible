@@ -1,7 +1,7 @@
 ---
 type: "Experiment"
-title: "An agent of a workflow cannot start helpers of its own"
-description: "Tested four ways on two surfaces: no agent started by a workflow script gets the Agent tool, so nesting is not available inside a run."
+title: "An agent of a workflow has no helper tool of its own"
+description: "Tested four ways on two surfaces: no agent started by a workflow script gets the Agent tool. Nesting is possible only through a child session started from the shell."
 tags: [workflows, nesting, subagents]
 kind: "behavior"
 maturity: "unlabelled"
@@ -40,10 +40,10 @@ The documentation says a subagent can start its own subagents, three layers deep
 
 # Result
 
-Nesting is not available to a workflow's agents, whatever the agent type or the depth setting. The documentation does not say so; it lists `Workflow` among the tools every subagent loses, and `Agent` only "at the depth limit" ([available tools](/agents-and-parallel-work/sub-agents/subagent-available-tools.md)).
+The Agent tool is not available to a workflow's agents, whatever the agent type or the depth setting. The documentation does not say so; it lists `Workflow` among the tools every subagent loses, and `Agent` only "at the depth limit" ([available tools](/agents-and-parallel-work/sub-agents/subagent-available-tools.md)).
 
 # What it means for crucible
 
-A hierarchy inside a run has to be made by the engine: a part that is too large is split into owned parts by the script, which keeps the budget, the records and the isolation in code. A solver cannot delegate by itself.
+A hierarchy that the run can see has to be made by the engine: a part that is too large is split into owned parts by the script, which keeps the budget, the records and the isolation in code. A solver cannot delegate with a tool of its own. It can start a child session from the shell, which nests freely but outside the run's controls: see [nesting through a child session](/experiments/nesting-through-a-child-session.md).
 
 Where a result says "here", the probe ran as a workflow inside an app built on the Agent SDK; "terminal" means an interactive `claude` session in a terminal with Code Mode on. Each probe was a workflow script with one small agent per question, on Claude Code 2.1.325 or 2.1.329. A result holds for that release only: run the probe again after an update.

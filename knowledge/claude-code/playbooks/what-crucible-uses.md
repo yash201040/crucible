@@ -49,7 +49,7 @@ One row per host feature that bears on running many agents. "Evidence" links to 
 
 | Feature | Why not | What would change it |
 | --- | --- | --- |
-| [Nested subagents](/agents-and-parallel-work/sub-agents/nested-subagents.md) | Not available to a workflow's agents at all. | [the test](/experiments/workflow-agents-cannot-start-helpers.md) passing on a later release. Even then helpers would have to be counted and recorded by code. |
+| [Nested subagents](/agents-and-parallel-work/sub-agents/nested-subagents.md) | A workflow's agents get no helper tool ([test](/experiments/workflow-agents-cannot-start-helpers.md)). They can nest through a child session started from the shell ([test](/experiments/nesting-through-a-child-session.md)), which the run does not count, cap or record. Not built. | A wrapper that counts, caps and records each helper, and a run that shows the owners' contexts shrink by more than the helpers cost. |
 | [Custom agent types per role](/agents-and-parallel-work/sub-agents/frontmatter-fields.md) | Work, but give nothing a session setting does not, and need an install step. | [an attacker changing a solver's files](/experiments/custom-agent-types-in-workflows.md) |
 | [Earlier compaction](/agents-and-parallel-work/sub-agents/subagent-auto-compaction.md) | At most 4% of the reading to save, against lost detail. | [solvers over 300K](/experiments/context-growth-without-compaction.md) staying common |
 | [Agent teams](/agents-and-parallel-work/agent-teams/agent-teams-overview-and-enable.md) | Agents decide between themselves and talk freely: the opposite of code deciding and of an attacker who never sees the solver's reasoning. | nothing foreseeable |

@@ -34,6 +34,9 @@ stale_after: "2027-01-19T00:00:00Z"
 | --- | --- | --- |
 | Terminal, Code Mode on | `REPL`, `StructuredOutput` | everything else is called from inside a script (`tools.list()` showed Bash, Read, Edit, Write, Glob, Grep, the MCP tools and more) |
 | App built on the Agent SDK | Bash, Read, Edit, Write and the rest, loaded or deferred | no script tool |
+| Headless (`claude -p`), Code Mode set in the user's settings | the ordinary tools | none; it prints "Code Mode (experimental) isn't available: for now it only works in the interactive terminal" |
+
+The main agent of a new terminal session started with nothing but `CLAUDE_CODE_EXPERIMENTAL_CODE_MODE=1` in the `env` of `~/.claude/settings.json` has `REPL` and `Poll` as its only direct tools (checked on 2.1.329).
 
 A custom agent type with a `tools` list gets the script tool only when `REPL` is in that list; without it the agent has the listed tools and no Code Mode.
 

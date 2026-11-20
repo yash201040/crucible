@@ -376,7 +376,7 @@ class TheFileItself(unittest.TestCase):
         s = f.read_text()
         self.assertTrue(s.split("\n")[2].startswith("Only I, the owner of this repository, edit this file."))
         self.assertNotIn("/Users/", s)
-        for i in ["U1", "U10", "R1", "R12", "I1", "I6", "L1", "L4"]:
+        for i in ["U1", "U10", "R1", "R12", "I1", "I6", "I7", "L1", "L4"]:
             self.assertIn(f"**{i}.", s)
 
 

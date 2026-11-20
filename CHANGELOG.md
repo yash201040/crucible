@@ -2,6 +2,19 @@
 
 Every change to the framework, newest first. Automatic entries come from `crucible-evolve` (run = after one run, periodic = weekly/monthly review) and cite the run and evidence they rest on.
 
+## 2026-11-20 (the owner): `expectation.md` revised
+
+The owner revised their file on GitHub (commit `7add7c7`), from the wordings that had waited in `PROPOSALS.md`. What changed in the standard that reviews measure against:
+- **U5**: after a stop, nothing the run started keeps running. **U6**: the ceiling counts every session a run starts, helpers included.
+- **U8**: a session with the settings a long run profits from (agents at once, cache lifetime); Code Mode is on in the owner's terminal sessions, and crucible must work as well without it.
+- **R4**: a run uses as many agents at once as its plan allows; a default of the host must not hold it back.
+- **R5**: a solver may hand bulk reading, a wide search or a long wait to a helper, as deep as the run allows; only the solving side, the model by the task and not by the level, and the owner checks what comes back.
+- **R11**: few, large steps, and no paying twice because a cache expired; nothing depends on Code Mode.
+- **I7** (new): a review knows its host, prefers a feature of the host to a mechanism of its own, and tests a feature before it relies on it.
+- Section 6 is now the state on 2026-11-20 (version 5.5).
+
+`PROPOSALS.md` holds nothing. The ids now run U1 to U10, R1 to R12, I1 to I7, L1 to L4.
+
 ## 2026-11-20 (manual; asked for by the user): v5.5, helpers under a solver
 
 Asked for by the user: make nesting possible although a child session is outside the run, handle each thing the run cannot see, close child sessions properly, account for the handoff in both directions, and let the depth vary.

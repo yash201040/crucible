@@ -273,7 +273,7 @@ def run_digest(run_dir: Path, row: dict | None = None) -> dict:
         "finals": finals, "critical_finals": {p["id"]: p["final"] for p in parts if p["critical"]} if crit else None,
         "findings": fin, "empty_handbacks": empty, "open_clauses": open_bar,
         "between_parts": {"issues_raised": raised, "by_pair": dict(sorted(pairs.items(), key=lambda kv: -kv[1])[:15]), "requests": len(asks), "requests_unanswered": [a for a in asks if a not in replies]},
-        "context": eff.get("context"), "steps": eff.get("steps"), "cache": eff.get("cache"), "host": eff.get("host"), "solvers": len(sol), "first_round": eff.get("first_round"), "by_role_model": eff.get("by_role_model"),
+        "context": eff.get("context"), "steps": eff.get("steps"), "cache": eff.get("cache"), "host": eff.get("host"), "helpers": eff.get("helpers"), "solvers": len(sol), "first_round": eff.get("first_round"), "by_role_model": eff.get("by_role_model"),
         "answer": {"solved": syn.get("solved"), "confidence": syn.get("confidence"), "contradictions": len(syn.get("contradictions") or []), "human_review_items": len(syn.get("human_review_items") or []),
                    "answer_file": (run_dir / "answer.md").exists(), "handoff_file": (run_dir / "crucible-handoff.md").exists(), "inline": bool(syn.get("inline")),
                    "success_items": {s: sum(1 for it in items if it.get("status") == s) for s in sorted({it.get("status") for it in items})} if items else None,
@@ -317,6 +317,11 @@ def digest_md(d: dict) -> str:
          f"- model calls per agent: mean {(d.get('steps') or {}).get('turns_per_agent')}, median {(d.get('steps') or {}).get('turns_median')}; cached tokens re-read per agent {(d.get('steps') or {}).get('cache_read_per_agent_m')} M",
          f"- cache: {(d.get('cache') or {}).get('write_m')} M tokens written, of which {(d.get('cache') or {}).get('rebuild_tokens_m')} M in {(d.get('cache') or {}).get('rebuilds')} rebuilds after the cache had expired (share {(d.get('cache') or {}).get('rebuild_share_of_writes')}); written with the one-hour lifetime: share {(d.get('cache') or {}).get('one_hour_share_of_writes')}",
          f"- script tool (Code Mode): on at launch: {(d.get('steps') or {}).get('code_mode')}; agents that ran scripts: {(d.get('steps') or {}).get('agents_using_scripts')} of {d.get('agents')}; script calls {(d.get('steps') or {}).get('script_calls')} of {(d.get('steps') or {}).get('tool_calls')} tool calls", "",
+         "## Helpers",
+         (lambda x: f"- none started (refused: {x.get('refused', 0)})" if not x.get("count") else
+          f"- {x.get('count')} helper session(s) under {x.get('owners')} solver(s), deepest level {x.get('max_depth')}, by level {json.dumps(x.get('by_depth'))}, by model {json.dumps(x.get('by_model'))}; "
+          f"ended {json.dumps(x.get('by_status'))}; cost {x.get('weighted_agents')} weighted agents of {x.get('allowance')} allowed ({x.get('share_of_agents')} per agent of the run); "
+          f"handoffs never read {x.get('unread')}; still alive after the run {x.get('still_alive')}; refused {x.get('refused')} {json.dumps(x.get('refused_by'))}")(d.get("helpers") or {}), "",
          "## Parts", "", "| part | difficulty | essential | final | rounds | blocking by round (round, attempt, count) | attempts | open-set clauses |", "|---|---|---|---|---|---|---|---|"]
     for p in d.get("parts") or []:
         L.append(f"| {p['id']} | {p['difficulty']} | {p['critical']} | {p['final']} | {p['rounds']} | {json.dumps(p['blocking_by_round'])} | {', '.join(p['attempts']) or '-'} | {p['open_clauses']} |")
@@ -343,6 +348,10 @@ METRICS = {
     "time.mean_live": lambda d: (d.get("time") or {}).get("mean_live"),
     "time.at_peak_share": lambda d: (d.get("time") or {}).get("at_peak_share"),
     "cache.rebuild_share_of_writes": lambda d: (d.get("cache") or {}).get("rebuild_share_of_writes"),
+    "helpers.done_share": lambda d: (d.get("helpers") or {}).get("done_share"),
+    "helpers.unread": lambda d: (d.get("helpers") or {}).get("unread"),
+    "helpers.still_alive": lambda d: (d.get("helpers") or {}).get("still_alive"),
+    "helpers.allowance_used": lambda d: (d.get("helpers") or {}).get("allowance_used"),
     "context.solvers_over_300k_share": lambda d: _share((d.get("context") or {}).get("solvers_over_300k", 0), d.get("solvers")) if d.get("context") else None,
     "steps.turns_per_agent": lambda d: (d.get("steps") or {}).get("turns_per_agent"),
     "steps.cache_read_per_agent_m": lambda d: (d.get("steps") or {}).get("cache_read_per_agent_m"),

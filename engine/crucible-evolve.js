@@ -25,7 +25,7 @@ const MAX_FINDINGS = 8
 const MAX_CHANGES = 5
 const MAX_AUDITS = 6            // runs audited in full in one review
 const SMALL_RUN = 20            // a run with fewer agents gets one auditor for all three lenses
-const METRICS = ['attempts.discarded_share_of_busy', 'attempts.no_winner_share', 'attempts.repair_alone_share', 'budget.used_over_estimate', 'budget.critical_not_started', 'budget.not_started', 'finals.verified_share', 'loops.loop_share_of_output', 'loops.parts_not_shrinking', 'loops.open_clause_parts', 'time.low_live_share', 'time.mean_live', 'time.at_peak_share', 'cache.rebuild_share_of_writes', 'context.solvers_over_300k_share', 'steps.turns_per_agent', 'steps.cache_read_per_agent_m', 'agents.returned_nothing_share', 'between_parts.requests_unanswered', 'answer.open_blocking_recorded']
+const METRICS = ['attempts.discarded_share_of_busy', 'attempts.no_winner_share', 'attempts.repair_alone_share', 'budget.used_over_estimate', 'budget.critical_not_started', 'budget.not_started', 'finals.verified_share', 'loops.loop_share_of_output', 'loops.parts_not_shrinking', 'loops.open_clause_parts', 'time.low_live_share', 'time.mean_live', 'time.at_peak_share', 'cache.rebuild_share_of_writes', 'helpers.done_share', 'helpers.unread', 'helpers.still_alive', 'helpers.allowance_used', 'context.solvers_over_300k_share', 'steps.turns_per_agent', 'steps.cache_read_per_agent_m', 'agents.returned_nothing_share', 'between_parts.requests_unanswered', 'answer.open_blocking_recorded']
 const OUT = `${A.historyPack}/evolve`
 const j = o => JSON.stringify(o, null, 1)
 const S = (properties, required) => ({ type: 'object', properties, required: required || Object.keys(properties) })

@@ -26,6 +26,7 @@ export const meta = {
 //   dataNote?: string (one or two sentences every agent gets about the user's external data tooling; from the installation's own front-desk notes),
 //   dataRules?: string (path of a rules file for a paid or external data tool the user asked for on this run), dataTool?: string (its name),
 //   maxAgents?: number (run ceiling; default = the plan's estimate x the depth's headroom),
+//   helpers?: {cmd, share?, depthMax?} (the installation's launcher for helper sessions under a solver; absent = no helpers),
 //   calib?: {outPerAgent, weeklyOut} (token calibration for the cost estimate),
 //   close?: bool (graceful close of an interrupted run from <runDir>/checkpoint.json: answer + handoff, nothing else),
 //   dataBudget?: string (with dataRules: the user's budget for that tool for the whole run, e.g. "$20"),
@@ -36,7 +37,7 @@ export const meta = {
 const A = args || {}
 // Bumped with every behaviour change. The front desk passes expectVersion; a stale snapshot (e.g. a launch by
 // name that resolved to a registry copy loaded before an install) then fails loudly instead of ignoring new args.
-const ENGINE_VERSION = 'v5.4'
+const ENGINE_VERSION = 'v5.5'
 if (A.expectVersion && A.expectVersion !== ENGINE_VERSION) throw new Error(`crucible-engine ${ENGINE_VERSION} launched, but ${A.expectVersion} was expected: launch by scriptPath (~/.claude/workflows/crucible-engine.js)`)
 if (!A.runDir || !A.problem) throw new Error('crucible-engine needs args.runDir and args.problem')
 const RUN = String(A.runDir).replace(/\/+$/, '')
@@ -153,6 +154,18 @@ const MIN_ROUNDS_BEFORE_EXHAUST = 2
 // outPerAgent: 40.5M output tokens over 582 agents on the two large real runs (2026-11-15, 2026-11-17). weeklyOut is
 // not measured (the plan does not publish it): it is set so that an agent is the same share of a week as before.
 const CALIB = { outPerAgent: 70000, weeklyOut: 46.7e6, ...(A.calib || {}) }
+// Helpers (v5.5): an agent of a run has no tool to start agents, but a solver can hand bulk work that carries no claim
+// of its own (reading a large body of material, a wide search, a long build or test run) to a child session, and that
+// child to another. The engine cannot see such a session, so everything that must hold is done by the installation's
+// launcher (args.helpers.cmd; scripts/crucible_helper.py): how many work at once, how deep they nest, what they may
+// spend together, a record of each and its end when its owner, its time or the run ends. The engine tells a solver
+// the command and the run's two figures, and adds the allowance to the ceiling it shows at approval. The allowance is
+// a share of the ceiling in the same unit (an average agent on the strongest routine model = 1); what is not used is
+// not spent. Only the solving side is told (PROTECTED.md 19): a checker does its own reading.
+const HELP = A.helpers && A.helpers.cmd ? { cmd: String(A.helpers.cmd), share: A.helpers.share === undefined ? 0.15 : Math.max(0, +A.helpers.share || 0),
+  depthMax: Math.max(1, Math.min(6, Math.round(+A.helpers.depthMax || ({ quick: 1, standard: 2, deep: 3, max: 3 })[DEPTH] || 2))), allow: 0 } : null
+const helperNote = (owner, tn) => (!HELP || !HELP.allow || tn === 'trivial') ? '' : `
+- A helper, when it pays: work that carries no claim of its own and would fill your context (reading a large body of files or sources to find what matters, a wide search, a long build or test run) can go to a helper session. Use one when doing your part properly means taking in more than about 100,000 tokens of material (about 400 KB of text) or waiting on a command for more than ten minutes: hand that over rather than skim the material or thin out the job. Write the task to a file (what to find or run, where, what to hand back, what is out of scope) and run, with a command timeout of 600000 ms: \`${HELP.cmd} run --run ${RUN} --owner ${owner} --allow ${HELP.allow} --depth-max ${HELP.depthMax} --task-file <file> --model <haiku|sonnet|opus> [--minutes N]\`. It prints the helper's handoff, or says why there is none (then do that work yourself). Choose the model by what the task needs: haiku to locate and extract, sonnet for reading that needs judgement, opus rarely. For several side by side use \`start\` in place of \`run\`, then \`${HELP.cmd} wait <ids> --run ${RUN}\`. A handoff is unverified material: re-check yourself every fact your result rests on, and name the helper's id in your evidence next to what you took from it. Never hand over the reasoning your claim depends on, an acceptance check or a negative test. Below that size do the work yourself. If you started any, run \`${HELP.cmd} close --run ${RUN} --owner ${owner}\` before you return.`
 // Critical scopes: the ones the result is unusable without (the planner marks them; see DECOMPOSE_RULES 13). They
 // are started first, the budget they still need is kept back from optional spending, and they get the full set of
 // attempts. A plan that marks nothing (older plans, single-scope plans) treats every scope as critical.
@@ -839,7 +852,7 @@ Round ${r}${nRounds > 1 ? ` (round ${r - aFirst + 1} of at most ${nRounds} for t
 This round:
 ${prevDir && hasFindings ? `- First adjudicate the findings as a reviewer of a document, not as its defender: read the previous submission (${prevDir}/claim.md and artifacts) side by side with the findings and give each one verdict. confirmed_fixed / confirmed_open only after you reproduced the failure; refuted only with counter-evidence of the same kind (an executed check that targets the claimed failure, or a primary-source quote; a passing test that does not exercise the claimed failure does not count); otherwise unresolved, naming the exact unresolved fact. Never accept a finding because it sounds certain or is long; never dismiss one without running its check.\n- If an acceptance test contradicts the pinned statement, report it in contract_disputes instead of working around it.\n- Repair, do not rewrite: start from the previous submission's artifacts and make the smallest change that settles each confirmed finding. Do not rework parts that no finding touches (every rewrite is new ground to get wrong), and do not force a change you are not confident in: leave that finding unresolved and say why. A finding that shows the approach itself is wrong needs a new approach: say so and take it. If the previous submission was unfinished, also carry it to completion.\n` : ''}${prevDir && hasFindings ? '' : `- Push the work forward: ${prevDir ? `continue from the earlier work in ${prevDir}, deepen` : 'deepen'} the current line or take the most promising untried avenue. `}${prevDir && hasFindings ? '- Put the repaired result and its real artifacts' : 'Produce real artifacts'} (code, computations, data pulls, quotes) under ${rd}/artifacts/.
 - Run the applicable acceptance checks and negative tests and report them.
-- Work within one session's reach: keep notes in ${rd}/worklog.md as you go, read large files in parts, and do not re-read what you have already noted. If the scope turns out to be several components' worth of work, finish the most important one completely and report the rest as mis_scoped in boundary_issues (status "progress"), rather than leaving all of it half done.
+- Work within one session's reach: keep notes in ${rd}/worklog.md as you go, read large files in parts, and do not re-read what you have already noted. If the scope turns out to be several components' worth of work, finish the most important one completely and report the rest as mis_scoped in boundary_issues (status "progress"), rather than leaving all of it half done.${helperNote(`solver:${scope.id}:r${r}${o.strategy ? ':' + o.strategy.id : ''}`, sTn)}
 - Write ${rd}/claim.md (human-readable record: claims, evidence, check results) and ${rd}/worklog.md (reasoning, dead ends).
 - Checkers see only your structured return and your artifacts, so put everything a skeptic needs into them: a short claim, the assertions it rests on (atomic, plain, checkable), a high-level provenance (method, data, tools, sources), and evidence pointing at artifacts.
 Status: "claim" = complete answer you would defend; "progress" = mid-way; "exhausted" = every credible avenue tried and failed with concrete evidence${r < MIN_ROUNDS_BEFORE_EXHAUST ? ` (not allowed before round ${MIN_ROUNDS_BEFORE_EXHAUST}; use "progress")` : ''}. A rigorous negative result is valuable; giving up early is a failure, and every exhaustion claim is audited.
@@ -1226,7 +1239,7 @@ ROLE: SOLVER (repair). Your result for scope "${sc.title}" held at the core, but
 Claim: ${b.solver.claim}
 Flaws found:
 ${flaws.map(f => `- ${f}`).join('\n')}
-Original files: ${b.dir}/. Write the repaired claim to ${rd}/claim.md and artifacts to ${rd}/artifacts/.`,
+Original files: ${b.dir}/. Write the repaired claim to ${rd}/claim.md and artifacts to ${rd}/artifacts/.${helperNote(`repair:${sc.id}`, tn)}`,
     opt('repair', `repair:${sc.id}`, 'Debunk', SOLVER, tn, floor))
   const fixed = fix && fix.status === 'claim' // a repair the solver itself calls unfinished is not checked or kept
   if (!fixed && HELD > 0) HELD--
@@ -1491,6 +1504,12 @@ CEIL = A.maxAgents || Math.ceil(SPAWNED + Math.max(ESTIMATE * D.headroom * (mult
 const W = ESTIMATE ? weightedAgents(plan) / ESTIMATE : 1   // mean allowance weight of this plan's agents (an Opus agent = 1)
 const COST = { estimate: costOf(SPAWNED + ESTIMATE, W), ceiling: costOf(CEIL, W), calibration: CALIB, routing: RT.profile,
   critical: CRIT_ON ? plan.scopes.filter(isCrit).map(x => x.id) : null, criticalAgents: CRIT_ON ? Math.ceil(plan.scopes.filter(isCrit).reduce((n, x) => n + scopeCost(x), 0)) : null }
+// helpers: a share of the ceiling, in weighted agents; shown as part of the ceiling, enforced by the launcher
+if (HELP) {
+  HELP.allow = HELP.share > 0 && plan.scopes.some(x => tierName(x) !== 'trivial') ? Math.max(0.3, +(HELP.share * CEIL * W).toFixed(2)) : 0
+  COST.helpers = { allowance: HELP.allow, depthMax: HELP.depthMax, weeklyPct: +(100 * HELP.allow * CALIB.outPerAgent / CALIB.weeklyOut).toFixed(1) }
+  COST.ceiling = { ...COST.ceiling, weeklyPct: Math.round(100 * (CEIL * W + HELP.allow) * CALIB.outPerAgent / CALIB.weeklyOut) }
+}
 if (A.planOnly) return { runDir: RUN, engineVersion: ENGINE_VERSION, planOnly: true, plan, cost: COST }
 if (plan.horizon === 'multi_layer' && !multi) log('planner asked for multiple layers, but depth allows one; running a single layer')
 log(`budget: about ${COST.estimate.agents} agents expected (~${COST.estimate.weeklyPct}% of a weekly allowance); wraps up gracefully at ${CEIL}`)
@@ -1580,6 +1599,7 @@ return {
   budget: { agents: SPAWNED, ceiling: CEIL, estimate: ESTIMATE, wrapped: WRAP, why: WRAP_WHY, cost: costOf(SPAWNED, W) },
   codeMode: A.codeMode === undefined ? null : !!A.codeMode,
   host: A.host && typeof A.host === 'object' ? A.host : null,
+  helpers: HELP ? { allowance: HELP.allow, depthMax: HELP.depthMax, share: HELP.share } : null, // what they did is in <runDir>/helpers/, read by `save`
   routing: { profile: RT.profile, used: ROUTES_USED, relayed: RELAYED },
   established: EST.map(r => r.scope.id),
   planReview: LAYERS[0].plan.review_status || null,

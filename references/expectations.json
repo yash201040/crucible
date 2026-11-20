@@ -120,6 +120,18 @@
    "why": "the first v5.0 run sat at the cap of six agents for 78% of its time; the target is a guess, a plan with few parts side by side cannot reach it, and it holds only for runs started from a session with the higher cap (the digest's host block says which)",
    "status": "open",
    "checked": []
+  },
+  {
+   "id": "v5.5-helpers-hand-back",
+   "since": "v5.5",
+   "change": "a solver may hand bulk reading, a wide search or a long test run to a helper session, counted and closed by scripts/crucible_helper.py",
+   "metric": "helpers.done_share",
+   "baseline": null,
+   "op": ">=",
+   "target": 0.8,
+   "why": "a helper that is stopped, fails or runs out of time costs tokens and hands back nothing; holds only for runs in which a solver started at least one. The effect helpers are meant to have, fewer solvers past 300K tokens of context, is the number of v5.1-part-size (53 of 100 solvers on the first v5.0 run)",
+   "status": "open",
+   "checked": []
   }
  ]
 }

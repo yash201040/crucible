@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-11-20
+* **Creation**: Added [helper sessions, counted and closed](/experiments/helper-sessions-counted-and-closed.md): the launcher that makes nesting safe to use, its live tests, and what solvers did with it. The playbook now lists nested helpers as used.
 * **Correction**: Nesting is possible after all, through a child session started from the shell: added [the test](/experiments/nesting-through-a-child-session.md) and corrected [the earlier one](/experiments/workflow-agents-cannot-start-helpers.md), whose finding is only that an agent of a workflow has no helper tool.
 * **Update**: [Code Mode](/experiments/code-mode-reaches-workflow-agents.md) now records that a headless session never has it, and that a terminal session gets it from the user's settings alone.
 * **Creation**: Added seven experiments on workflows, Code Mode, the cap on agents at once, the agents' cache lifetime, agent types and context growth, starting with [nesting](/experiments/workflow-agents-cannot-start-helpers.md).

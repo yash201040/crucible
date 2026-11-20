@@ -29,10 +29,10 @@ Agents run unattended, so they are started with permission prompts off: Claude C
 
 ## Status
 
-Version 5.4. What that rests on:
+Version 5.5. What that rests on:
 
-- The engine's rules are covered by a regression suite that needs no model (`node tests/run.mjs`, about 270 checks).
-- The engine has done two large real runs under Claude Code (280 and 302 agents), on v4 and v5.0. The changes since then (staged retries, budget by importance, ownership of parts, closed acceptance lists) are tested in the suite and on small live probes, but **have not yet been through a large real run**.
+- The engine's rules are covered by a regression suite that needs no model (`node tests/run.mjs`, about 280 checks).
+- The engine has done two large real runs under Claude Code (280 and 302 agents), on v4 and v5.0. The changes since then (staged retries, budget by importance, ownership of parts, closed acceptance lists) are tested in the suite and on small live probes, but **have not yet been through a large real run**. The same holds for helper sessions (v5.5): their counting, limits and closing are tested with a stand-in and on live sessions three levels deep, and whether they make a long run cheaper is not yet measured.
 - The standalone runner has been run end to end on a small problem. The Codex path is written from the Codex CLI's documented flags and tested against a stand-in binary; **it has not yet been run against the real Codex CLI**. Expect to fix a detail on first use, and please report it.
 
 ## Install
@@ -143,6 +143,25 @@ To get them, start the session you run crucible in with `crucible-claude` (`ln -
 
 **What the host can do** is kept in `knowledge/claude-code/`: about 1,650 notes read from Claude Code's documentation, pinned to one release, in Open Knowledge Format (markdown with a header; start at `index.md` or `playbooks/how-to-use-this-bundle.md`). `experiments/` there holds every test above with its figures, and `playbooks/what-crucible-uses.md` the decision for each feature, including the ones left out: nested subagents (not available to a run's agents), agent teams, custom agent types, the advisor. `python3 scripts/crucible_okf.py refresh` says what changed in the host since the pin.
 
+## Helpers under a solver
+
+Claude Code gives the agents of a run no tool to start agents of their own. A solver that has a large body of files to read, a wide search to make or a long build to wait for would otherwise do all of it in its own context, and pay to re-read that context at every later step. Since v5.5 it can hand such work to a **helper**: a separate headless session, started through `scripts/crucible_helper.py`, which can start a helper of its own in turn.
+
+A session started from a shell is outside the run, so the launcher does in code what the run cannot see:
+
+| What could go wrong | What the launcher does |
+|---|---|
+| Too many sessions at once | at most four helpers work at once per level; the rest wait their turn |
+| Cost outside the ceiling | all helpers of a run share one allowance, 15% of the run's ceiling, shown inside the ceiling you approve; a request past it is refused and the solver does the work itself |
+| Nothing in the records | each helper leaves its task, its handoff and a record (owner, level, model, tokens, cost, session) under `<run>/helpers/`; the run's efficiency log and digest count them |
+| Sessions left running | a helper is ended when its owner finishes, when its time is up (15 minutes unless the solver asks for more, 45 at most), when the session that started it is gone, and when the run is stopped or saved |
+| Endless nesting | a run sets how many levels are allowed: two at standard depth, three at deep, `--helper-depth N` for another number |
+| A checker leaning on a helper | only a solver or a repair may own one; any other role is refused |
+
+The solver picks the helper's model by what the task needs, not by its level: Haiku to locate and extract, Sonnet for reading that needs judgement. What a helper hands back is unverified material: the solver re-checks every fact its result rests on and names the helper next to it, and never hands over an acceptance check. `--no-helpers` switches helpers off for a run; `crucible_helper.py status <run>` shows what they did.
+
+Three things to know. A helper session never has Code Mode, because Claude Code gives that to terminal sessions only. It runs in the permission mode of your own settings (set `permission_mode` in `<run>/helpers/config.json` for another). And it is not covered by the workflow's waiting on a usage limit: a helper that fails on a limit is reported to its owner, which then works alone, and no helper starts for ten minutes. Helpers need the `claude` command, so the Codex front desk does not offer them.
+
 ## Your own additions
 
 The framework names no data tool and holds nothing about your setup. If you use a paid search or data service and want every agent to follow your rules for it, or want your own flag, put it in `~/.crucible/local/`:
@@ -163,7 +182,7 @@ engine/                  the two workflow scripts: the run engine and the self-r
 runner/                  runs the same scripts outside Claude Code
 bin/crucible-claude      starts Claude Code with the two session settings a long run profits from
 bin/git-pre-commit       commit guard: no private paths, and only the owner changes expectation.md
-scripts/                 bookkeeping (save, checkpoint, review pack, digests), the single-agent adapter
+scripts/                 bookkeeping (save, checkpoint, review pack, digests), the single-agent adapter, the launcher of helper sessions
 references/              the run-audit questions, expectations, domain checks, templates
 knowledge/claude-code/   what the host can do, from its documentation, pinned to one release; experiments; what crucible uses and why
 calibration/             probes for models and for the engine's own prompts
@@ -180,7 +199,7 @@ expectation.md           what the owner expects of crucible; the standard for re
 node tests/run.mjs
 ```
 
-It runs the engine against scripted agents, then the Python tests of the review pack, of the runner and of the knowledge bundle. No model is called and it takes under a minute.
+It runs the engine against scripted agents, then the Python tests of the review pack, of the runner, of the knowledge bundle and of helper sessions (with a stand-in for the `claude` command). No model is called and it takes about two minutes.
 
 ## Working on crucible itself
 

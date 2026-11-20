@@ -2,6 +2,28 @@
 
 Every change to the framework, newest first. Automatic entries come from `crucible-evolve` (run = after one run, periodic = weekly/monthly review) and cite the run and evidence they rest on.
 
+## 2026-11-20 (manual; asked for by the user): v5.5, helpers under a solver
+
+Asked for by the user: make nesting possible although a child session is outside the run, handle each thing the run cannot see, close child sessions properly, account for the handoff in both directions, and let the depth vary.
+
+What was built
+- `scripts/crucible_helper.py`: the only way a run starts a child session. A solver writes a task file and calls `run` (or `start` and `wait` for several side by side); the launcher starts a headless session, stays with it as its supervisor, and prints the handoff. A helper may call it in turn.
+- Held in code, not by an agent's word: four helpers at once per level; an allowance of 15% of the run's ceiling for all helpers together, in the run's own unit, shown inside the ceiling at approval; a time limit per helper (15 minutes, 45 at most); the depth the run sets (two levels at standard depth, three at deep, `--helper-depth N`); only a solver or a repair may own one.
+- Closing: a helper and everything it started is ended when its owner calls `close`, when its time is up, when the session that started it is gone, when the run is stopped (`checkpoint`) or saved, and when the helper that started it is stopped. A supervisor that died is found and its session ended.
+- Handoff to a helper: the owner's task file, wrapped in fixed rules (ground what you report, keep notes, change nothing outside your folder, no paid calls). Handoff from it: its final message, kept as `result.md` and printed to the owner as unverified material; its notes when it was stopped.
+- Records: `<run>/helpers/<id>/` with task, prompt, handoff and a record (owner, parent, level, model, times, tokens, cost, session, transcript). The efficiency log, the run digest and four new numbers (`helpers.done_share`, `helpers.unread`, `helpers.still_alive`, `helpers.allowance_used`) count them.
+- Engine v5.5: a solver of a part that is not trivial, and a repair, are told the command with the run's figures; no other role is. `stage` passes the launcher (`--no-helpers` leaves it out) and lifts a stop left by an earlier end of the run. PROTECTED.md 19.
+
+Evidence
+- 27 tests with a stand-in for the `claude` command (`tests/test_helper.py`), 13 engine checks; no probed prompt changed (`changed_cases`: none).
+- Live on Claude Code 2.1.329: a helper that started a helper (two real sessions, 34 seconds, 0.01 USD by API prices); a helper stopped during a long command (gone in 2 seconds with its child process, cost taken from its transcript, notes handed over); a Sonnet solver told to use two helpers used `start`, `wait` and `close` correctly, re-read all 20 lines they cited and named the helper next to each.
+- Three Sonnet solvers left to choose did not use a helper, on a quick job, on a search over 205 pages and on 880 KB to be judged as a whole: each searched instead of reading and said so. After the third, the instruction got a size above which to hand over (about 100,000 tokens of material, or a command of more than ten minutes); a fourth still searched. On files that can be searched that is the cheaper way, so helpers are expected where material cannot be filtered first.
+
+Not known
+- Whether helpers make a real run cheaper or more thorough. No run has used them. `references/expectations.json` names the number for it (`v5.5-helpers-hand-back`), and the share of solvers past 300K tokens of context is watched by `v5.1-part-size`.
+- A helper never has Code Mode, runs in the permission mode of the user's settings, and is not covered by the workflow's waiting on a usage limit (a helper that fails on one is reported, and none starts for ten minutes).
+- Not on the Codex path: the launcher starts `claude`.
+
 ## 2026-11-20 (manual): correction on nesting; no code change
 
 The v5.4 entry below says a hierarchy inside a run has to be made by the engine. That was too strong. An agent of a run has no helper tool, but it can start a headless child session from the shell, and the child nests its own subagents: three levels ran under one agent in a test (`knowledge/claude-code/experiments/nesting-through-a-child-session.md`). The child is outside the run's cap, ceiling and records, so nothing uses it yet; the design for a counted helper is in `PROPOSALS.md`. Also recorded: a headless session never has Code Mode, and a terminal session gets it from the user's settings alone.

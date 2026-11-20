@@ -37,6 +37,7 @@ One row per host feature that bears on running many agents. "Evidence" links to 
 | [Cache lifetime for agents](/core-concepts/prompt-caching/cache-ttl-controls-reference.md) | `bin/crucible-claude` starts the session with one hour. | [test](/experiments/agent-cache-lifetime.md) |
 | [Headless runs](/automation/headless/print-mode-basics.md) | The standalone runner starts one headless session per agent on hosts without the workflow tool. | suite, one small run |
 | Agent transcripts | The save step reads them for tokens, model calls, cache rebuilds and time. | [counting](/experiments/code-mode-reaches-workflow-agents.md) |
+| [Nested subagents](/agents-and-parallel-work/sub-agents/nested-subagents.md), through [a headless child session](/automation/headless/index.md) | A workflow's agents get no tool that starts agents, so a solver hands bulk work with no claim of its own (a large body of reading, a wide search, a long build or test run) to a helper session started by `scripts/crucible_helper.py`, which may start another. The launcher caps how many work at once and how deep they go, holds them to an allowance inside the run's ceiling, records each and ends each. Solvers only. | [no tool](/experiments/workflow-agents-cannot-start-helpers.md), [the child session](/experiments/nesting-through-a-child-session.md), [counted and closed](/experiments/helper-sessions-counted-and-closed.md). Not yet measured on a real run. |
 
 # Recorded, not relied on
 
@@ -49,7 +50,6 @@ One row per host feature that bears on running many agents. "Evidence" links to 
 
 | Feature | Why not | What would change it |
 | --- | --- | --- |
-| [Nested subagents](/agents-and-parallel-work/sub-agents/nested-subagents.md) | A workflow's agents get no helper tool ([test](/experiments/workflow-agents-cannot-start-helpers.md)). They can nest through a child session started from the shell ([test](/experiments/nesting-through-a-child-session.md)), which the run does not count, cap or record. Not built. | A wrapper that counts, caps and records each helper, and a run that shows the owners' contexts shrink by more than the helpers cost. |
 | [Custom agent types per role](/agents-and-parallel-work/sub-agents/frontmatter-fields.md) | Work, but give nothing a session setting does not, and need an install step. | [an attacker changing a solver's files](/experiments/custom-agent-types-in-workflows.md) |
 | [Earlier compaction](/agents-and-parallel-work/sub-agents/subagent-auto-compaction.md) | At most 4% of the reading to save, against lost detail. | [solvers over 300K](/experiments/context-growth-without-compaction.md) staying common |
 | [Agent teams](/agents-and-parallel-work/agent-teams/agent-teams-overview-and-enable.md) | Agents decide between themselves and talk freely: the opposite of code deciding and of an attacker who never sees the solver's reasoning. | nothing foreseeable |

@@ -764,6 +764,10 @@ def build_efficiency(run_dir: Path, agents: list, returned: dict, write: bool = 
                           "rebuild_share_of_writes": round(rb / cw, 2), "one_hour_share_of_writes": round(sum(r.get("cache_write_1h") or 0 for r in rows) / cw, 2)}
     if res.get("host"):
         extra["host"] = res.get("host")
+    import crucible_helper as hp
+    hs = hp.summary(run_dir)
+    if hs:           # helper sessions under solvers: outside the workflow, so counted by their launcher (scripts/crucible_helper.py)
+        extra["helpers"] = {**hs, "share_of_agents": round(hs["weighted_agents"] / len(rows), 3) if rows else None}
     eff = {
         "wall_s": round(wall), "stalled_s": round(at.get(0, 0)), "active_s": round(active), "busy_s": round(busy), "agents": len(rows),
         "mean_live": round(busy / active, 2), "peak_live": peak,
@@ -779,6 +783,7 @@ def build_efficiency(run_dir: Path, agents: list, returned: dict, write: bool = 
                        "attempts.discarded_share_of_busy is agent time spent on versions that were not kept; attempts.repair_alone_enough against attempts.parts shows how often the first, cheap attempt settled it. "
                        "budget.used_over_estimate far from 1 means the approval-time estimate was wrong; budget.critical_not_started should always be empty. "
                        "context.solvers_over_300k counts solvers whose part was too large for one session. "
+                       "helpers (when a solver started any): weighted_agents is what they cost in average agents on the strongest routine model, against allowance; unread counts handoffs no owner read (wasted work), still_alive must be 0, refused_by says which limit turned requests away. "
                        "steps.turns_per_agent is model calls per agent (each re-reads the context so far); steps.agents_using_scripts above 0 means agents ran scripts that call tools (Code Mode), which should lower turns and cached tokens per agent.",
     }
     if write:
@@ -1230,6 +1235,16 @@ def save(output_file: Path, run_dir: Path, transcript_arg=None, run_id_arg=None,
         except Exception:
             pass
     (run_dir / "run-meta.json").write_text(json.dumps(meta, indent=1))
+    if not result.get("planOnly"):   # the run is over: a helper session still alive has no owner left to hand anything to
+        import crucible_helper as hp
+        try:
+            n = hp.reap(run_dir, "the run ended")
+            hs = hp.summary(run_dir)
+            if hs:
+                print(f"helpers: {hs['count']} started ({', '.join(f'{k} {v}' for k, v in hs['by_status'].items())}), {hs['weighted_agents']} of {hs['allowance']} weighted agents used, "
+                      f"deepest level {hs['max_depth']}, {hs['refused']} refused" + (f"; {n} still alive at the end, now stopped" if n else ""))
+        except Exception as e:      # bookkeeping must never block giving the user their answer
+            print(f"helpers not closed: {e}")
     metrics = build_metrics(run_dir, meta) if not result.get("planOnly") else {}
     if result.get("closed"):
         print(f"closed run: the checkpoint it was closed from is kept: {run_dir / 'checkpoint.json'}")
@@ -1379,6 +1394,15 @@ def main(argv):
             out["routing"] = {k: v for k, v in table["profiles"][prof].items() if k != "about"}
             # a profile with Codex or OpenRouter routes needs args.sessionId, so their relay agents can find their specs
             out["externalRoutes"] = bool(re.search(r'"(codex|openrouter):', json.dumps(out["routing"]["roles"])))
+        if name == "crucible-engine.js":
+            # helper sessions under solvers: lift a stop left by an earlier end of this run, and pass the launcher's
+            # command as args.helpers (absent: this machine has no `claude` command, or the user said --no-helpers)
+            import crucible_helper as hp
+            hh = hp.open_run(rd)
+            if hh and "--no-helpers" not in argv and "--source" not in argv:
+                if so.get("--helper-depth", "").isdigit():
+                    hh["depthMax"] = int(so["--helper-depth"])
+                out["helpers"] = hh
         print(json.dumps(out))
         return 0
     if argv and argv[0] == "version":
@@ -1436,7 +1460,11 @@ def main(argv):
         return prior_atlases(argv[1] if len(argv) > 1 else None)
     if len(argv) >= 2 and argv[0] == "checkpoint":
         o = {argv[i]: argv[i + 1] for i in range(2, len(argv) - 1) if argv[i].startswith("--")}
+        import crucible_helper as hp
+        n = hp.reap(Path(argv[1]).expanduser(), "the run was stopped")   # a stopped run leaves no helper session behind
         print(build_checkpoint(Path(argv[1]).expanduser(), o.get("--transcript")))
+        if n:
+            print(f"helper sessions stopped: {n}")
         return 0
     if len(argv) >= 2 and argv[0] == "continue-info":
         return continue_info(Path(argv[1]).expanduser())

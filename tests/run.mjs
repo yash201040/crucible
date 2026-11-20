@@ -44,6 +44,31 @@ const byId = (res, id) => res.results.find(r => r.id === id) || {}
   check('resplit: merged scope replaces both and builds on them', byId(res, 'xy').final === 'verified' && byId(res, 'x').supersededBy === 'xy' && byId(res, 'y').supersededBy === 'xy')
   check('resplit: boundary issue recorded', (byId(res, 'x').boundaryIssues || []).length === 1)
   check('resplit: no errors', !logs.some(l => /ERR/.test(l)), logs.filter(l => /ERR/.test(l)).join(' | ')) }
+// helpers (v5.5): only the solving side is told the launcher's command, with the run's own figures; the allowance is part of the ceiling shown
+{ const H = { helpers: { cmd: 'python3 /opt/x/crucible_helper.py' } }
+  const { res, prompts, calls } = await run(engine, 'exhaustive', 'standard', { ...H, leftover: 'material' })
+  const told = Object.entries(prompts).filter(([, p]) => p.includes('crucible_helper.py')).map(([l]) => l)
+  check('helpers: every solver of a part that is not trivial is told the command', calls.filter(c => /^solver:/.test(c)).every(c => told.includes(c)), calls.filter(c => /^solver:/.test(c) && !told.includes(c)).join(' '))
+  check('helpers: nobody but the solving side is told', told.length > 0 && told.every(l => /^(solver|repair):/.test(l)), told.filter(l => !/^(solver|repair):/.test(l)).join(' '))
+  const sp = prompts['solver:a:r1'] || ''
+  check('helpers: the command carries the run, the owner, the allowance and the depth', sp.includes(`run --run /tmp/run --owner solver:a:r1 --allow ${res.helpers.allowance} --depth-max 2 --task-file`) && sp.includes('close --run /tmp/run --owner solver:a:r1'), sp.slice(sp.indexOf('A helper'), sp.indexOf('A helper') + 400))
+  check('helpers: a handoff is unverified material and a check is never handed over', /unverified material/.test(sp) && /Never hand over the reasoning your claim depends on, an acceptance check or a negative test/.test(sp))
+  const rp = Object.keys(prompts).find(l => l.startsWith('repair:'))
+  check('helpers: a repair is the solving side too, under its own name', !!rp && prompts[rp].includes(`--owner ${rp} `), String(rp))
+  check('helpers: an attempt after the serial rounds has its own name', Object.keys(prompts).filter(l => /^solver:c:r[3-9]/.test(l)).every(l => new RegExp(`--owner ${l}:[a-z]+ `).test(prompts[l])))
+  check('helpers: the result says what was allowed', res.helpers && res.helpers.depthMax === 2 && res.helpers.share === 0.15 && res.helpers.allowance > 0)
+  const plain = await run(engine, 'exhaustive', 'standard', { leftover: 'material' })
+  check('helpers: without the launcher no prompt mentions a helper and the result says none', !Object.values(plain.prompts).some(p => /helper session|crucible_helper/.test(p)) && plain.res.helpers === null)
+  check('helpers: they change nothing else in a run', JSON.stringify(plain.calls) === JSON.stringify(calls) && plain.res.budget.ceiling === res.budget.ceiling)
+  const a = await run(engine, 'exhaustive', 'standard', { ...H, planOnly: true }), b = await run(engine, 'exhaustive', 'standard', { planOnly: true })
+  const W = b.res.cost.ceiling.weeklyPct / b.res.cost.ceiling.agents
+  check('helpers: the allowance is a share of the ceiling and is shown inside it', Math.abs(a.res.cost.helpers.allowance / (0.15 * a.res.cost.ceiling.agents) - W * 46.7e6 / 70000 / 100) < 0.05 && a.res.cost.ceiling.weeklyPct >= b.res.cost.ceiling.weeklyPct && a.res.cost.ceiling.agents === b.res.cost.ceiling.agents && a.res.cost.estimate.weeklyPct === b.res.cost.estimate.weeklyPct && b.res.cost.helpers === undefined,
+    JSON.stringify([a.res.cost.helpers, a.res.cost.ceiling, b.res.cost.ceiling]))
+  const t = await run(engine, 'trivial', 'standard', H)
+  check('helpers: a trivial task stays at 3 agents, with no helper and no allowance', t.calls.length === 3 && !Object.values(t.prompts).some(p => p.includes('crucible_helper')) && t.res.helpers.allowance === 0)
+  const deep = await run(engine, 'race', 'deep', H), set = await run(engine, 'race', 'standard', { helpers: { ...H.helpers, depthMax: 5, share: 0.3 } }), off = await run(engine, 'race', 'standard', { helpers: { ...H.helpers, share: 0 } })
+  check('helpers: the depth follows the run and the user can set it', /--depth-max 3 /.test(deep.prompts['solver:a:r1']) && /--depth-max 5 /.test(set.prompts['solver:a:r1']) && set.res.helpers.share === 0.3)
+  check('helpers: a share of zero switches them off', !Object.values(off.prompts).some(p => p.includes('crucible_helper')) && off.res.helpers.allowance === 0) }
 // self-reflection: recorded per run, never applied per run; skipped on small clean runs; runs alongside the final synthesis
 { const { res, calls } = await run(engine, 'trivial')
   check('reflect: skipped on a small clean run', !calls.includes('reflector') && res.reflection === null) }
@@ -351,6 +376,8 @@ for (const sc of ['own', 'fix', 'stop']) { const a = await run(engine, sc), b = 
   const q = spawnSync('python3', [path.join(here, 'test_runner.py')], { encoding: 'utf8' })
   check('standalone runner and Codex adapter: tests/test_runner.py passes', q.status === 0, (q.stderr || '').split('\n').slice(-12).join(' | '))
   const o = spawnSync('python3', [path.join(here, 'test_okf.py')], { encoding: 'utf8' })
-  check('knowledge bundle about the host: tests/test_okf.py passes', o.status === 0, (o.stderr || '').split('\n').slice(-12).join(' | ')) }
+  check('knowledge bundle about the host: tests/test_okf.py passes', o.status === 0, (o.stderr || '').split('\n').slice(-12).join(' | '))
+  const hp = spawnSync('python3', [path.join(here, 'test_helper.py')], { encoding: 'utf8' })
+  check('helper sessions, counted, capped and closed: tests/test_helper.py passes', hp.status === 0, (hp.stderr || '').split('\n').slice(-12).join(' | ')) }
 console.log(fails ? `\n${fails} FAILED` : '\nall passed')
 process.exit(fails ? 1 : 0)

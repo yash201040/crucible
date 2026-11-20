@@ -43,6 +43,8 @@ On a laptop the default cap is the number of CPUs minus two, and a wide run spen
 
 # What it means for crucible
 
+Since 2026-11-20 the launcher sets 64 (the owner's choice), which in practice lifts the cap; more than twelve agents alive at once has not been tested. A value in the `env` block of the user's settings wins over one exported by the shell or the launcher (checked: a session started with 12 exported saw the 64 of the settings).
+
 `bin/crucible-claude` starts a session with 12. The run digest reports the share of time spent at the peak, so a cap that binds shows. A build whose agents all run heavy test suites can still overload a small machine: that is the one reason to set it lower.
 
 Where a result says "here", the probe ran as a workflow inside an app built on the Agent SDK; "terminal" means an interactive `claude` session in a terminal with Code Mode on. Each probe was a workflow script with one small agent per question, on Claude Code 2.1.325 or 2.1.329. A result holds for that release only: run the probe again after an update.

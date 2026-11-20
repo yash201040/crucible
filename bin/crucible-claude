@@ -4,15 +4,17 @@
 #
 #   CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS   how many agents of a run may work at once. Claude Code's default is
 #       16, or the number of CPUs minus two if that is less (6 on an 8-core laptop). Agents mostly wait for the model,
-#       not for the CPU. On the first large run 78% of the time was spent at the cap of 6. Default here: 12.
+#       not for the CPU. On the first large run 78% of the time was spent at the cap of 6. Default here: 64, which in
+#       practice lifts the cap: a plan decides how many agents can work at once. Set a lower number on a machine that
+#       struggles when many agents run builds or tests at the same time.
 #   CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL        how long an agent's cached context lives. The default for agents is
 #       five minutes; a build or test run that takes longer makes the agent pay for its whole context again. On the
 #       first large run that was 57% of everything written to the cache. Default here: 1h.
 #
-# A value you have already set wins. Code Mode (CLAUDE_CODE_EXPERIMENTAL_CODE_MODE=1) is left to you: in our tests it
+# A value you have already exported wins over these, and one in the `env` block of ~/.claude/settings.json wins over both. Code Mode (CLAUDE_CODE_EXPERIMENTAL_CODE_MODE=1) is left to you: in our tests it
 # made no measurable difference to model calls or tokens.
 # Everything you add is passed to claude (for example: crucible-claude --resume).
-: "${CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS:=12}"
+: "${CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS:=64}"
 : "${CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL:=1h}"
 export CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL
 exec claude "$@"

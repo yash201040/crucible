@@ -2,6 +2,10 @@
 
 Every change to the framework, newest first. Automatic entries come from `crucible-evolve` (run = after one run, periodic = weekly/monthly review) and cite the run and evidence they rest on.
 
+## 2026-11-20 (manual; the owner's decision): the launcher lets 64 agents work at once
+
+`bin/crucible-claude` now sets `CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS=64` (was 12), as the owner's own settings do. In practice that lifts the cap: how many agents work at once is decided by the plan. Tested: a value in the settings' `env` block wins over one the launcher exports. Not tested: more than twelve agents alive at once, and what many agents running builds or tests together do to a small machine. The expectation `v5.4-more-agents-at-once` keeps its wording and its target; the first run's `time.mean_live` and `time.peak_live` show what the change bought.
+
 ## 2026-11-20 (the owner): `expectation.md` revised
 
 The owner revised their file on GitHub (commit `7add7c7`), from the wordings that had waited in `PROPOSALS.md`. What changed in the standard that reviews measure against:

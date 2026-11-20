@@ -132,10 +132,10 @@ Two settings of Claude Code matter more to a long run than anything in crucible'
 
 | Setting | Claude Code's default | What the first large run showed | What the launcher sets |
 |---|---|---|---|
-| `CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS`: agents of a run working at once | 16, or the number of CPUs minus two if that is less (6 on an 8-core laptop) | exactly 6 agents were alive for 78% of the 31 hours | 12 |
+| `CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS`: agents of a run working at once | 16, or the number of CPUs minus two if that is less (6 on an 8-core laptop) | exactly 6 agents were alive for 78% of the 31 hours | 64 |
 | `CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL`: how long an agent's cached context lives | 5 minutes | 318 times a build or test run took longer, and the agent paid for its whole context again: 57% of everything written to the cache | 1 hour |
 
-To get them, start the session you run crucible in with `crucible-claude` (`ln -s ~/.claude/skills/crucible/bin/crucible-claude ~/.local/bin/`), or put both variables in the `env` block of `~/.claude/settings.json`, which also covers sessions started from an app. A value you set yourself wins. Lower the first one on a machine that struggles when many agents run tests at once. A one-hour cache write costs more than a five-minute one, so the second setting pays for agents that run long commands and costs a little for short-lived ones; by API prices it would have saved about 7% of that run's tokens.
+To get them, start the session you run crucible in with `crucible-claude` (`ln -s ~/.claude/skills/crucible/bin/crucible-claude ~/.local/bin/`), or put both variables in the `env` block of `~/.claude/settings.json`, which also covers sessions started from an app. A value in your settings wins over the launcher's. Sixty-four in practice lifts the cap: how many agents work at once is then decided by the plan, and that has been tested up to twelve at once, not beyond. Lower it on a machine that struggles when many agents run builds or tests at the same time. A one-hour cache write costs more than a five-minute one, so the second setting pays for agents that run long commands and costs a little for short-lived ones; by API prices it would have saved about 7% of that run's tokens.
 
 `crucible_run.py host` prints what the current session has. The front desk mentions it once, at approval, for a plan of 30 agents or more.
 

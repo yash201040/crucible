@@ -466,7 +466,7 @@ def host_info() -> dict:
     advice = []
     if not cap_env and default_cap < 10:
         advice.append(f"at most {default_cap} agents work at once in this session (the host's default for this machine); "
-                      "CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS=12, set before the session starts, lets twice as many work at once")
+                      "CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS=64, set before the session starts, lets as many work at once as the plan allows")
     if ttl != "1h":
         advice.append("agents keep their cache five minutes, so a command that runs longer makes the agent pay for its whole context again; "
                       "CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL=1h, set before the session starts, avoids that")
